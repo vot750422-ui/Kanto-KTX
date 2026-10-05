@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1:3306
--- Thời gian đã tạo: Th10 05, 2026 lúc 08:18 AM
+-- Thời gian đã tạo: Th10 05, 2026 lúc 09:07 AM
 -- Phiên bản máy phục vụ: 8.4.7
 -- Phiên bản PHP: 8.3.28
 
@@ -238,7 +238,7 @@ CREATE TABLE IF NOT EXISTS `hopdong` (
 DROP TABLE IF EXISTS `nhanvien`;
 CREATE TABLE IF NOT EXISTS `nhanvien` (
   `MaNV` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `MaTK` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `MaTK` int NOT NULL,
   `HoTen` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `SDT` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -302,7 +302,7 @@ CREATE TABLE IF NOT EXISTS `phong` (
 DROP TABLE IF EXISTS `sinhvien`;
 CREATE TABLE IF NOT EXISTS `sinhvien` (
   `MSSV` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `MaTK` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `MaTK` int NOT NULL,
   `MaUuTien` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
   `HoTen` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `NgaySinh` date NOT NULL,
@@ -329,7 +329,7 @@ CREATE TABLE IF NOT EXISTS `sinhvien` (
 
 DROP TABLE IF EXISTS `taikhoan`;
 CREATE TABLE IF NOT EXISTS `taikhoan` (
-  `MaTK` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `MaTK` int NOT NULL AUTO_INCREMENT,
   `TenDangNhap` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `MatKhau` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `VaiTro` enum('Sinh viên','Nhân viên quản lý KTX','Nhân viên kế toán','Quản lý KTX') COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -337,7 +337,17 @@ CREATE TABLE IF NOT EXISTS `taikhoan` (
   PRIMARY KEY (`MaTK`),
   UNIQUE KEY `uq_taikhoan_tendangnhap` (`TenDangNhap`),
   UNIQUE KEY `TenDangNhap` (`TenDangNhap`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `taikhoan`
+--
+
+INSERT INTO `taikhoan` (`MaTK`, `TenDangNhap`, `MatKhau`, `VaiTro`, `TrangThai`) VALUES
+(1, 'sv001', '$2y$10$GBEExmOUOdtEOAfOAxRkKudSQVuho9szhCgsx83fUJ8cbmlPf34P.', 'Sinh viên', 'Hoạt động'),
+(3, 'nvql001', '$2y$10$GBEExmOUOdtEOAfOAxRkKudSQVuho9szhCgsx83fUJ8cbmlPf34P.', 'Nhân viên quản lý KTX', 'Hoạt động'),
+(5, 'nvkt001', '$2y$10$GBEExmOUOdtEOAfOAxRkKudSQVuho9szhCgsx83fUJ8cbmlPf34P.', 'Nhân viên kế toán', 'Hoạt động'),
+(6, 'ql001', '$2y$10$GBEExmOUOdtEOAfOAxRkKudSQVuho9szhCgsx83fUJ8cbmlPf34P.', 'Quản lý KTX', 'Hoạt động');
 
 -- --------------------------------------------------------
 
@@ -428,7 +438,7 @@ ALTER TABLE `hopdong`
 -- Ràng buộc cho bảng `nhanvien`
 --
 ALTER TABLE `nhanvien`
-  ADD CONSTRAINT `fk_nhanvien_taikhoan` FOREIGN KEY (`MaTK`) REFERENCES `taikhoan` (`MaTK`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_nhanvien_taikhoan` FOREIGN KEY (`MaTK`) REFERENCES `taikhoan` (`MaTK`);
 
 --
 -- Ràng buộc cho bảng `phananhsuco`
@@ -449,7 +459,7 @@ ALTER TABLE `phong`
 --
 ALTER TABLE `sinhvien`
   ADD CONSTRAINT `fk_sinhvien_dienuutien` FOREIGN KEY (`MaUuTien`) REFERENCES `dienuutien` (`MaUuTien`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_sinhvien_taikhoan` FOREIGN KEY (`MaTK`) REFERENCES `taikhoan` (`MaTK`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_sinhvien_taikhoan` FOREIGN KEY (`MaTK`) REFERENCES `taikhoan` (`MaTK`);
 
 --
 -- Ràng buộc cho bảng `thongbao`

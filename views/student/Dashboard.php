@@ -1,6 +1,7 @@
 <?php
 
-session_start();
+require_once __DIR__ . '/../../middleware/Role.php';
+requireRole('Sinh viên');
 
 ?>
 

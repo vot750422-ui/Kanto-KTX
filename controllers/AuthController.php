@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../middleware/Role.php';
 require_once __DIR__ . '/../models/User.php';
 
 class AuthController
@@ -18,8 +18,18 @@ class AuthController
             return;
         }
 
-        $username = trim($_POST['username'] ?? '');
+        // Lần đăng nhập mới phải xác thực lại, không kế thừa tài khoản cũ.
+        unset($_SESSION['user'], $_SESSION['error']);
+
+        $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
+
+        if (!is_string($username) || !is_string($password)) {
+            $_SESSION['error'] = 'Thông tin đăng nhập không hợp lệ.';
+            header('Location: /Kanto-KTX/');
+            exit;
+        }
+        $username = trim($username);
 
         if ($username === '' || $password === '') {
             $_SESSION['error'] = 'Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.';
@@ -35,14 +45,20 @@ class AuthController
             exit;
         }
 
-        if ($user['TrangThai'] === 'Khóa') {
+        if (!password_verify($password, $user['MatKhau'])) {
+            $_SESSION['error'] = 'Tên đăng nhập hoặc mật khẩu không chính xác.';
+            header('Location: /Kanto-KTX/');
+            exit;
+        }
+
+        if ($user['TrangThai'] !== 'Hoạt động') {
             $_SESSION['error'] = 'Tài khoản đã bị khóa.';
             header('Location: /Kanto-KTX/');
             exit;
         }
 
-        if (!password_verify($password, $user['MatKhau'])) {
-            $_SESSION['error'] = 'Tên đăng nhập hoặc mật khẩu không chính xác.';
+        if (dashboardForRole($user['VaiTro']) === null) {
+            $_SESSION['error'] = 'Vai trò tài khoản không hợp lệ.';
             header('Location: /Kanto-KTX/');
             exit;
         }
@@ -60,30 +76,7 @@ class AuthController
 
     private function redirectByRole(string $role): void
     {
-        switch ($role) {
-
-            case 'Sinh viên':
-                header('Location: /Kanto-KTX/views/student/Dashboard.php');
-                break;
-
-            case 'Nhân viên quản lý KTX':
-                header('Location: /Kanto-KTX/views/nvql/Dashboard.php');
-                break;
-
-            case 'Nhân viên kế toán':
-                header('Location: /Kanto-KTX/views/ketoan/Dashboard.php');
-                break;
-
-            case 'Quản lý KTX':
-                header('Location: /Kanto-KTX/views/quanly/Dashboard.php');
-                break;
-
-            default:
-                session_destroy();
-                header('Location: /Kanto-KTX/');
-                break;
-        }
-
+        header('Location: ' . (dashboardForRole($role) ?? '/Kanto-KTX/'));
         exit;
     }
 }
