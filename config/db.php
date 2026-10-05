@@ -8,7 +8,7 @@ $password = '';
 try {
     $pdo = new PDO(
         "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
-        $username,
+        $username,  
         $password
     );
 
