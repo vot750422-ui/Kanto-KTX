@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1:3306
--- Thời gian đã tạo: Th10 05, 2026 lúc 07:36 AM
+-- Thời gian đã tạo: Th10 05, 2026 lúc 08:18 AM
 -- Phiên bản máy phục vụ: 8.4.7
 -- Phiên bản PHP: 8.3.28
 
@@ -331,11 +331,12 @@ DROP TABLE IF EXISTS `taikhoan`;
 CREATE TABLE IF NOT EXISTS `taikhoan` (
   `MaTK` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
   `TenDangNhap` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `MatKhauHash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `MatKhau` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `VaiTro` enum('Sinh viên','Nhân viên quản lý KTX','Nhân viên kế toán','Quản lý KTX') COLLATE utf8mb4_unicode_ci NOT NULL,
   `TrangThai` enum('Hoạt động','Khóa') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Hoạt động',
   PRIMARY KEY (`MaTK`),
-  UNIQUE KEY `uq_taikhoan_tendangnhap` (`TenDangNhap`)
+  UNIQUE KEY `uq_taikhoan_tendangnhap` (`TenDangNhap`),
+  UNIQUE KEY `TenDangNhap` (`TenDangNhap`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
