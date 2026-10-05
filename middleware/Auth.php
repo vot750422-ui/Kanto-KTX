@@ -13,9 +13,13 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 function requireAuth(): array
 {
     $sessionUser = $_SESSION['user'] ?? null;
-    if (!is_array($sessionUser) || !is_string($sessionUser['MaTK'] ?? null)) {
+    $accountId = is_array($sessionUser) ? ($sessionUser['MaTK'] ?? null) : null;
+    // PDO có thể trả cột INT dưới dạng số nguyên hoặc chuỗi số.
+    $validAccountId = (is_int($accountId) && $accountId > 0)
+        || (is_string($accountId) && preg_match('/^[1-9][0-9]*$/D', $accountId) === 1);
+    if (!$validAccountId) {
         unset($_SESSION['user']);
-        header('Location: /Kanto-KTX/');
+        header('Location: /Kanto-KTX/index.php?action=login');
         exit;
     }
 
@@ -29,7 +33,7 @@ function requireAuth(): array
         unset($_SESSION['user']);
         session_regenerate_id(true);
         $_SESSION['error'] = 'Phiên đăng nhập không còn hợp lệ. Vui lòng đăng nhập lại.';
-        header('Location: /Kanto-KTX/');
+        header('Location: /Kanto-KTX/index.php?action=login');
         exit;
     }
 

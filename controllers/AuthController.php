@@ -26,14 +26,14 @@ class AuthController
 
         if (!is_string($username) || !is_string($password)) {
             $_SESSION['error'] = 'Thông tin đăng nhập không hợp lệ.';
-            header('Location: /Kanto-KTX/');
+            header('Location: /Kanto-KTX/index.php?action=login');
             exit;
         }
         $username = trim($username);
 
         if ($username === '' || $password === '') {
             $_SESSION['error'] = 'Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.';
-            header('Location: /Kanto-KTX/');
+            header('Location: /Kanto-KTX/index.php?action=login');
             exit;
         }
 
@@ -41,25 +41,25 @@ class AuthController
 
         if (!$user) {
             $_SESSION['error'] = 'Tên đăng nhập hoặc mật khẩu không chính xác.';
-            header('Location: /Kanto-KTX/');
+            header('Location: /Kanto-KTX/index.php?action=login');
             exit;
         }
 
         if (!password_verify($password, $user['MatKhau'])) {
             $_SESSION['error'] = 'Tên đăng nhập hoặc mật khẩu không chính xác.';
-            header('Location: /Kanto-KTX/');
+            header('Location: /Kanto-KTX/index.php?action=login');
             exit;
         }
 
         if ($user['TrangThai'] !== 'Hoạt động') {
             $_SESSION['error'] = 'Tài khoản đã bị khóa.';
-            header('Location: /Kanto-KTX/');
+            header('Location: /Kanto-KTX/index.php?action=login');
             exit;
         }
 
         if (dashboardForRole($user['VaiTro']) === null) {
             $_SESSION['error'] = 'Vai trò tài khoản không hợp lệ.';
-            header('Location: /Kanto-KTX/');
+            header('Location: /Kanto-KTX/index.php?action=login');
             exit;
         }
 
@@ -76,7 +76,7 @@ class AuthController
 
     private function redirectByRole(string $role): void
     {
-        header('Location: ' . (dashboardForRole($role) ?? '/Kanto-KTX/'));
+        header('Location: ' . (dashboardForRole($role) ?? '/Kanto-KTX/index.php?action=login'));
         exit;
     }
 }

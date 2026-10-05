@@ -46,6 +46,28 @@ $active = array_values(array_filter($users, fn($user) => $user['TrangThai'] === 
 $case = $argv[1] ?? '';
 try {
     switch ($case) {
+        case 'student_dashboard':
+            require_once __DIR__ . '/../models/StudentDashboard.php';
+            $model = new StudentDashboard($pdo);
+            $empty = $model->forAccount(-1);
+            check($empty['student'] === null && $empty['invoices'] === 0 && $empty['reports'] === 0, 'Tài khoản chưa có hồ sơ phải có trạng thái trống.');
+            $students = array_filter($active, fn($user) => $user['VaiTro'] === 'Sinh viên');
+            check(count($students) > 0, 'Cần tài khoản sinh viên.');
+            foreach ($students as $user) {
+                $data = $model->forAccount((int) $user['MaTK']);
+                check(is_int($data['invoices']) && $data['invoices'] >= 0, 'Số hóa đơn phải là số nguyên không âm.');
+                check(is_int($data['reports']) && $data['reports'] >= 0, 'Số phản ánh phải là số nguyên không âm.');
+                $stmt = $pdo->prepare('SELECT MSSV FROM sinhvien WHERE MaTK = :id');
+                $stmt->execute(['id' => $user['MaTK']]);
+                $studentId = $stmt->fetchColumn();
+                check(($data['student']['MSSV'] ?? false) === $studentId, 'Hồ sơ phải thuộc tài khoản đăng nhập.');
+            }
+            // Chạy đầy đủ các truy vấn với hồ sơ thật, kể cả hồ sơ chưa có tài khoản mẫu hoạt động.
+            foreach ($pdo->query('SELECT MaTK FROM sinhvien')->fetchAll() as $student) {
+                $data = $model->forAccount((int) $student['MaTK']);
+                check($data['student'] !== null, 'Không đọc được hồ sơ sinh viên.');
+            }
+            break;
         case 'schema':
             foreach (['taikhoan', 'sinhvien', 'nhanvien'] as $table) {
                 $column = $pdo->query("SHOW COLUMNS FROM `$table` LIKE 'MaTK'")->fetch();
@@ -88,10 +110,14 @@ try {
             throw new RuntimeException('Không chặn sai vai trò.');
         case 'guest':
         case 'deleted':
+        case 'invalid_id':
             if ($case === 'deleted') {
                 // ID âm không có trong tài khoản demo; xác nhận trước khi dùng.
                 check((int) $pdo->query('SELECT COUNT(*) FROM taikhoan WHERE MaTK = -1')->fetchColumn() === 0, 'ID kiểm thử đang tồn tại.');
                 $_SESSION['user'] = ['MaTK' => -1];
+            }
+            if ($case === 'invalid_id') {
+                $_SESSION['user'] = ['MaTK' => ['invalid']];
             }
             expectExit(function () {
                 check(http_response_code() === 302, 'Phải chuyển hướng về đăng nhập.');
@@ -100,8 +126,12 @@ try {
             requireRole('Sinh viên');
             throw new RuntimeException('Không chặn truy cập.');
         case 'refresh':
+        case 'string_id':
             check(count($active) > 0, 'Cần tài khoản hoạt động.');
-            $_SESSION['user'] = ['MaTK' => $active[0]['MaTK'], 'VaiTro' => 'fake'];
+            $_SESSION['user'] = [
+                'MaTK' => $case === 'string_id' ? (string) $active[0]['MaTK'] : $active[0]['MaTK'],
+                'VaiTro' => 'fake',
+            ];
             $current = requireAuth();
             check($current['VaiTro'] === $active[0]['VaiTro'], 'Chưa cập nhật quyền từ CSDL.');
             check(!isset($current['MatKhau']), 'Không được lưu mật khẩu trong session.');

@@ -6,6 +6,7 @@ if (PHP_SAPI !== 'cli') {
 }
 
 $cases = [
+    'student_dashboard' => 'Dashboard sinh viên đọc dữ liệu và xử lý tài khoản chưa có hồ sơ',
     'schema' => 'MaTK và khóa ngoại có kiểu INT, tài khoản dùng mật khẩu băm',
     'model' => 'Model tìm tài khoản và chống đầu vào SQL injection',
     'roles' => 'Bốn vai trò được vào đúng dashboard',
@@ -13,6 +14,8 @@ $cases = [
     'guest' => 'Chưa đăng nhập được chuyển hướng',
     'deleted' => 'Tài khoản không tồn tại bị xóa khỏi session',
     'refresh' => 'Vai trò giả trong session được thay bằng vai trò từ CSDL',
+    'string_id' => 'MaTK dạng chuỗi số vẫn được xác thực từ CSDL',
+    'invalid_id' => 'MaTK sai kiểu bị từ chối và xóa khỏi session',
     'invalid_input' => 'Form chứa dữ liệu dạng mảng bị từ chối',
     'wrong_password' => 'Mật khẩu sai không tạo phiên đăng nhập',
     'existing_session_wrong_password' => 'Có session cũ vẫn phải kiểm tra mật khẩu mới qua index.php',
