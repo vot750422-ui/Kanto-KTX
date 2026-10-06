@@ -6,6 +6,10 @@ if (PHP_SAPI !== 'cli') {
 }
 
 $cases = [
+    'logout' => 'Đăng xuất xóa session và chuyển về đăng nhập',
+    'logout_invalid_token' => 'Token đăng xuất sai không xóa session',
+    'logout_get' => 'Yêu cầu GET không được đăng xuất',
+    'staff_dashboard' => 'Dashboard NVQL trả đúng số liệu tổng quan và tên nhân viên',
     'student_dashboard' => 'Dashboard sinh viên đọc dữ liệu và xử lý tài khoản chưa có hồ sơ',
     'schema' => 'MaTK và khóa ngoại có kiểu INT, tài khoản dùng mật khẩu băm',
     'model' => 'Model tìm tài khoản và chống đầu vào SQL injection',

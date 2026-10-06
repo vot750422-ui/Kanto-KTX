@@ -46,6 +46,46 @@ $active = array_values(array_filter($users, fn($user) => $user['TrangThai'] === 
 $case = $argv[1] ?? '';
 try {
     switch ($case) {
+        case 'logout':
+        case 'logout_invalid_token':
+        case 'logout_get':
+            check(count($active) > 0, 'Cần tài khoản hoạt động.');
+            $_SESSION['user'] = $active[0];
+            $_SESSION['logout_token'] = bin2hex(random_bytes(32));
+            $_SERVER['REQUEST_METHOD'] = $case === 'logout_get' ? 'GET' : 'POST';
+            $_GET['action'] = 'logout';
+            $_POST['csrf_token'] = $case === 'logout_invalid_token' ? 'invalid' : $_SESSION['logout_token'];
+            expectExit(function () use ($case) {
+                if ($case === 'logout') {
+                    check(http_response_code() === 303, 'Đăng xuất phải chuyển hướng bằng 303.');
+                    check($_SESSION === [] && session_status() !== PHP_SESSION_ACTIVE, 'Session chưa được xóa hoàn toàn.');
+                } else {
+                    check(http_response_code() === ($case === 'logout_get' ? 405 : 403), 'Sai mã HTTP.');
+                    check(isset($_SESSION['user']), 'Yêu cầu không hợp lệ không được xóa tài khoản.');
+                }
+            });
+            require __DIR__ . '/../index.php';
+            throw new RuntimeException('Yêu cầu đăng xuất không được xử lý.');
+        case 'staff_dashboard':
+            require_once __DIR__ . '/../models/StaffDashboard.php';
+            $model = new StaffDashboard($pdo);
+            $data = $model->summary();
+            check($data['applications'] === (int) $pdo->query("SELECT COUNT(*) FROM dondangky WHERE TrangThai = 'Chờ duyệt'")->fetchColumn(), 'Sai số đơn chờ duyệt.');
+            check($data['students'] === (int) $pdo->query("SELECT COUNT(*) FROM sinhvien WHERE TrangThaiLuuTru = 'Đang ở'")->fetchColumn(), 'Sai số sinh viên đang ở.');
+            check($data['reports'] === (int) $pdo->query("SELECT COUNT(*) FROM phananhsuco WHERE TrangThai = 'Chờ xử lý'")->fetchColumn(), 'Sai số phản ánh chờ xử lý.');
+            $today = (new DateTimeImmutable('now', new DateTimeZone('Asia/Ho_Chi_Minh')))->format('Y-m-d');
+            $rooms = [];
+            foreach ($pdo->query('SELECT h.MaPhong, h.NgayBatDau, h.NgayKetThuc, h.TrangThai, s.TrangThaiLuuTru FROM hopdong h JOIN sinhvien s ON s.MSSV = h.MSSV')->fetchAll() as $contract) {
+                if ($contract['TrangThai'] === 'Còn hạn' && $contract['TrangThaiLuuTru'] === 'Đang ở' && $contract['NgayBatDau'] <= $today && $contract['NgayKetThuc'] >= $today) {
+                    $rooms[$contract['MaPhong']] = true;
+                }
+            }
+            check($data['rooms'] === count($rooms), 'Phòng có nhiều hợp đồng chỉ được đếm một lần.');
+            check($model->nameForAccount(-1) === null, 'Tài khoản chưa có hồ sơ phải trả null.');
+            foreach ($pdo->query('SELECT MaTK, HoTen FROM nhanvien')->fetchAll() as $employee) {
+                check($model->nameForAccount((int) $employee['MaTK']) === $employee['HoTen'], 'Sai tên nhân viên.');
+            }
+            break;
         case 'student_dashboard':
             require_once __DIR__ . '/../models/StudentDashboard.php';
             $model = new StudentDashboard($pdo);

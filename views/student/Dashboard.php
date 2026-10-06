@@ -16,19 +16,11 @@ $icons = [
     'contract' => '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',
     'invoice' => '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2Z"/><path d="M9 7h6M9 11h6M9 15h3"/>',
     'report' => '<path d="M21 11a9 9 0 0 1-9 9H6l-4 2 2-5a9 9 0 1 1 17-6Z"/><path d="M12 7v5M12 16h.01"/>',
-    'notice' => '<path d="m3 10 14-6v16L3 14Z"/><path d="M7 16v5h3v-4M21 8v8"/>',
-    'bot' => '<rect x="4" y="7" width="16" height="14" rx="4"/><path d="M12 7V3M10 3h4M1 12v5M23 12v5M8 12h.01M16 12h.01M9 17h6"/>',
 ];
 $renderIcon = static function (string $name) use ($icons): string {
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $icons[$name] . '</svg>';
 };
 $statIcons = ['Phòng hiện tại' => 'room', 'Hợp đồng' => 'contract', 'Hóa đơn chưa thu' => 'invoice', 'Phản ánh đang xử lý' => 'report'];
-$quickActions = [
-    ['label' => 'Xem thông tin lưu trú', 'icon' => 'room', 'color' => 'blue'],
-    ['label' => 'Xem thông báo', 'icon' => 'notice', 'color' => 'purple'],
-    ['label' => 'Gửi phản ánh sự cố', 'icon' => 'report', 'color' => 'orange'],
-    ['label' => 'Sử dụng Chatbot AI', 'icon' => 'bot', 'color' => 'green'],
-];
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -38,6 +30,7 @@ $quickActions = [
     <title>Trang chủ Sinh viên — Kanto KTX</title>
     <link rel="stylesheet" href="/Kanto-KTX/assets/css/style.css">
     <link rel="stylesheet" href="/Kanto-KTX/assets/css/student-dashboard.css">
+    <link rel="stylesheet" href="/Kanto-KTX/assets/css/navbar.css">
 </head>
 <body class="student-page">
     <header class="student-header">
@@ -55,10 +48,16 @@ $quickActions = [
                     <span class="student-name"><?= htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8') ?></span>
                     <span class="student-chevron" aria-hidden="true"></span>
                 </summary>
-                <div class="student-account-menu"><span>Sinh viên</span><a href="/Kanto-KTX/index.php">Về trang chủ Kanto</a></div>
+                <div class="student-account-menu">
+                    <span>Sinh viên</span>
+                    <a href="/Kanto-KTX/index.php">Về trang chủ Kanto</a>
+                    <?php require __DIR__ . '/../../includes/logout.php'; ?>
+                </div>
             </details>
         </div>
     </header>
+    <div class="dashboard-layout">
+    <?php require __DIR__ . '/../../includes/navbar.php'; ?>
     <main class="student-main">
         <h1>Trang chủ Sinh viên</h1>
         <p class="student-intro">Theo dõi thông tin lưu trú và các chức năng cá nhân.</p>
@@ -74,19 +73,8 @@ $quickActions = [
                 </div>
             <?php endforeach; ?>
         </section>
-        <section class="student-quick" aria-labelledby="quick-title">
-            <h2 id="quick-title">Chức năng nhanh</h2>
-            <div class="student-quick-grid">
-                <?php foreach ($quickActions as $action): ?>
-                    <button class="student-action student-action--<?= $action['color'] ?>" type="button" disabled title="Chức năng đang được xây dựng">
-                        <span class="student-action-icon"><?= $renderIcon($action['icon']) ?></span>
-                        <span class="student-action-label"><?= htmlspecialchars($action['label'], ENT_QUOTES, 'UTF-8') ?></span>
-                        <span class="student-action-arrow" aria-hidden="true">›</span>
-                    </button>
-                <?php endforeach; ?>
-            </div>
-        </section>
     </main>
+    </div>
     <?php require __DIR__ . '/../../includes/chatbot.php'; ?>
 </body>
 </html>
