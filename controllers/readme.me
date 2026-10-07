@@ -1,0 +1,10 @@
+# controllers — Xử lý yêu cầu xác thực
+
+| File | Vai trò |
+| --- | --- |
+| `AuthController.php` | Xử lý POST đăng nhập: kiểm tra đầu vào, tìm tài khoản qua `User`, xác minh mật khẩu băm, trạng thái và vai trò; đổi ID session, lưu thông tin tài khoản và chuyển tới dashboard tương ứng. Lỗi được lưu trong session để form hiển thị. |
+| `logout.php` | Chỉ nhận POST với token CSRF hợp lệ; xóa session và cookie phiên, sau đó chuyển về đăng nhập bằng HTTP 303. GET trả 405; token sai trả 403. |
+
+Các controller liên quan đến `models/User.php`, `middleware/Role.php` và giao diện trong `views/auth/`, `includes/logout.php`.
+
+Sau khi sửa đăng nhập hoặc đăng xuất, chạy `php -d xdebug.mode=off tests/run.php` từ thư mục gốc.

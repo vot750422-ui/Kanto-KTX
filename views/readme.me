@@ -1,0 +1,11 @@
+# views — Giao diện PHP
+
+| Thư mục | Vai trò |
+| --- | --- |
+| `auth/login.php` | Form POST đăng nhập và hiển thị lỗi từ session; xử lý xác thực nằm trong `AuthController`. |
+| `student/Dashboard.php` | Chỉ dành cho Sinh viên; dùng `StudentDashboard` để hiển thị tên, phòng, hợp đồng, hóa đơn chưa thu và phản ánh chờ xử lý. Thông báo khi chưa có hồ sơ. |
+| `nvql/Dashboard.php` | Chỉ dành cho Nhân viên quản lý KTX; dùng `StaffDashboard` để hiển thị tên nhân viên, số đơn chờ duyệt, sinh viên đang ở, phòng đang sử dụng và phản ánh chờ xử lý. |
+| `ketoan/Dashboard.php` | Chỉ dành cho Nhân viên kế toán; hiện có thông tin tài khoản, vai trò, sidebar và đăng xuất, chưa có xử lý hóa đơn hoặc thu tiền. |
+| `quanly/Dashboard.php` | Chỉ dành cho Quản lý KTX; hiện có header, menu tài khoản, sidebar và tiêu đề, chưa có số liệu báo cáo. |
+
+Dashboard gọi middleware phân quyền trước khi xuất HTML, dùng các thành phần trong `includes/` và CSS trong `assets/css/`. Các mục nghiệp vụ chưa kết nối URL, chatbot và thông báo hiện bị vô hiệu hóa.

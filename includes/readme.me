@@ -1,0 +1,10 @@
+# includes — Thành phần giao diện dùng chung
+
+| File | Vai trò |
+| --- | --- |
+| `header.php` | Header công khai với logo, điều hướng và liên kết đăng nhập. Một số nút đang bị vô hiệu hóa vì chức năng chưa được xây dựng. |
+| `navbar.php` | Sidebar theo vai trò trong session. Mục Trang chủ liên kết dashboard của vai trò; các nghiệp vụ chưa kết nối URL hiển thị nút bị vô hiệu hóa. |
+| `logout.php` | Tạo token CSRF nếu chưa có, nạp CSS đăng xuất và hiển thị form POST đăng xuất kèm token. |
+| `chatbot.php` | Nút Chatbot AI dạng giao diện mẫu; hiện bị vô hiệu hóa và chưa kết nối dịch vụ AI. |
+
+Dashboard phải gọi `requireRole()` trước khi hiển thị navbar. Việc ẩn hoặc vô hiệu hóa menu không thay thế kiểm tra quyền ở trang xử lý.

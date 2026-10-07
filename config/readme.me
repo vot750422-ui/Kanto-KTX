@@ -1,0 +1,8 @@
+# config — Kết nối CSDL
+
+| File | Vai trò |
+| --- | --- |
+| `db.php` | Tạo biến `$pdo` kết nối MySQL với charset `utf8mb4`, bật ngoại lệ và chế độ lấy dữ liệu dạng mảng kết hợp. Được middleware, model thông qua bên gọi, dashboard và bộ test sử dụng. |
+| `test-db.php` | Nạp kết nối và truy vấn tên CSDL, thời gian máy chủ để kiểm tra kết nối; không phải bộ kiểm thử chức năng. |
+
+Sau khi pull về, chuẩn bị CSDL `qlktx_v2` theo thư mục `sql/` và kiểm tra cấu hình kết nối phù hợp máy local. Không đưa mật khẩu hoặc credential thực tế vào Git hay README.

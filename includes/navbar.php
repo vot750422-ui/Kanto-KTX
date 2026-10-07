@@ -4,9 +4,9 @@
     $role = $_SESSION['user']['VaiTro'] ?? '';
     $menus = [
         'Sinh viên' => [['Thông tin lưu trú', 'room'], ['Thông báo', 'notice'], ['Gửi phản ánh sự cố', 'report'], ['Chatbot AI', 'bot']],
-        'Nhân viên quản lý KTX' => [['Xét duyệt đơn đăng ký', 'document'], ['Quản lý sinh viên', 'users'], ['Quản lý hợp đồng', 'document'], ['Quản lý phòng ở', 'room'], ['Ghi chỉ số điện nước', 'bolt'], ['Xử lý phản ánh sự cố', 'report']],
+        'Nhân viên quản lý KTX' => [['Xét duyệt đơn đăng ký', 'document'], ['Quản lý sinh viên', 'users'], ['Quản lý hợp đồng', 'document'], ['Ghi chỉ số điện nước', 'bolt'], ['Xử lý phản ánh sự cố', 'report']],
         'Nhân viên kế toán' => [['Quản lý hóa đơn', 'document'], ['Thu tiền và thanh toán', 'money']],
-        'Quản lý KTX' => [['Tổng quan và báo cáo', 'chart'], ['Quản lý nhân viên', 'users']],
+        'Quản lý KTX' => [['Tổng quan và báo cáo', 'chart']],
     ];
     if (!isset($menus[$role])) {
         return;

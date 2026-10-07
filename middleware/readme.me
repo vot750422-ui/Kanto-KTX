@@ -1,0 +1,20 @@
+# Middleware
+
+Các lớp kiểm tra xác thực và phân quyền trước khi người dùng truy cập chức năng.
+
+## Auth.php
+
+Kiểm tra:
+- người dùng đã đăng nhập hay chưa;
+- tài khoản còn tồn tại;
+- trạng thái và quyền hiện tại được lấy lại từ CSDL.
+
+## Role.php
+
+Kiểm tra người dùng có đúng VaiTro để truy cập khu vực hay không.
+
+Sai vai trò:
+HTTP 403.
+
+Chưa đăng nhập:
+chuyển về trang đăng nhập.
