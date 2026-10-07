@@ -106,6 +106,17 @@ Cho phép tác nhân gửi thông tin đăng ký ký túc xá để chờ Nhân 
 
 ## 7. Quy tắc nghiệp vụ
 
+### Danh mục diện ưu tiên đã chốt
+
+| Mã | Diện ưu tiên | Mức ưu tiên |
+|---|---|---|
+| UT00 | Không có | 0 (không ưu tiên) |
+| UT01 | Hộ nghèo / Cận nghèo | 1 (ưu tiên đầu) |
+| UT02 | Con thương binh / Liệt sĩ | 2 |
+| UT03 | Vùng sâu vùng xa / Hải đảo | 3 |
+
+Dropdown hiển thị theo thứ tự trên, mặc định Không có. Khi xét duyệt, các mức 1, 2, 3 được ưu tiên theo số tăng dần; mức 0 xếp sau các diện ưu tiên.
+
 ### BR-UC02-01 - Một MSSV không được có nhiều đơn chờ duyệt
 
 Tại một thời điểm, một MSSV chỉ được có tối đa một `DonDangKy` có trạng thái:

@@ -12,6 +12,7 @@
 - Model: `models/Registration.php`; controller: `controllers/RegistrationController.php`; view: `views/registration/form.php`.
 - CSS/JS riêng: `assets/css/registration.css`, `assets/js/registration.js`.
 - Diện ưu tiên lấy từ `dienuutien`; phòng lấy từ `phong`/`toanha`, lọc theo giới tính và chỗ khả dụng. Dãy/tầng được lấy từ dữ liệu thật.
+- Danh mục diện ưu tiên đã chốt: UT00 Không có (0), UT01 Hộ nghèo / Cận nghèo (1), UT02 Con thương binh / Liệt sĩ (2), UT03 Vùng sâu vùng xa / Hải đảo (3). Dropdown mặc định Không có; khi xét duyệt ưu tiên 1 rồi 2 rồi 3, không ưu tiên (0) cuối cùng. Script cập nhật dữ liệu: `sql/update-priorities.sql`; SQL dump đã đồng bộ danh mục.
 - Chỗ khả dụng = sức chứa - số hợp đồng có trạng thái `Còn hạn` - số đơn `Chờ duyệt`. Không sửa sức chứa, không lưu thêm trạng thái phòng.
 - Khi gửi: khóa MySQL GET_LOCK chung cho UC02 trong cùng CSDL, transaction READ COMMITTED và khóa dòng phòng FOR UPDATE; kiểm tra lại MSSV, diện ưu tiên, giới tính và chỗ còn lại trước INSERT. Module xét duyệt/hợp đồng tương lai cần phối hợp khóa phòng khi thay đổi sức chứa sử dụng.
 - Hồ sơ nháp nằm trong Session; POST có CSRF; gửi thành công chuyển hướng 303, đổi token và xóa nháp.
@@ -19,7 +20,7 @@
 - Ảnh minh chứng tùy chọn theo wireframe, chỉ JPG/PNG thực tế dưới 5 MB, tên ngẫu nhiên; lưu trong `storage/registration/`, bị chặn HTTP bằng `storage/.htaccess`, được gitignore. FileMinhChung lưu đường dẫn tương đối.
 - Chưa có màn hình đọc ảnh minh chứng cho NVQL (thuộc UC03). Chưa có tác vụ dọn ảnh của hồ sơ nháp bị bỏ dở; cần xử lý vòng đời tệp khi triển khai UC03/vận hành.
 - Validation: trường bắt buộc/độ dài theo schema, ngày sinh hợp lệ trước hôm nay, CCCD 12 số, SDT 10 số bắt đầu bằng 0, MSSV chữ/số/gạch ngang/gạch dưới, niên khóa dạng YYYY-YYYY.
-- Không thay đổi schema hay thêm dữ liệu mẫu. Khi kiểm tra, CSDL WAMP hiện có **0 phòng**; cần dữ liệu tòa nhà/phòng để đăng ký thực tế. Trường hợp không có phòng hiển thị trạng thái rỗng.
+- Không thay đổi schema. Đã cập nhật danh mục diện ưu tiên theo yêu cầu; chưa thêm dữ liệu phòng. Khi kiểm tra UC02, CSDL WAMP có **0 phòng**; cần dữ liệu tòa nhà/phòng để đăng ký thực tế. Trường hợp không có phòng hiển thị trạng thái rỗng.
 
 ## Kiểm thử
 

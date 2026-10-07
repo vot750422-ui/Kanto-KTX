@@ -58,7 +58,6 @@ $token = $escape($_SESSION['registration_token']);
                     <div class="registration-field">
                         <label for="MaUuTien">Diện ưu tiên *</label>
                         <select id="MaUuTien" name="MaUuTien" required>
-                            <option value="">Chọn diện ưu tiên</option>
                             <?php foreach ($priorities as $priority): ?><option value="<?= $escape($priority['MaUuTien']) ?>"<?= ($data['MaUuTien'] ?? 'UT00') === $priority['MaUuTien'] ? ' selected' : '' ?>><?= $escape($priority['TenDienUuTien']) ?></option><?php endforeach; ?>
                         </select>
                         <?php if (isset($errors['MaUuTien'])): ?><small class="field-error"><?= $escape($errors['MaUuTien']) ?></small><?php endif; ?>

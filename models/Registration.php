@@ -6,7 +6,8 @@ class Registration
 
     public function priorities(): array
     {
-        return $this->db->query('SELECT * FROM dienuutien ORDER BY MucUuTien DESC, MaUuTien')->fetchAll();
+        // Dropdown hiển thị Không có trước, sau đó các mức ưu tiên 1, 2, 3.
+        return $this->db->query('SELECT * FROM dienuutien ORDER BY MucUuTien ASC, MaUuTien')->fetchAll();
     }
 
     public function hasPending(string $mssv): bool

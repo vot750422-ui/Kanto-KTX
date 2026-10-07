@@ -62,7 +62,10 @@ CREATE TABLE IF NOT EXISTS `dienuutien` (
 --
 
 INSERT INTO `dienuutien` (`MaUuTien`, `TenDienUuTien`, `MucUuTien`) VALUES
-('UT00', 'Không thuộc diện ưu tiên', 0);
+('UT00', 'Không có', 0),
+('UT01', 'Hộ nghèo / Cận nghèo', 1),
+('UT02', 'Con thương binh / Liệt sĩ', 2),
+('UT03', 'Vùng sâu vùng xa / Hải đảo', 3);
 
 -- --------------------------------------------------------
 

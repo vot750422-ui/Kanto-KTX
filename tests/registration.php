@@ -45,7 +45,8 @@ try {
         $pdo->exec(str_replace('CREATE TABLE', 'CREATE TEMPORARY TABLE', $definition));
     }
     $pdo->exec("INSERT INTO toanha (MaToa, TenToa) VALUES ('TA', 'Dãy A')");
-    $pdo->exec("INSERT INTO dienuutien (MaUuTien, TenDienUuTien) VALUES ('UT00', 'Không thuộc diện ưu tiên')");
+    $pdo->exec(file_get_contents(__DIR__ . '/../sql/update-priorities.sql'));
+    verify(array_column((new Registration($pdo))->priorities(), 'MaUuTien') === ['UT00', 'UT01', 'UT02', 'UT03'], 'Dropdown gồm Không có và các diện ưu tiên theo thứ tự 1, 2, 3');
     $pdo->exec("INSERT INTO phong (MaPhong, MaToa, SoPhong, Tang, GioiTinhPhong, SucChua) VALUES ('P1','TA','101',1,'Nam',2),('P2','TA','102',1,'Nam',2),('P3','TA','103',1,'Nữ',2)");
     $pdo->exec("INSERT INTO hopdong (MaHopDong, MSSV, MaPhong, NgayBatDau, NgayKetThuc, TrangThai) VALUES ('H1','OLD1','P1','2026-01-01','2026-12-31','Còn hạn'),('H2','OLD2','P1','2025-01-01','2025-12-31','Hết hạn')");
     $data = ['HoTen' => 'Nguyễn Văn A', 'NgaySinh' => '2006-09-12', 'CCCD' => '079204000001', 'GioiTinh' => 'Nam', 'QueQuan' => 'Đồng Tháp', 'SDT' => '0912345678', 'MSSV' => 'KTPM2411001', 'Lop' => 'DHKTPM24A', 'NienKhoa' => '2024-2028', 'MaUuTien' => 'UT00', 'FileMinhChung' => null];
