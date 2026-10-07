@@ -1,0 +1,68 @@
+@startuml
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam actorStyle stickman
+skinparam usecase {
+    BackgroundColor White
+    BorderColor Black
+}
+skinparam rectangle {
+    BorderColor Black
+}
+
+actor "Khách vãng lai" as Guest
+actor "Sinh viên" as Student
+actor "Nhân viên quản lý KTX" as NVQL
+actor "Nhân viên kế toán" as Accountant
+actor "Quản lý KTX" as Manager
+actor "Timer" as Timer <<System>>
+
+rectangle "HỆ THỐNG QUẢN LÝ KÝ TÚC XÁ" {
+
+    usecase "Xem thông tin phòng" as UC15
+    usecase "Đăng ký lưu trú" as UC02
+    usecase "Xem hướng dẫn" as UC16
+
+    usecase "Xem thông báo" as UC12
+    usecase "Gửi phản ánh\nsự cố" as UC08
+    usecase "Xem thông tin\nlưu trú" as UC11
+    usecase "Sử dụng trợ lý AI" as UC13
+
+    usecase "Xét duyệt đơn đăng ký" as UC03
+    usecase "Quản lý hợp đồng\nlưu trú" as UC05
+    usecase "Xử lý phản ánh\nsự cố" as UC09
+    usecase "Quản lý thông tin\nsinh viên" as UC04
+    usecase "Ghi nhận chỉ số\nđiện nước" as UC06
+
+    usecase "Đăng nhập" as UC01
+    usecase "Quản lý hóa đơn" as UC07
+    usecase "Xem thống kê\nvà báo cáo" as UC14
+    usecase "Lập hóa đơn" as UC10
+}
+
+Guest --> UC15
+Guest --> UC02
+Guest --> UC16
+
+Student --> UC12
+Student --> UC08
+Student --> UC11
+Student --> UC13
+Student --> UC01
+
+NVQL --> UC03
+NVQL --> UC05
+NVQL --> UC09
+NVQL --> UC04
+NVQL --> UC06
+NVQL --> UC01
+
+Accountant --> UC01
+Accountant --> UC07
+
+Manager --> UC01
+Manager --> UC14
+
+Timer --> UC10
+@enduml

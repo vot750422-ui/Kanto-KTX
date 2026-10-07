@@ -1,0 +1,18 @@
+@startuml
+left to right direction
+hide footbox
+
+actor "Nhân viên quản lý KTX" as NVQL
+
+usecase "Quản lý thông tin\nsinh viên" as UC04
+usecase "Tra cứu sinh viên" as UC04_1
+usecase "Cập nhật thông tin\nsinh viên" as UC04_2
+
+NVQL --> UC04
+
+UC04_1 ..> UC04 : <<extend>>
+UC04_2 ..> UC04 : <<extend>>
+
+UC04_2 ..> UC04_1 : <<include>>
+
+@enduml

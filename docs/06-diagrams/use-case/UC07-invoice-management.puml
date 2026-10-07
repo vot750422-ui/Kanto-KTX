@@ -1,0 +1,18 @@
+@startuml
+left to right direction
+hide footbox
+
+actor "Nhân viên kế toán" as KT
+
+usecase "Quản lý hóa đơn" as UC09
+usecase "Tra cứu hóa đơn" as UC09_1
+usecase "Xác nhận thanh toán" as UC09_2
+
+KT --> UC09
+
+UC09_1 ..> UC09 : <<extend>>
+UC09_2 ..> UC09 : <<extend>>
+
+UC09_2 ..> UC09_1 : <<include>>
+
+@enduml

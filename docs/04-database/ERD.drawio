@@ -1,0 +1,224 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="C5RBs43oDa-KdzZeNtuy" name="Trang-1">
+    <mxGraphModel dx="1066" dy="606" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-8" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.017;entryY=0.427;entryDx=0;entryDy=0;endArrow=ERzeroToOne;endFill=0;startArrow=ERmandOne;startFill=0;entryPerimeter=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-6">
+          <mxGeometry relative="1" x="0.0013" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-10" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.999;entryY=0.27;entryDx=0;entryDy=0;endArrow=ERzeroToOne;endFill=0;startArrow=ERmandOne;startFill=0;entryPerimeter=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-13">
+          <mxGeometry relative="1" x="0.0118" as="geometry" />
+        </mxCell>
+        <mxCell id="wsGU_gC-MZF_Ujz5eg7c-4" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;taikhoan&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;MaTK INT AUTO_INCREMENT&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;UQ&lt;/td&gt;&lt;td&gt;&lt;pre dir=&quot;ltr&quot;&gt;&lt;code&gt;TenDangNhap varchar(50)&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;MatKhau varchar(255)&lt;br&gt;VaiTro enum&lt;br&gt;TrangThai enum&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="150" width="180" x="820" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-19" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeWidth=2;startSize=7;endSize=7;" target="wsGU_gC-MZF_Ujz5eg7c-19">
+          <mxGeometry relative="1" x="0.2781" as="geometry">
+            <Array as="points">
+              <mxPoint x="1112.5" y="10" />
+              <mxPoint x="220" y="10" />
+              <mxPoint x="220" y="725" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wsGU_gC-MZF_Ujz5eg7c-6" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;nhanvien&lt;/span&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;MaNV varchar(10)&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;FK&lt;/td&gt;&lt;td&gt;&lt;pre dir=&quot;ltr&quot;&gt;MaTK int&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;HoTen varchar(100)&lt;br&gt;SDT varchar(15) NULL&lt;br&gt;TrangThaiLamViec enum&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="130" width="170" x="1070" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-11" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.65;entryDx=0;entryDy=0;endArrow=ERzeroToMany;endFill=0;startArrow=ERmandOne;startFill=0;entryPerimeter=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-11">
+          <mxGeometry relative="1" x="-0.5522" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="132.5" />
+              <mxPoint x="240" y="540" />
+            </Array>
+            <mxPoint x="400" y="157" as="sourcePoint" />
+            <mxPoint x="895" y="345" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-12" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1.004;exitY=0.55;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;exitPerimeter=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-13">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="530" y="110.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wsGU_gC-MZF_Ujz5eg7c-7" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;dienuutien&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;MaUuTien varchar(10)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;UQ&lt;/td&gt;&lt;td&gt;&lt;pre dir=&quot;ltr&quot;&gt;&lt;code&gt;TenDienUuTien varchar(100)&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;MucUuTien int&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="110" width="200" x="300" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="wsGU_gC-MZF_Ujz5eg7c-8" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;toanha&lt;/span&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;MaToa varchar(10)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;UQ&lt;/td&gt;&lt;td&gt;&lt;pre dir=&quot;ltr&quot;&gt;&lt;code&gt;TenToa varchar(100)&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="180" x="270" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-14" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=-0.001;exitY=0.124;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;startArrow=ERzeroToMany;startFill=0;endArrow=ERmandOne;endFill=0;exitPerimeter=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-17" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;">
+          <mxGeometry relative="1" x="0.1934" as="geometry">
+            <Array as="points">
+              <mxPoint x="600" y="320" />
+              <mxPoint x="1170" y="320" />
+            </Array>
+            <mxPoint x="1170" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-18" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=0;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-19">
+          <mxGeometry relative="1" x="0.0222" as="geometry">
+            <Array as="points">
+              <mxPoint x="555" y="580" />
+              <mxPoint x="385" y="580" />
+            </Array>
+            <mxPoint x="541.3" y="500" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-22" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.637;exitY=1.006;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;exitPerimeter=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="LoAF8mQJU56m3Z3J-OHd-2">
+          <mxGeometry relative="1" x="0.0083" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-28" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-21">
+          <mxGeometry relative="1" x="-0.0007" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-31" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;">
+          <mxGeometry relative="1" x="-0.1775" as="geometry">
+            <Array as="points">
+              <mxPoint x="510" y="630" />
+              <mxPoint x="780" y="630" />
+              <mxPoint x="780" y="930" />
+            </Array>
+            <mxPoint x="780" y="930" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wsGU_gC-MZF_Ujz5eg7c-9" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;phong&lt;/span&gt;&lt;br&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;MaPhong varchar(10)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;FK&lt;/td&gt;&lt;td&gt;&lt;pre dir=&quot;ltr&quot;&gt;&lt;code&gt;MaToa varchar(10)&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;UQ&lt;/td&gt;&lt;td&gt;SoPhong varchar(20)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;Tang TINYINT&lt;br&gt;GioiTinhPhong enum&lt;br&gt;SucChua int&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="150" width="180" x="510" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-15" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=-0.004;exitY=0.233;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;endArrow=ERmandOne;endFill=0;startArrow=ERzeroToMany;startFill=0;exitPerimeter=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-21" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.913;entryY=0;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;entryPerimeter=0;exitX=0.889;exitY=1.002;exitDx=0;exitDy=0;exitPerimeter=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="LoAF8mQJU56m3Z3J-OHd-2">
+          <mxGeometry relative="1" x="0.0347" as="geometry">
+            <mxPoint x="720" y="300" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-27" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=ERzeroToMany;endFill=0;startArrow=ERmandOne;startFill=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-34" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0.571;entryY=-0.024;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=ERzeroToMany;endFill=0;startArrow=ERmandOne;startFill=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="LoAF8mQJU56m3Z3J-OHd-1">
+          <mxGeometry relative="1" x="0.1518" as="geometry">
+            <Array as="points">
+              <mxPoint x="1099.9" y="290" />
+            </Array>
+            <mxPoint x="1100" y="920" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-36" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.996;exitY=0.707;exitDx=0;exitDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;exitPerimeter=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="LoAF8mQJU56m3Z3J-OHd-3">
+          <mxGeometry relative="1" x="0.0561" as="geometry">
+            <Array as="points">
+              <mxPoint x="1360" y="219.7" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wsGU_gC-MZF_Ujz5eg7c-13" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;sinhvien&lt;/span&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;MSSV varchar(15)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;FK&lt;/td&gt;&lt;td&gt;&lt;pre dir=&quot;ltr&quot;&gt;MaTK int&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;FK&lt;/td&gt;&lt;td&gt;MaUuTien varchar(10)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;UQ&lt;/td&gt;&lt;td&gt;CCCD varchar(20)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;HoTen varchar(100)&lt;br&gt;NgaySinh date&lt;br&gt;GioiTinh enum&lt;br&gt;QueQuan varchar(150)&lt;br&gt;SDT varchar(15)&lt;br&gt;Lop varchar(30)&lt;br&gt;NienKhoa varchar(20)&lt;br&gt;TrangThaiLuuTru enum&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="240" width="180" x="560" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-29" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-21">
+          <mxGeometry relative="1" x="-0.2859" as="geometry">
+            <Array as="points">
+              <mxPoint x="855" y="870" />
+              <mxPoint x="632.5" y="870" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wsGU_gC-MZF_Ujz5eg7c-15" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;hocky&lt;/span&gt;&lt;br&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;MaHocKy varchar(10)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;TenHocKy varchar(50)&lt;br&gt;NamHoc varchar(20)&lt;br&gt;NgayBatDau date&lt;br&gt;NgayKetThuc date&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="180" x="810" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-30" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.947;entryY=0;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;entryPerimeter=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-21">
+          <mxGeometry relative="1" x="0.4149" as="geometry">
+            <Array as="points">
+              <mxPoint x="1050" y="755" />
+              <mxPoint x="1050" y="900" />
+              <mxPoint x="669.9000000000001" y="900" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-32" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-23">
+          <mxGeometry relative="1" x="-0.2" as="geometry">
+            <Array as="points">
+              <mxPoint x="1240" y="860" />
+              <mxPoint x="882.5" y="860" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wsGU_gC-MZF_Ujz5eg7c-18" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;dongia&lt;/span&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;MaDonGia varchar(10)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;LoaiDonGia enum&lt;br&gt;GiaTri decimal(12,2)&lt;br&gt;DonViTinh&amp;nbsp; varchar(30)&lt;br&gt;NgayApDung date&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="180" x="1150" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="wsGU_gC-MZF_Ujz5eg7c-19" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;chisodiennuoc&lt;/span&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;MaChiSo varchar(10)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;FK&lt;/td&gt;&lt;td&gt;&lt;pre dir=&quot;ltr&quot;&gt;&lt;code&gt;MaPhong varchar(10)&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;FK&lt;/td&gt;&lt;td&gt;MaNV varchar(10)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;ChiSoDien int&lt;br&gt;ChiSoNuoc int&lt;br&gt;Thang TINYINT&lt;br&gt;Nam SMALLINT&lt;br&gt;ThoiGianGhi datetime&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="180" width="180" x="250" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-24" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToOne;endFill=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-21">
+          <mxGeometry relative="1" x="0.0047" as="geometry">
+            <Array as="points">
+              <mxPoint x="392.5" y="1080" />
+              <mxPoint x="537.5" y="1080" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-25" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToOne;endFill=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-23">
+          <mxGeometry relative="1" x="0.3495" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-44" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;startArrow=ERzeroToOne;startFill=0;endArrow=ERzeroToMany;endFill=0;" target="LoAF8mQJU56m3Z3J-OHd-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="297.5" y="1150" />
+              <mxPoint x="1257.5" y="1150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wsGU_gC-MZF_Ujz5eg7c-20" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;hoadon&lt;/span&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;MaHoaDon varchar(12)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;LoaiHoaDon enum&lt;br&gt;TongTien decimal(12,2)&lt;br&gt;ThoiGianLap datetime&lt;br&gt;TrangThai enum&lt;br&gt;ThoiGianThanhToan datetime NULL&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="130" width="190" x="250" y="930" as="geometry" />
+        </mxCell>
+        <mxCell id="wsGU_gC-MZF_Ujz5eg7c-21" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;hoadontienphong&lt;/span&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK/FK&lt;/td&gt;&lt;td&gt;MaHoaDon varchar(12)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;FK&lt;/td&gt;&lt;td&gt;MSSV varchar(15)&lt;br&gt;MaPhong varchar(10)&lt;br&gt;MaHocKy varchar(10)&lt;br&gt;MaDonGia varchar(10)&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="190" x="490" y="930" as="geometry" />
+        </mxCell>
+        <mxCell id="wsGU_gC-MZF_Ujz5eg7c-23" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;hoadondiennuoc&lt;/span&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;MaHoaDon varchar(12)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;FK&lt;/td&gt;&lt;td&gt;MaPhong varchar(10)&lt;br&gt;MaDonGiaDien varchar(10)&lt;br&gt;MaDonGiaNuoc varchar(10)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;Thang TINYINT&lt;br&gt;Nam SMALLINT&lt;br&gt;DienTieuThu int&lt;br&gt;NuocTieuThu int&lt;br&gt;TienDien decimal(12,2)&lt;br&gt;TienNuoc decimal(12,2)&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="180" width="190" x="740" y="930" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-35" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="LoAF8mQJU56m3Z3J-OHd-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;startArrow=ERoneToMany;startFill=0;endArrow=ERmandOne;endFill=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-23">
+          <mxGeometry relative="1" x="0.0028" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-1" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;hoadondiennuocsinhvien&lt;/span&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK/FK&lt;/td&gt;&lt;td&gt;MaHoaDon varchar(12)&lt;br&gt;MSSV varchar(15)&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="210" x="980" y="930" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-2" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;phananhsuco&lt;/span&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;MaPhanAnh varchar(10)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;FK&lt;/td&gt;&lt;td&gt;MaPhong varchar(10)&lt;br&gt;MSSV varchar(15)&lt;br&gt;MaNhanVienXuLy varchar(10) NULL&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;LoaiSuCo enum&lt;br&gt;MoTa text&lt;br&gt;ThoiGianGui datetime&lt;br&gt;ChiPhiSuaChua decimal(12,2) NULL&lt;br&gt;TrangThai enum&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="170" width="230" x="510" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-3" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;thongbao&lt;/span&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;MaThongBao varchar(12)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;FK&lt;/td&gt;&lt;td&gt;MSSV varchar(15)&lt;br&gt;MaHoaDon varchar(12) NULL&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;TieuDe varchar(150)&lt;br&gt;NoiDung text&lt;br&gt;ThoiGianTao datetime&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="120" width="190" x="1210" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-37" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="LoAF8mQJU56m3Z3J-OHd-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;startArrow=ERzeroToMany;startFill=0;endArrow=ERzeroToOne;endFill=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;" target="wsGU_gC-MZF_Ujz5eg7c-14" value="">
+          <mxGeometry relative="1" x="0.0035" as="geometry">
+            <Array as="points">
+              <mxPoint x="567.5" y="660" />
+              <mxPoint x="1240" y="660" />
+            </Array>
+            <mxPoint x="878" y="610" as="sourcePoint" />
+            <mxPoint x="1113" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wsGU_gC-MZF_Ujz5eg7c-14" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;hopdong&lt;/span&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;MaHopDong varchar(10)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;FK&lt;/td&gt;&lt;td&gt;&lt;pre dir=&quot;ltr&quot;&gt;&lt;code&gt;MSSV varchar(15)&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;FK&lt;/td&gt;&lt;td&gt;MaPhong varchar(10)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;NgayBatDau date&lt;br&gt;NgayKetThuc date&lt;br&gt;TrangThai enum&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="150" width="180" x="1150" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="LoAF8mQJU56m3Z3J-OHd-39" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="wsGU_gC-MZF_Ujz5eg7c-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;startArrow=ERzeroToMany;startFill=0;endArrow=ERmandOne;endFill=0;strokeWidth=2;startSize=7;endSize=7;fontSize=12;">
+          <mxGeometry relative="1" x="0.0092" as="geometry">
+            <Array as="points">
+              <mxPoint x="1195" y="250" />
+              <mxPoint x="739.5" y="250" />
+            </Array>
+            <mxPoint x="740" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wsGU_gC-MZF_Ujz5eg7c-11" parent="WIyWlLk6GJQsqaUBKTNV-1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fontSize=12;" value="&lt;div style=&quot;box-sizing: border-box; width: 100%; background: rgb(228, 228, 228); padding: 2px;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;DonDangKy&lt;/span&gt;&lt;br&gt;&lt;table cellpadding=&quot;2&quot; cellspacing=&quot;0&quot; style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 1em; background-color: transparent; width: 100%;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;PK&lt;/td&gt;&lt;td&gt;MaDonDangKy varchar(10)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;FK&lt;/td&gt;&lt;td&gt;&lt;pre dir=&quot;ltr&quot;&gt;&lt;code&gt;MaUuTien varchar(10)&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;FK&lt;/td&gt;&lt;td&gt;MaPhong varchar(10)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;MSSV varchar(15)&lt;br&gt;HoTen varchar(100)&lt;br&gt;NgaySinh date&lt;br&gt;CCCD varchar(20)&lt;br&gt;GioiTinh enum&lt;br&gt;QueQuan varchar(150)&lt;br&gt;SDT varchar(15)&lt;br&gt;Lop varchar(30)&lt;br&gt;NienKhoa varchar(20)&lt;br&gt;FileMinhChung varchar(255) NULL&lt;br&gt;ThoiGianGui datetime&lt;br&gt;TrangThai enum&lt;br&gt;LyDoTuChoi&amp;nbsp;varchar(500) NULL&lt;br&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="300" width="220" x="840" y="345" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

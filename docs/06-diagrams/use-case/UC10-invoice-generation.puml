@@ -1,0 +1,25 @@
+@startuml
+
+left to right direction
+
+skinparam actorStyle stickman
+skinparam usecase {
+    BackgroundColor White
+    BorderColor Black
+}
+
+actor "Timer" as Timer <<System>>
+
+rectangle "UC10 - LẬP HÓA ĐƠN" {
+
+    usecase "Lập hóa đơn" as UC10
+    usecase "Lập hóa đơn\ntiền phòng" as UC101
+    usecase "Lập hóa đơn\nđiện nước" as UC102
+}
+
+Timer --> UC10
+
+UC101 ..> UC10 : <<extend>>
+UC102 ..> UC10 : <<extend>>
+
+@enduml
