@@ -92,6 +92,7 @@ $token = $escape($_SESSION['registration_token']);
                         <strong>Phòng <?= $escape($room['SoPhong']) ?></strong>
                         <span><?= $escape($room['TenToa']) ?> • Tầng <?= $escape($room['Tang']) ?></span>
                         <span><?= (int) $room['DangO'] ?>/<?= (int) $room['SucChua'] ?> sinh viên đang ở</span>
+                        <span>Sức chứa: <?= (int) $room['SucChua'] ?> sinh viên</span>
                         <b>Còn <?= (int) $room['ConCho'] ?> chỗ</b>
                     </label>
                     <?php endforeach; ?>

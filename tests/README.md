@@ -2,6 +2,14 @@
 
 ## UC02 - Đăng ký lưu trú
 
+Kiểm tra seed tòa/phòng và UC02 trên bộ dữ liệu 200 phòng:
+
+```powershell
+& 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/rooms.php
+```
+
+Bộ kiểm thử dùng bảng TEMPORARY theo schema thật, không sửa dữ liệu thật. Kiểm tra số lượng/tầng/mã phòng/giới tính/sức chứa, seed chạy lại giữ dữ liệu, UC02 lọc phòng và giữ chỗ khi gửi.
+
 ```powershell
 & 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/registration.php
 ```
