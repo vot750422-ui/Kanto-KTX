@@ -1,5 +1,11 @@
 <?php
 require_once __DIR__ . '/middleware/Role.php';
+if (($_GET['action'] ?? '') === 'register') {
+    require_once __DIR__ . '/config/db.php';
+    require_once __DIR__ . '/controllers/RegistrationController.php';
+    (new RegistrationController($pdo))->show();
+    exit;
+}
 if (($_GET['action'] ?? '') === 'logout') {
     require __DIR__ . '/controllers/logout.php';
     exit;
@@ -42,11 +48,11 @@ if (($_GET['action'] ?? '') === 'login') {
                 <h1>Nơi khởi đầu<br><span>hành trình đại học</span><br>của bạn</h1>
                 <p class="home-description">Theo dõi thông tin lưu trú, cập nhật thông báo và quản lý các nhu cầu cá nhân trong một hệ thống.</p>
                 <div class="home-hero-actions">
-                    <button class="home-register" type="button" disabled title="Chức năng đăng ký lưu trú đang được xây dựng">
+                    <a class="home-register" href="/Kanto-KTX/index.php?action=register" style="text-decoration: none">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>
                         Đăng ký lưu trú
                         <span aria-hidden="true">→</span>
-                    </button>
+                    </a>
                     <a class="home-secondary" href="/Kanto-KTX/index.php?action=login">Đăng nhập tài khoản <span aria-hidden="true">↗</span></a>
                 </div>
             </div>

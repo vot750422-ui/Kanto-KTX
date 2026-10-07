@@ -1,0 +1,43 @@
+.registration-page { background: #f5f7fb; }
+.registration-shell { max-width: 1320px; margin: 32px auto; padding: 32px; background: white; border: 1px solid #dce3ed; border-radius: 16px; }
+.registration-shell h1 { margin: 0 0 12px; font-size: 32px; }
+.registration-subtitle, .registration-upload p { color: #64748b; line-height: 1.6; }
+.registration-steps { display: flex; gap: 32px; list-style: none; padding: 12px 0 24px; border-bottom: 1px solid #e2e8f0; }
+.registration-steps li { display: flex; align-items: center; gap: 12px; color: #64748b; }
+.registration-steps li span { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 8px; background: #f1f5f9; }
+.registration-steps .current { font-weight: bold; color: #1d4ed8; }
+.registration-steps .current span { color: white; background: #2563eb; }
+.registration-layout { display: grid; grid-template-columns: 3fr 1fr; gap: 32px; margin-top: 28px; }
+.registration-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 24px; }
+.registration-field label, .registration-upload > label { display: block; font-weight: bold; margin-bottom: 8px; }
+.registration-shell input:not([type=radio]), .registration-shell select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; background: white; }
+.registration-shell :focus-visible { outline: 3px solid #93c5fd; outline-offset: 3px; }
+.registration-shell [aria-invalid=true] { border-color: #b91c1c; }
+.upload-box { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 24px 12px; text-align: center; background: #f8fafc; }
+.upload-box > span { display: block; color: #64748b; font-size: 64px; }
+.registration-actions { display: flex; justify-content: flex-end; align-items: center; gap: 16px; margin-top: 28px; }
+.registration-actions p { margin-right: auto; color: #64748b; }
+.registration-actions button { padding: 12px 28px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; color: #334155; font: 600 16px Arial, sans-serif; cursor: pointer; }
+.registration-actions .primary { background: #2563eb; color: white; border-color: #2563eb; }
+.registration-actions button:disabled { opacity: .5; cursor: default; }
+.field-error { display: block; margin-top: 6px; color: #b91c1c; }
+.registration-error, .registration-info, .registration-success { border-radius: 8px; padding: 16px; margin: 20px 0; line-height: 1.6; }
+.registration-error { background: #fef2f2; color: #991b1b; }
+.registration-info { background: #eff6ff; color: #1e40af; }
+.registration-success { background: #ecfdf5; color: #065f46; }
+.room-filters { display: flex; gap: 20px; }
+.room-filters label { min-width: 180px; }
+.room-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.room-card { display: grid; gap: 12px; padding: 20px; border: 1px solid #cbd5e1; border-radius: 10px; position: relative; cursor: pointer; }
+.room-card input { position: absolute; right: 16px; top: 16px; }
+.room-card:has(input:checked) { background: #eff6ff; border-color: #2563eb; }
+.room-card span { color: #64748b; }
+.room-card b { color: #047857; }
+.registration-review { border: 1px solid #e2e8f0; border-radius: 10px; margin: 24px 0; overflow: hidden; }
+.registration-review h2 { background: #f8fafc; padding: 16px 20px; font-size: 20px; margin: 0; }
+.registration-review dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding: 20px; margin: 0; }
+.registration-review dt { color: #64748b; margin-bottom: 8px; }
+.registration-review dd { margin: 0; overflow-wrap: anywhere; }
+.room-card[hidden] { display: none; }
+@media (max-width: 800px) { .registration-shell { margin: 16px; padding: 20px; } .registration-layout { grid-template-columns: 1fr; } .registration-steps { gap: 12px; font-size: 13px; } .registration-steps li { flex-direction: column; text-align: center; flex: 1; } .registration-review dl { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .registration-fields, .registration-review dl { grid-template-columns: 1fr; } .room-filters { flex-direction: column; } .registration-actions { flex-wrap: wrap; } }

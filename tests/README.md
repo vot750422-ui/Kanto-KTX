@@ -1,5 +1,15 @@
 # Kiểm thử đăng nhập và phân quyền
 
+## UC02 - Đăng ký lưu trú
+
+```powershell
+& 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/registration.php
+```
+
+Test UC02 tạo bảng TEMPORARY theo schema thực tế trong kết nối riêng, không sửa dữ liệu nghiệp vụ. Kiểm tra validation, lọc giới tính, tính chỗ còn lại, giữ chỗ, trùng MSSV, rollback, CSRF, tệp giả, ba bước, quay lại và gửi lặp. Mô phỏng phòng bị đơn khác giữ trước khi gửi; chưa chạy hai tiến trình đồng thời hoặc tự động kiểm tra giao diện trình duyệt và upload ảnh hợp lệ qua HTTP.
+
+## Đăng nhập và phân quyền
+
 Chạy từ thư mục dự án bằng PowerShell, sau khi bật MySQL trong WAMP:
 
 ```powershell
