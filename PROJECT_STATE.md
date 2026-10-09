@@ -1,56 +1,289 @@
-# Trạng thái dự án Kanto-KTX
+# PROJECT_STATE
 
-## Đã triển khai
+## 1. Tổng quan dự án
 
-- UC01: đăng nhập bằng mật khẩu băm, Session và phân quyền theo bốn vai trò; đăng xuất POST có CSRF.
-- Trang chủ, dashboard theo vai trò; dashboard sinh viên và NVQL có model đọc dữ liệu.
-- UC02: `index.php?action=register`, gồm nhập thông tin, chọn phòng, xác nhận và gửi đơn `Chờ duyệt`.
-- UC02 không tạo tài khoản/sinh viên/hợp đồng; các nghiệp vụ đó thuộc bước xét duyệt tiếp theo.
+Tên dự án:
 
-## UC02 - Chi tiết bàn giao
+Hệ thống Quản lý Ký túc xá Kanto
 
-- Model: `models/Registration.php`; controller: `controllers/RegistrationController.php`; view: `views/registration/form.php`.
-- CSS/JS riêng: `assets/css/registration.css`, `assets/js/registration.js`.
-- Diện ưu tiên lấy từ `dienuutien`; phòng lấy từ `phong`/`toanha`, lọc theo giới tính và chỗ khả dụng. Dãy/tầng được lấy từ dữ liệu thật.
-- Danh mục diện ưu tiên đã chốt: UT00 Không có (0), UT01 Hộ nghèo / Cận nghèo (1), UT02 Con thương binh / Liệt sĩ (2), UT03 Vùng sâu vùng xa / Hải đảo (3). Dropdown mặc định Không có; khi xét duyệt ưu tiên 1 rồi 2 rồi 3, không ưu tiên (0) cuối cùng. Script cập nhật dữ liệu: `sql/update-priorities.sql`; SQL dump đã đồng bộ danh mục.
-- Chỗ khả dụng = sức chứa - số hợp đồng có trạng thái `Còn hạn` - số đơn `Chờ duyệt`. Không sửa sức chứa, không lưu thêm trạng thái phòng.
-- Khi gửi: khóa MySQL GET_LOCK chung cho UC02 trong cùng CSDL, transaction READ COMMITTED và khóa dòng phòng FOR UPDATE; kiểm tra lại MSSV, diện ưu tiên, giới tính và chỗ còn lại trước INSERT. Module xét duyệt/hợp đồng tương lai cần phối hợp khóa phòng khi thay đổi sức chứa sử dụng.
-- Hồ sơ nháp nằm trong Session; POST có CSRF; gửi thành công chuyển hướng 303, đổi token và xóa nháp.
-- Form không có Email theo UC02; cột Email hiện có trong CSDL giữ nguyên, giá trị mặc định NULL.
-- Ảnh minh chứng tùy chọn theo wireframe, chỉ JPG/PNG thực tế dưới 5 MB, tên ngẫu nhiên; lưu trong `storage/registration/`, bị chặn HTTP bằng `storage/.htaccess`, được gitignore. FileMinhChung lưu đường dẫn tương đối.
-- Chưa có màn hình đọc ảnh minh chứng cho NVQL (thuộc UC03). Chưa có tác vụ dọn ảnh của hồ sơ nháp bị bỏ dở; cần xử lý vòng đời tệp khi triển khai UC03/vận hành.
-- Validation: trường bắt buộc/độ dài theo schema, ngày sinh hợp lệ trước hôm nay, CCCD 12 số, SDT 10 số bắt đầu bằng 0, MSSV chữ/số/gạch ngang/gạch dưới, niên khóa dạng YYYY-YYYY.
-- Không thay đổi schema. Đã cập nhật danh mục diện ưu tiên và seed tòa/phòng theo yêu cầu.
+Công nghệ hiện tại:
 
-## Dữ liệu tòa nhà và phòng (08/10/2026)
+- PHP 8.x
+- MySQL
+- PDO
+- Apache
+- Docker
+- Git / GitHub
+- Render
+- Aiven MySQL
+- DBeaver
 
-- Đã chạy `sql/seed-buildings-rooms.sql` trên CSDL WAMP: T01 Tòa A, T02 Tòa B (Nam); T03 Tòa C, T04 Tòa D (Nữ).
-- Mỗi tòa 50 phòng, 4 tầng: 13/13/12/12 phòng. Tổng 200 phòng, sức chứa thiết kế 1600 sinh viên; mỗi phòng 8 chỗ.
-- Mã kỹ thuật P0001–P0200; số phòng hiển thị A101–A113, A201–A213, A301–A312, A401–A412 và tương tự B/C/D.
-- Script SQL dùng CTE tự sinh phòng, không sửa schema/không tạo bảng day. Chạy lại giữ nguyên dữ liệu trùng khóa; nếu có mã/tên xung đột thì không tự ghi đè (xem DATABASE_DESIGN.md).
-- Khi tạo CSDL mới: import dump rồi chạy riêng script seed; không import lại dump vào CSDL đang dùng chỉ để bổ sung phòng.
-- View đã hiển thị rõ sức chứa; dữ liệu lọc dãy/tầng vẫn lấy từ CSDL. Không cần sửa Model/Controller vì logic UC02 hiện tại đáp ứng yêu cầu.
-- Wireframe minh họa có tầng 5/phòng đầy; áp dụng yêu cầu mới và UC02: 4 tầng, chỉ hiển thị phòng còn chỗ.
+---
 
-## Kiểm thử
+## 2. Môi trường local
 
-- `php -d xdebug.mode=off tests/run.php`: bộ kiểm thử đăng nhập/phân quyền.
-- `php -d xdebug.mode=off tests/registration.php`: UC02 trên bảng TEMPORARY theo schema thực tế, không sửa dữ liệu thật; xem `tests/README.md`.
-- `php -d xdebug.mode=off tests/rooms.php`: seed và UC02 trên bộ 200 phòng, dùng bảng TEMPORARY, kiểm tra chạy lại không trùng/không ghi đè, lưu MaPhong, giữ chỗ và phòng đầy.
-- Đã kiểm tra qua HTTP WAMP bước chọn phòng: Nam 100 phòng Tòa A/B, Nữ 100 phòng Tòa C/D. Chỉ tạo nháp Session để kiểm tra HTTP, không lưu đơn demo vào dữ liệu thật.
-- PHP WAMP: `C:\wamp64\bin\php\php8.3.28\php.exe` (PHP chưa có trong PATH).
-- Đã kiểm tra syntax các file PHP thay đổi và route đăng ký qua HTTP localhost.
-- Chưa kiểm thử hình ảnh giao diện trong trình duyệt, upload ảnh hợp lệ qua HTTP hoặc hai tiến trình gửi đồng thời.
+Project local chạy bằng WAMP.
 
-## Tài liệu và công việc tiếp theo
+Đường dẫn project:
 
-- 09/10/2026: đã chuẩn bị Docker/Render, chưa deploy. Dockerfile PHP 8.3 Apache có pdo_mysql/mbstring; cấu hình Apache chặn HTTP vào thư mục nội bộ/storage, cấu hình PHP upload 5M/post 8M. .dockerignore loại file môi trường, SQL, docs/tests và upload local.
-- config/db.php giữ $pdo, đọc DB_HOST/DB_PORT/DB_NAME/DB_USER/DB_PASSWORD, mặc định tương thích WAMP; lỗi kết nối trả HTTP 500 chung. Không thêm credential production.
-- config/app.php cung cấp appUrl(): WAMP mặc định /Kanto-KTX; Docker đặt APP_BASE_PATH=/. Các link/redirect hiện tại đã dùng helper. Auth giữ session security, cookie Secure bật khi HTTPS trực tiếp hoặc RENDER=true.
-- Kiểm tra: syntax PHP đạt; local login/role 17/17, UC02 20/20, rooms 14/14; APP_BASE_PATH=/ cũng đạt login/role 17/17 và UC02 20/20. Chưa build/chạy Docker vì máy chưa có Docker CLI.
-- Hướng dẫn: docs/DEPLOY_RENDER.md. Cần MySQL online trước deploy; xác nhận yêu cầu TLS của nhà cung cấp. Render filesystem không bền vững, ảnh UC02 và session/nháp có thể mất khi restart/redeploy; chưa thêm cloud storage.
+`C:\wamp64\www\Kanto-KTX`
 
-- `docs/02-use-cases/UC02-registration.md` và ba wireframe UC02 là tài liệu triển khai.
-- `DATABASE_DESIGN.md` đã mô tả phần tòa/phòng và cách seed. `BUSINESS_RULES.md` còn trống; Use Case overview có mã UC06–UC11 không khớp đặc tả chi tiết.
-- CSDL thực tế có CHECK của phòng và hợp đồng chưa thể hiện trong SQL dump; luôn đối chiếu schema thực tế trước khi sửa.
-- Tiếp theo: kiểm tra giao diện/upload bằng trình duyệt để demo UC02; sau đó triển khai UC03 khi được yêu cầu.
+Local URL:
+
+`http://localhost/Kanto-KTX/`
+
+Local database:
+
+`qlktx_v2`
+
+Khi không có Environment Variables, `config/db.php` fallback về:
+
+- Host: `127.0.0.1`
+- Port: `3306`
+- Database: `qlktx_v2`
+- User: `root`
+- Password: rỗng
+
+Không được phá khả năng chạy local trên WAMP.
+
+---
+
+## 3. Môi trường production
+
+Project đã được deploy online.
+
+Web hosting:
+
+Render
+
+Public domain hiện tại:
+
+`https://kanto-ktx.onrender.com`
+
+Render đã liên kết trực tiếp với GitHub repository.
+
+Branch production:
+
+`main`
+
+Render Auto Deploy đang dùng source từ branch `main`.
+
+Khi code được merge và push vào `main`, Render có thể tự động build và deploy phiên bản mới.
+
+Không sửa cấu hình deployment nếu không cần thiết.
+
+---
+
+## 4. Docker
+
+Project đã được chuẩn bị để deploy bằng Docker.
+
+Các file liên quan hiện có:
+
+- `Dockerfile`
+- `.dockerignore`
+- `config/docker-apache.conf`
+- `config/docker-php.ini`
+
+Không tự xóa hoặc thay đổi Docker config nếu chức năng đang triển khai không liên quan đến deployment.
+
+---
+
+## 5. Database production
+
+Database production đang được host trên:
+
+Aiven MySQL
+
+Database hiện đang dùng:
+
+`defaultdb`
+
+Dữ liệu schema của project đã được import vào Aiven.
+
+Ứng dụng trên Render kết nối Aiven qua Environment Variables.
+
+Các key đang sử dụng:
+
+- `DB_HOST`
+- `DB_PORT`
+- `DB_NAME`
+- `DB_USER`
+- `DB_PASSWORD`
+
+Không hard-code các giá trị production vào source code.
+
+Không commit:
+
+- password
+- token
+- URI chứa credential
+- `.env`
+- secret
+
+---
+
+## 6. Kết nối database trong source
+
+`config/db.php` phải hỗ trợ cả:
+
+### Local
+
+WAMP + MySQL local
+
+### Production
+
+Render + Aiven MySQL
+
+Production lấy cấu hình từ Environment Variables.
+
+Không thay đổi cách kết nối database nếu không thực sự cần thiết cho UC đang triển khai.
+
+---
+
+## 7. Quản lý database
+
+Database production hiện được quản lý bằng:
+
+DBeaver
+
+DBeaver đã kết nối thành công tới Aiven MySQL.
+
+Có thể dùng DBeaver để:
+
+- xem dữ liệu
+- kiểm tra bảng
+- chạy SQL
+- kiểm tra kết quả sau khi thao tác trên website
+
+Không cần tạo thêm công cụ quản trị database trong source code.
+
+---
+
+## 8. Encoding
+
+Database và ứng dụng hiện sử dụng UTF-8 / `utf8mb4`.
+
+Vấn đề hiển thị tiếng Việt ở Aiven trước đây đã được xử lý.
+
+Không thay đổi charset/collation nếu không có lý do rõ ràng.
+
+---
+
+## 9. Git workflow
+
+Không code trực tiếp trên `main` cho chức năng mới.
+
+Mỗi Use Case triển khai trên branch riêng.
+
+Ví dụ UC03:
+
+`feature/uc03-approval`
+
+Quy trình:
+
+1. Cập nhật `main`.
+2. Tạo branch feature.
+3. Code.
+4. Test.
+5. Commit.
+6. Push branch.
+7. Tạo Pull Request.
+8. Review.
+9. Merge vào `main`.
+10. Render auto deploy sau khi `main` thay đổi.
+
+Không merge code chưa test vào `main`.
+
+---
+
+## 10. Trạng thái chức năng hiện tại
+
+### Hoàn thành
+
+- UC01 - Đăng nhập
+- Authentication
+- Session
+- Role middleware
+- CLI tests cho login/auth
+- UC02 - Đăng ký lưu trú
+- Dữ liệu diện ưu tiên
+- Dữ liệu tòa nhà/phòng
+- Chọn phòng
+- Deploy Render
+- Aiven MySQL
+- DBeaver quản lý database
+
+### Đang chuẩn bị triển khai
+
+- UC03 - Xét duyệt đơn đăng ký
+
+---
+
+## 11. UC02 hiện tại
+
+UC02 đã hoạt động trên production.
+
+Luồng chính:
+
+1. Khách nhập thông tin.
+2. Chọn diện ưu tiên.
+3. Hệ thống lọc phòng phù hợp.
+4. Người dùng chọn phòng.
+5. Xác nhận.
+6. Backend kiểm tra lại sức chứa.
+7. Tạo `DonDangKy`.
+8. `TrangThai = "Chờ duyệt"`.
+
+Số chỗ khả dụng:
+
+`SucChua - số HopDong Còn hạn - số DonDangKy Chờ duyệt`
+
+Một đơn `Chờ duyệt` giữ đúng 1 chỗ.
+
+---
+
+## 12. Quy tắc trước khi triển khai UC03
+
+Trước khi sửa code UC03, phải đọc:
+
+- đặc tả UC03 trong `docs/02-use-cases/`
+- Sequence Diagram UC03
+- Wireframe UC03
+- `DATABASE_DESIGN.md`
+- schema SQL hiện tại
+- source code UC02
+- authentication / role middleware
+- code hiện có liên quan đến `DonDangKy`, `SinhVien`, `TaiKhoan`, `HopDong`
+
+Trước khi code, phải báo lại:
+
+- file nào có thể tái sử dụng
+- file nào cần tạo mới
+- model/helper/middleware nào đã có
+- bảng nào sẽ đọc
+- bảng nào sẽ ghi
+- transaction nào cần dùng
+- các điểm mâu thuẫn giữa tài liệu và schema nếu có
+
+Không tự bổ sung nghiệp vụ.
+
+---
+
+## 13. Quy tắc bảo vệ phần đã ổn định
+
+Không tự ý sửa:
+
+- Docker config
+- Render config
+- Aiven config
+- `config/db.php`
+- authentication
+- session
+- role middleware
+- schema database
+- UC02
+
+trừ khi UC03 thực sự yêu cầu và phải báo trước.
+
+Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại trước khi sửa.
