@@ -13,8 +13,8 @@ $token = $escape($_SESSION['registration_token']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng ký lưu trú — Kanto KTX</title>
-    <link rel="stylesheet" href="/Kanto-KTX/assets/css/style.css">
-    <link rel="stylesheet" href="/Kanto-KTX/assets/css/registration.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars(appUrl('assets/css/style.css'), ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars(appUrl('assets/css/registration.css'), ENT_QUOTES, 'UTF-8') ?>">
 </head>
 <body class="home-page registration-page">
 <?php require __DIR__ . '/../../includes/header.php'; ?>
@@ -25,7 +25,7 @@ $token = $escape($_SESSION['registration_token']);
             <h2>Đăng ký lưu trú thành công. Hồ sơ đang chờ xét duyệt.</h2>
             <p>Mã đơn đăng ký: <strong><?= $escape($success) ?></strong></p>
             <p>Tài khoản sinh viên sẽ được tạo sau khi hồ sơ được duyệt.</p>
-            <a href="/Kanto-KTX/index.php">Về trang chủ</a>
+            <a href="<?= htmlspecialchars(appUrl('index.php'), ENT_QUOTES, 'UTF-8') ?>">Về trang chủ</a>
         </div>
     <?php else: ?>
         <p class="registration-subtitle">Bước <?= $step ?>: <?= [1 => 'Thông tin đăng ký', 2 => 'Chọn phòng', 3 => 'Xác nhận'][$step] ?> — Vui lòng kiểm tra thông tin trước khi tiếp tục.</p>
@@ -117,6 +117,6 @@ $token = $escape($_SESSION['registration_token']);
         <?php endif; ?>
     <?php endif; ?>
 </main>
-<script src="/Kanto-KTX/assets/js/registration.js" defer></script>
+<script src="<?= htmlspecialchars(appUrl('assets/js/registration.js'), ENT_QUOTES, 'UTF-8') ?>" defer></script>
 </body>
 </html>

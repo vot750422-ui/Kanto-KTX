@@ -28,14 +28,14 @@ $statIcons = ['Phòng hiện tại' => 'room', 'Hợp đồng' => 'contract', 'H
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang chủ Sinh viên — Kanto KTX</title>
-    <link rel="stylesheet" href="/Kanto-KTX/assets/css/style.css">
-    <link rel="stylesheet" href="/Kanto-KTX/assets/css/student-dashboard.css">
-    <link rel="stylesheet" href="/Kanto-KTX/assets/css/navbar.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars(appUrl('assets/css/style.css'), ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars(appUrl('assets/css/student-dashboard.css'), ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars(appUrl('assets/css/navbar.css'), ENT_QUOTES, 'UTF-8') ?>">
 </head>
 <body class="student-page">
     <header class="student-header">
-        <a class="site-brand" href="/Kanto-KTX/views/student/Dashboard.php" aria-label="Kanto — Trang chủ Sinh viên">
-            <img class="site-logo" src="/Kanto-KTX/assets/images/logo.png" alt="">
+        <a class="site-brand" href="<?= htmlspecialchars(appUrl('views/student/Dashboard.php'), ENT_QUOTES, 'UTF-8') ?>" aria-label="Kanto — Trang chủ Sinh viên">
+            <img class="site-logo" src="<?= htmlspecialchars(appUrl('assets/images/logo.png'), ENT_QUOTES, 'UTF-8') ?>" alt="">
             <span class="site-brand-text"><strong>KANTO</strong><span>HỆ THỐNG QUẢN LÝ KÝ TÚC XÁ</span></span>
         </a>
         <div class="student-header-actions">
@@ -50,7 +50,7 @@ $statIcons = ['Phòng hiện tại' => 'room', 'Hợp đồng' => 'contract', 'H
                 </summary>
                 <div class="student-account-menu">
                     <span>Sinh viên</span>
-                    <a href="/Kanto-KTX/index.php">Về trang chủ Kanto</a>
+                    <a href="<?= htmlspecialchars(appUrl('index.php'), ENT_QUOTES, 'UTF-8') ?>">Về trang chủ Kanto</a>
                     <?php require __DIR__ . '/../../includes/logout.php'; ?>
                 </div>
             </details>

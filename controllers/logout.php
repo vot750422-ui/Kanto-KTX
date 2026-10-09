@@ -29,5 +29,5 @@ if (ini_get('session.use_cookies')) {
 }
 session_destroy();
 header('Cache-Control: no-store');
-header('Location: /Kanto-KTX/index.php?action=login', true, 303);
+header('Location: ' . appUrl('index.php?action=login'), true, 303);
 exit;

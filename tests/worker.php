@@ -138,7 +138,8 @@ try {
                 $_SESSION['user'] = $matches[0];
                 requireRole($role);
                 $url = dashboardForRole($role);
-                check($url !== null && is_file(dirname(__DIR__) . substr($url, strlen('/Kanto-KTX'))), 'Dashboard không tồn tại.');
+                $base = rtrim(appUrl(), '/');
+                check($url !== null && is_file(dirname(__DIR__) . substr($url, strlen($base))), 'Dashboard không tồn tại.');
             }
             check(dashboardForRole('unknown') === null, 'Vai trò lạ phải bị từ chối.');
             break;

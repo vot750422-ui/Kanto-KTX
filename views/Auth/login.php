@@ -13,13 +13,13 @@ unset($_SESSION['error']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Đăng nhập</title>
-    <link rel="stylesheet" href="/Kanto-KTX/assets/css/login.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars(appUrl('assets/css/login.css'), ENT_QUOTES, 'UTF-8') ?>">
 </head>
 
 <body>
 
     <main class="login-wrapper">
-        <img class="login-logo" src="/Kanto-KTX/assets/images/logo.png" alt="Logo Kanto KTX">
+        <img class="login-logo" src="<?= htmlspecialchars(appUrl('assets/images/logo.png'), ENT_QUOTES, 'UTF-8') ?>" alt="Logo Kanto KTX">
         <div class="login-box">
             <header class="login-header">
                 <h1>Đăng nhập hệ thống</h1>
@@ -32,7 +32,7 @@ unset($_SESSION['error']);
                 </p>
             <?php endif; ?>
 
-            <form method="POST" action="/Kanto-KTX/index.php?action=login">
+            <form method="POST" action="<?= htmlspecialchars(appUrl('index.php?action=login'), ENT_QUOTES, 'UTF-8') ?>">
                 <div class="form-group">
                     <label for="username">Tên đăng nhập</label>
                     <input

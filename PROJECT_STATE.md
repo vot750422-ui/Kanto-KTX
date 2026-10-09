@@ -44,6 +44,12 @@
 
 ## Tài liệu và công việc tiếp theo
 
+- 09/10/2026: đã chuẩn bị Docker/Render, chưa deploy. Dockerfile PHP 8.3 Apache có pdo_mysql/mbstring; cấu hình Apache chặn HTTP vào thư mục nội bộ/storage, cấu hình PHP upload 5M/post 8M. .dockerignore loại file môi trường, SQL, docs/tests và upload local.
+- config/db.php giữ $pdo, đọc DB_HOST/DB_PORT/DB_NAME/DB_USER/DB_PASSWORD, mặc định tương thích WAMP; lỗi kết nối trả HTTP 500 chung. Không thêm credential production.
+- config/app.php cung cấp appUrl(): WAMP mặc định /Kanto-KTX; Docker đặt APP_BASE_PATH=/. Các link/redirect hiện tại đã dùng helper. Auth giữ session security, cookie Secure bật khi HTTPS trực tiếp hoặc RENDER=true.
+- Kiểm tra: syntax PHP đạt; local login/role 17/17, UC02 20/20, rooms 14/14; APP_BASE_PATH=/ cũng đạt login/role 17/17 và UC02 20/20. Chưa build/chạy Docker vì máy chưa có Docker CLI.
+- Hướng dẫn: docs/DEPLOY_RENDER.md. Cần MySQL online trước deploy; xác nhận yêu cầu TLS của nhà cung cấp. Render filesystem không bền vững, ảnh UC02 và session/nháp có thể mất khi restart/redeploy; chưa thêm cloud storage.
+
 - `docs/02-use-cases/UC02-registration.md` và ba wireframe UC02 là tài liệu triển khai.
 - `DATABASE_DESIGN.md` đã mô tả phần tòa/phòng và cách seed. `BUSINESS_RULES.md` còn trống; Use Case overview có mã UC06–UC11 không khớp đặc tả chi tiết.
 - CSDL thực tế có CHECK của phòng và hợp đồng chưa thể hiện trong SQL dump; luôn đối chiếu schema thực tế trước khi sửa.

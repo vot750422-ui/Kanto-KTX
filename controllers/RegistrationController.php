@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../models/Registration.php';
 
 class RegistrationController
@@ -111,7 +112,7 @@ class RegistrationController
                             unset($_SESSION['registration_draft']);
                             $_SESSION['registration_success'] = $id;
                             $_SESSION['registration_token'] = bin2hex(random_bytes(32));
-                            header('Location: /Kanto-KTX/index.php?action=register', true, 303);
+                            header('Location: ' . appUrl('index.php?action=register'), true, 303);
                             return;
                         } catch (DomainException $error) {
                             $message = $error->getMessage();

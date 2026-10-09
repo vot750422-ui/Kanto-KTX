@@ -1,0 +1,14 @@
+.git
+.github
+.vscode
+.idea
+.codex
+.agents
+tests
+docs
+*.log
+.env
+.env.*
+storage/registration
+AGENTS.md
+PROJECT_STATE.md

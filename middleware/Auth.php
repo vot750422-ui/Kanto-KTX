@@ -1,11 +1,13 @@
 <?php
+require_once __DIR__ . '/../config/app.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start([
         'use_strict_mode' => true,
         'use_only_cookies' => true,
         'cookie_httponly' => true,
-        'cookie_secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        'cookie_secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || getenv('RENDER') === 'true',
         'cookie_samesite' => 'Lax',
     ]);
 }
@@ -19,7 +21,7 @@ function requireAuth(): array
         || (is_string($accountId) && preg_match('/^[1-9][0-9]*$/D', $accountId) === 1);
     if (!$validAccountId) {
         unset($_SESSION['user']);
-        header('Location: /Kanto-KTX/index.php?action=login');
+        header('Location: ' . appUrl('index.php?action=login'));
         exit;
     }
 
@@ -33,7 +35,7 @@ function requireAuth(): array
         unset($_SESSION['user']);
         session_regenerate_id(true);
         $_SESSION['error'] = 'Phiên đăng nhập không còn hợp lệ. Vui lòng đăng nhập lại.';
-        header('Location: /Kanto-KTX/index.php?action=login');
+        header('Location: ' . appUrl('index.php?action=login'));
         exit;
     }
 
