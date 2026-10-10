@@ -43,6 +43,7 @@ if (($_GET['action'] ?? '') === 'login') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php require __DIR__ . '/includes/head.php'; ?>
     <title>Trang chủ — Kanto KTX</title>
     <link rel="stylesheet" href="<?= htmlspecialchars(appUrl('assets/css/style.css'), ENT_QUOTES, 'UTF-8') ?>">
 </head>
