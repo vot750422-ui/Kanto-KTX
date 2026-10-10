@@ -1,5 +1,12 @@
 <?php
 require_once __DIR__ . '/middleware/Role.php';
+if (in_array($_GET['action'] ?? '', ['approval', 'approval-detail', 'approval-proof', 'approval-approve', 'approval-reject'], true)) {
+    requireRole('Nhân viên quản lý KTX');
+    require __DIR__ . '/config/db.php';
+    require_once __DIR__ . '/controllers/ApprovalController.php';
+    (new ApprovalController($pdo))->handle($_GET['action']);
+    exit;
+}
 if (($_GET['action'] ?? '') === 'register') {
     require_once __DIR__ . '/config/db.php';
     require_once __DIR__ . '/controllers/RegistrationController.php';

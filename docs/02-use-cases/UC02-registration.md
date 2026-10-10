@@ -15,6 +15,7 @@ Cho phép tác nhân gửi thông tin đăng ký ký túc xá để chờ Nhân 
 ## 3. Tiền điều kiện
 
 - Sinh viên chưa có đơn đăng ký ở trạng thái **“Chờ duyệt”** trong cơ sở dữ liệu.
+- MSSV và CCCD chưa tồn tại trong bảng `sinhvien` (kể cả hồ sơ đã rời đi).
 
 ## 4. Hậu điều kiện
 
@@ -111,11 +112,12 @@ Cho phép tác nhân gửi thông tin đăng ký ký túc xá để chờ Nhân 
 | Mã | Diện ưu tiên | Mức ưu tiên |
 |---|---|---|
 | UT00 | Không có | 0 (không ưu tiên) |
-| UT01 | Hộ nghèo / Cận nghèo | 1 (ưu tiên đầu) |
-| UT02 | Con thương binh / Liệt sĩ | 2 |
+| UT01 | Hộ nghèo / Cận nghèo | 2 |
+| UT02 | Con thương binh / Liệt sĩ | 4 (ưu tiên đầu) |
 | UT03 | Vùng sâu vùng xa / Hải đảo | 3 |
 
-Dropdown hiển thị theo thứ tự trên, mặc định Không có. Khi xét duyệt, các mức 1, 2, 3 được ưu tiên theo số tăng dần; mức 0 xếp sau các diện ưu tiên.
+Dropdown hiển thị theo thứ tự mã trên, mặc định Không có. Khi xét duyệt, mức lớn
+đứng trước: UT02 (4), UT03 (3), UT01 (2), UT00 (0), rồi thời gian gửi tăng dần.
 
 ### BR-UC02-01 - Một MSSV không được có nhiều đơn chờ duyệt
 
@@ -140,4 +142,11 @@ Số chỗ khả dụng của một phòng được tính dựa trên:
 trừ
 số sinh viên đang có `HopDong` còn hạn tại phòng
 trừ
-số `DonDangKy` đang ở trạng thái `Chờ duyệt` tại phòng.
+số `DonDangKy` đang ở trạng thái `Chờ duyệt` tại phòng
+trừ
+số `DonDangKy` `Đã duyệt` có `MaHopDong IS NULL` tại phòng.
+
+Đơn đã duyệt tiếp tục giữ chỗ chờ thanh toán. Khi UC thanh toán tạo hợp đồng,
+phải liên kết `dondangky.MaHopDong` trong cùng transaction để không đếm hai lần.
+Không giảm `phong.SucChua`. Kiểm tra MSSV/CCCD đã có sinh viên và trùng đơn
+chờ duyệt ở cả bước nhập và submit dưới khóa chung.

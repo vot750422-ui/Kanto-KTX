@@ -25,16 +25,20 @@
     ];
     $items = [['Trang chủ', 'home', dashboardForRole($role)]];
     foreach ($menus[$role] as $item) {
-        $items[] = [$item[0], $item[1], null]; // Thay null bằng URL khi chức năng hoàn thành.
+        $url = $role === 'Nhân viên quản lý KTX' && $item[0] === 'Xét duyệt đơn đăng ký'
+            ? appUrl('index.php?action=approval') : null;
+        $items[] = [$item[0], $item[1], $url];
     }
     $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+    $isApproval = in_array($_GET['action'] ?? '', ['approval', 'approval-detail', 'approval-approve', 'approval-reject'], true);
 ?>
 <aside class="dashboard-sidebar">
     <h2><?= htmlspecialchars($role, ENT_QUOTES, 'UTF-8') ?></h2>
     <nav aria-label="Chức năng theo vai trò">
         <?php foreach ($items as [$label, $icon, $url]): ?>
+            <?php $active = $url !== null && ($label === 'Xét duyệt đơn đăng ký' ? $isApproval : $currentPath === $url); ?>
             <?php if ($url !== null): ?>
-                <a href="<?= htmlspecialchars($url, ENT_QUOTES, 'UTF-8') ?>"<?= $currentPath === $url ? ' class="dashboard-nav-active" aria-current="page"' : '' ?>>
+                <a href="<?= htmlspecialchars($url, ENT_QUOTES, 'UTF-8') ?>"<?= $active ? ' class="dashboard-nav-active" aria-current="page"' : '' ?>>
             <?php else: ?>
                 <button type="button" disabled title="Chức năng đang được xây dựng">
             <?php endif; ?>

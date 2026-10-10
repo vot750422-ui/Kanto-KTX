@@ -6,8 +6,8 @@ class Registration
 
     public function priorities(): array
     {
-        // Dropdown hiển thị Không có trước, sau đó các mức ưu tiên 1, 2, 3.
-        return $this->db->query('SELECT * FROM dienuutien ORDER BY MucUuTien ASC, MaUuTien')->fetchAll();
+        // Dropdown giữ thứ tự mã; danh sách xét duyệt dùng mức ưu tiên giảm dần.
+        return $this->db->query('SELECT * FROM dienuutien ORDER BY MaUuTien')->fetchAll();
     }
 
     public function hasPending(string $mssv): bool
@@ -17,6 +17,18 @@ class Registration
         return (bool) $stmt->fetchColumn();
     }
 
+    public function studentConflict(string $mssv, string $cccd): ?string
+    {
+        $stmt = $this->db->prepare('SELECT 1 FROM sinhvien WHERE MSSV = ? LIMIT 1');
+        $stmt->execute([$mssv]);
+        if ($stmt->fetchColumn()) {
+            return 'MSSV đã tồn tại trong hồ sơ sinh viên.';
+        }
+        $stmt = $this->db->prepare('SELECT 1 FROM sinhvien WHERE CCCD = ? LIMIT 1');
+        $stmt->execute([$cccd]);
+        return $stmt->fetchColumn() ? 'CCCD đã tồn tại trong hồ sơ sinh viên.' : null;
+    }
+
     public function rooms(string $gender): array
     {
         $stmt = $this->db->prepare("SELECT p.*, t.TenToa,
@@ -24,7 +36,9 @@ class Registration
             p.SucChua - COALESCE(h.DangO, 0) - COALESCE(d.DangGiu, 0) AS ConCho
             FROM phong p JOIN toanha t ON t.MaToa = p.MaToa
             LEFT JOIN (SELECT MaPhong, COUNT(*) AS DangO FROM hopdong WHERE TrangThai = 'Còn hạn' GROUP BY MaPhong) h ON h.MaPhong = p.MaPhong
-            LEFT JOIN (SELECT MaPhong, COUNT(*) AS DangGiu FROM dondangky WHERE TrangThai = 'Chờ duyệt' GROUP BY MaPhong) d ON d.MaPhong = p.MaPhong
+            LEFT JOIN (SELECT MaPhong, COUNT(*) AS DangGiu FROM dondangky
+                WHERE TrangThai = 'Chờ duyệt' OR (TrangThai = 'Đã duyệt' AND MaHopDong IS NULL)
+                GROUP BY MaPhong) d ON d.MaPhong = p.MaPhong
             WHERE p.GioiTinhPhong = ? ORDER BY t.TenToa, p.Tang, p.SoPhong");
         $stmt->execute([$gender]);
         return array_values(array_filter($stmt->fetchAll(), fn($room) => (int) $room['ConCho'] > 0));
@@ -49,6 +63,9 @@ class Registration
             }
             if ($this->hasPending($data['MSSV'])) {
                 throw new DomainException('MSSV đã có hồ sơ đang được xử lý.', 1);
+            }
+            if ($conflict = $this->studentConflict($data['MSSV'], $data['CCCD'])) {
+                throw new DomainException($conflict, 1);
             }
             $room = array_filter($this->rooms($data['GioiTinh']), fn($r) => $r['MaPhong'] === $roomId);
             if (!$room) {

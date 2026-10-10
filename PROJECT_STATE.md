@@ -216,7 +216,12 @@ Không merge code chưa test vào `main`.
 
 ### Đang chuẩn bị triển khai
 
-- UC03 - Xét duyệt đơn đăng ký
+- UC thanh toán (mô phỏng QR), chưa triển khai.
+
+### UC03 trên branch feature
+
+- UC03 đã có danh sách/phân trang, chi tiết, ảnh bảo vệ, duyệt và từ chối;
+  chưa push/merge/deploy. Xem `docs/UC03_IMPLEMENTATION_NOTES.md`.
 
 ---
 
@@ -237,7 +242,7 @@ Luồng chính:
 
 Số chỗ khả dụng:
 
-`SucChua - số HopDong Còn hạn - số DonDangKy Chờ duyệt`
+`SucChua - số HopDong Còn hạn - số DonDangKy Chờ duyệt - số DonDangKy Đã duyệt có MaHopDong NULL`
 
 Một đơn `Chờ duyệt` giữ đúng 1 chỗ.
 
@@ -287,3 +292,36 @@ Không tự ý sửa:
 trừ khi UC03 thực sự yêu cầu và phải báo trước.
 
 Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại trước khi sửa.
+
+## 14. Bàn giao UC03 (10/10/2026)
+
+- Người dùng đã cho phép sửa UC02/schema để duyệt tạo tài khoản, sinh viên và hóa đơn
+  tiền phòng đầu tiên, giữ chỗ chờ thanh toán. Không tạo hợp đồng khi duyệt.
+- Hóa đơn thu trọn học kỳ kế tiếp gần nhất sau kỳ hiện tại, kể cả sang năm mới.
+  Giá tiền phòng mới nhất có hiệu lực tại ngày duyệt, đơn vị đồng/học kỳ.
+  Chưa giới hạn thời gian mở UC02; không tính tiền theo phần kỳ cũ còn lại.
+- Tên đăng nhập MSSV, mật khẩu được băm theo quy ước demo. Không Gmail.
+- Trạng thái sinh viên mới Chờ thanh toán; thêm dondangky.MaHoaDon và MaHopDong
+  nullable/UNIQUE/FK. Migration `sql/uc03-approval.sql` đã chạy trên local qlktx_v2;
+  chưa áp dụng Aiven. Dump mới đồng bộ; không import dump vào CSDL hiện có.
+- Ưu tiên UT00/UT01/UT02/UT03 = 0/2/4/3, xếp giảm dần rồi thời gian gửi/mã đơn.
+- UC02 thêm kiểm tra MSSV/CCCD đã có sinh viên (cả nhập và submit), giữ chỗ Đã duyệt
+  chưa có MaHopDong. UC03 cùng named lock UC02, READ COMMITTED, khóa phòng rồi đơn,
+  commit tài khoản/sinh viên/hóa đơn/trạng thái đơn cùng nhau; lỗi rollback toàn bộ.
+- Các route `index.php?action=approval`, approval-detail, approval-proof,
+  approval-approve và approval-reject chỉ dành NVQL. POST ghi dữ liệu có CSRF.
+- Ảnh tùy chọn; chỉ endpoint có quyền đọc, đường dẫn giới hạn storage/registration;
+  UI phân biệt không nộp ảnh và tệp không còn. Không đổi storage/deployment.
+- Local chưa có học kỳ hoặc đơn giá tiền phòng: cần nhập dữ liệu nghiệp vụ thật
+  để thử duyệt qua UI. Không tự thêm seed nghiệp vụ; test dùng TEMPORARY riêng.
+- Những việc tiếp theo: người dùng sửa Sequence/Wireframe; cập nhật ERD/bản thảo;
+  chốt thời hạn hợp đồng, thời hạn giữ chỗ/hủy hồ sơ và giao tài khoản; triển khai UC
+  thanh toán tạo hợp đồng + liên kết MaHopDong cùng transaction; Timer bỏ hóa đơn trùng kỳ.
+- Không đổi Docker/Render/Aiven/config DB/authentication/session/middleware, không xóa Email.
+- Kiểm tra dữ liệu đơn Đã duyệt cũ trước migration production: nếu đã có hợp đồng,
+  cần liên kết MaHopDong đúng để tránh đếm lại giữ chỗ; không tự backfill theo phỏng đoán.
+- Kiểm tra ngày 10/10/2026: UC03 51, đăng nhập/phân quyền 28, UC02 20, dữ liệu phòng 14
+  kiểm thử đều đạt (113 tổng). PHP lint đạt; local có đủ hai FK mới, không có đơn Đã duyệt cũ.
+  Chưa kiểm thử đồng thời hai tiến trình trên cùng dữ liệu vật lý hoặc UI trong trình duyệt.
+- Checklist bàn giao: `docs/UC03_IMPLEMENTATION_NOTES.md`. Giả định mở đăng ký một tháng
+  trước hết kỳ chỉ dùng để trình bày đồ án; không có yêu cầu tự chặn UC02 theo lịch.

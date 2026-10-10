@@ -1,5 +1,23 @@
 # Kiểm thử đăng nhập và phân quyền
 
+## UC03 - Xét duyệt
+
+```powershell
+& 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/approval.php
+```
+
+Cần schema UC03 (`sql/uc03-approval.sql`). Test sao chép schema thật vào TEMPORARY,
+gỡ FK để tạo fixture riêng; giữ CHECK/UNIQUE. Không sửa dữ liệu nghiệp vụ thật.
+Kiểm tra ưu tiên/phân trang, từ chối/giải phóng chỗ, duyệt phòng đã được giữ đầy,
+tài khoản băm, kỳ kế tiếp sang năm mới, giá DECIMAL, hồ sơ Chờ thanh toán,
+không tạo hợp đồng, trùng hồ sơ/tài khoản, rollback lỗi hóa đơn con, giải phóng khóa,
+CSRF/phương thức/input/XSS và endpoint ảnh. tests/run.php thêm kiểm tra quyền
+toàn bộ route UC03 cho khách/vai trò khác và NVQL mở danh sách.
+
+Giới hạn: TEMPORARY không chia sẻ giữa tiến trình; chưa kiểm thử hai NVQL thao tác
+đồng thời trên cùng dữ liệu vật lý hoặc giao diện/hộp thoại trong trình duyệt.
+Test không chứng minh FK bằng fixture; migration đã được kiểm tra trên schema local.
+
 ## UC02 - Đăng ký lưu trú
 
 Kiểm tra seed tòa/phòng và UC02 trên bộ dữ liệu 200 phòng:

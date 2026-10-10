@@ -63,8 +63,8 @@ CREATE TABLE IF NOT EXISTS `dienuutien` (
 
 INSERT INTO `dienuutien` (`MaUuTien`, `TenDienUuTien`, `MucUuTien`) VALUES
 ('UT00', 'Không có', 0),
-('UT01', 'Hộ nghèo / Cận nghèo', 1),
-('UT02', 'Con thương binh / Liệt sĩ', 2),
+('UT01', 'Hộ nghèo / Cận nghèo', 2),
+('UT02', 'Con thương binh / Liệt sĩ', 4),
 ('UT03', 'Vùng sâu vùng xa / Hải đảo', 3);
 
 -- --------------------------------------------------------
@@ -92,11 +92,15 @@ CREATE TABLE IF NOT EXISTS `dondangky` (
   `ThoiGianGui` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `TrangThai` enum('Chờ duyệt','Đã duyệt','Từ chối') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Chờ duyệt',
   `LyDoTuChoi` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `MaHoaDon` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `MaHopDong` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`MaDonDangKy`),
   KEY `idx_dondangky_mssv` (`MSSV`),
   KEY `idx_dondangky_trangthai` (`TrangThai`),
   KEY `idx_dondangky_maphong` (`MaPhong`),
-  KEY `idx_dondangky_mauutien` (`MaUuTien`)
+  KEY `idx_dondangky_mauutien` (`MaUuTien`),
+  UNIQUE KEY `uq_dondangky_hoadon` (`MaHoaDon`),
+  UNIQUE KEY `uq_dondangky_hopdong` (`MaHopDong`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -531,7 +535,7 @@ CREATE TABLE IF NOT EXISTS `sinhvien` (
   `Email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Lop` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
   `NienKhoa` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `TrangThaiLuuTru` enum('Đang ở','Đã rời đi') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Đang ở',
+  `TrangThaiLuuTru` enum('Đang ở','Đã rời đi','Chờ thanh toán') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Đang ở',
   PRIMARY KEY (`MSSV`),
   UNIQUE KEY `uq_sinhvien_matk` (`MaTK`),
   UNIQUE KEY `uq_sinhvien_cccd` (`CCCD`),
@@ -626,6 +630,8 @@ ALTER TABLE `chisodiennuoc`
 -- Ràng buộc cho bảng `dondangky`
 --
 ALTER TABLE `dondangky`
+  ADD CONSTRAINT `fk_dondangky_hoadon` FOREIGN KEY (`MaHoaDon`) REFERENCES `hoadontienphong` (`MaHoaDon`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_dondangky_hopdong` FOREIGN KEY (`MaHopDong`) REFERENCES `hopdong` (`MaHopDong`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_dondangky_dienuutien` FOREIGN KEY (`MaUuTien`) REFERENCES `dienuutien` (`MaUuTien`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_dondangky_phong` FOREIGN KEY (`MaPhong`) REFERENCES `phong` (`MaPhong`) ON DELETE RESTRICT ON UPDATE CASCADE;
 

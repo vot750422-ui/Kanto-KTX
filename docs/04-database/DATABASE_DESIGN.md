@@ -30,8 +30,25 @@ Script seed tự sinh dữ liệu bằng CTE, chạy trên MySQL 8 trở lên. K
 
 `Registration::rooms()` nối phòng với tòa, chỉ lấy đúng giới tính và phòng có chỗ khả dụng lớn hơn 0:
 
-`ConCho = SucChua - số HopDong Còn hạn - số DonDangKy Chờ duyệt`.
+`ConCho = SucChua - số HopDong Còn hạn - số DonDangKy Chờ duyệt - số DonDangKy Đã duyệt chưa có MaHopDong`.
 
 `SucChua` luôn là sức chứa thiết kế; không giảm khi gửi đơn. Một đơn `Chờ duyệt` giữ đúng 1 chỗ. Khi submit, backend kiểm tra lại giới tính/chỗ khả dụng và lưu mã kỹ thuật `MaPhong` vào `dondangky`; trạng thái mới mặc định `Chờ duyệt` theo schema.
 
 Wireframe UC02 minh họa tầng 5 và phòng đầy; bộ dữ liệu mới chỉ có 4 tầng và UC02 chỉ hiển thị phòng còn chỗ theo đặc tả/yêu cầu đã chốt.
+
+## UC03 — Duyệt và giữ chỗ chờ thanh toán
+
+- Migration cho CSDL hiện có: `sql/uc03-approval.sql`, chạy một lần; dump mới đã đồng bộ.
+- `sinhvien.TrangThaiLuuTru` thêm `Chờ thanh toán`.
+- `dondangky.MaHoaDon` nullable, UNIQUE, FK đến `hoadontienphong.MaHoaDon`;
+  `dondangky.MaHopDong` nullable, UNIQUE, FK đến `hopdong.MaHopDong`.
+- Duyệt tạo tài khoản, sinh viên Chờ thanh toán, hoadon và hoadontienphong;
+  đơn Đã duyệt có MaHoaDon nhưng MaHopDong NULL. Không tạo hợp đồng.
+- Hóa đơn thu trọn học kỳ kế tiếp gần nhất sau học kỳ hiện tại theo ngày Việt Nam,
+  đơn giá tiền phòng mới nhất đang hiệu lực, đơn vị đồng/học kỳ. Không tính phần kỳ cũ.
+- Khi thanh toán tạo hợp đồng sau này, phải cập nhật MaHopDong cùng transaction
+  và đổi trạng thái sinh viên; việc đổi hóa đơn Đã thu riêng không giải phóng chỗ giữ.
+- Mức ưu tiên UT00/UT01/UT02/UT03: 0/2/4/3, xét duyệt giảm dần.
+- Giữ cột Email nullable. Không ghi đè hồ sơ sinh viên đã tồn tại.
+- Không tự backfill hóa đơn/hợp đồng cho đơn cũ: kiểm tra dữ liệu trước khi deploy,
+  đặc biệt đơn Đã duyệt trước migration có MaHopDong NULL nhưng đã có hợp đồng cũ.
