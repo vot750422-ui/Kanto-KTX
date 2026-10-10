@@ -9,6 +9,7 @@ unset($_SESSION['error']);
 <html lang="vi">
 
 <head>
+    <?php require __DIR__ . '/../../includes/head.php'; ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 

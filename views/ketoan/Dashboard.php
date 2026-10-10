@@ -5,6 +5,7 @@ requireRole('Nhân viên kế toán');
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+    <?php require __DIR__ . '/../../includes/head.php'; ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($_SESSION['user']['VaiTro'], ENT_QUOTES, 'UTF-8') ?> — Kanto</title>
