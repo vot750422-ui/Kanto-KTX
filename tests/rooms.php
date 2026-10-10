@@ -17,7 +17,7 @@ function checkRoom(bool $condition, string $description): void
 }
 try {
     // Bảng tạm riêng trong kết nối test, không sửa phòng/đơn thật.
-    foreach (['toanha', 'phong', 'dienuutien', 'hopdong', 'dondangky'] as $table) {
+    foreach (['toanha', 'phong', 'dienuutien', 'hopdong', 'dondangky', 'sinhvien'] as $table) {
         $sql = $pdo->query("SHOW CREATE TABLE `$table`")->fetch(PDO::FETCH_NUM)[1];
         $sql = preg_replace('/^.*CONSTRAINT `[^`]+` FOREIGN KEY .*\r?\n/m', '', $sql);
         $sql = preg_replace('/,\s*\n\)/', "\n)", $sql);

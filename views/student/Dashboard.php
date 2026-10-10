@@ -63,6 +63,8 @@ $statIcons = ['Phòng hiện tại' => 'room', 'Hợp đồng' => 'contract', 'H
         <p class="student-intro">Theo dõi thông tin lưu trú và các chức năng cá nhân.</p>
         <?php if (!$dashboard['student']): ?>
             <p class="student-empty" role="status">Tài khoản chưa có hồ sơ sinh viên. Vui lòng liên hệ quản lý KTX để cập nhật thông tin.</p>
+        <?php elseif ($dashboard['student']['TrangThaiLuuTru'] === 'Chờ thanh toán'): ?>
+            <p class="student-empty" role="status">Hồ sơ đã được duyệt, chỗ đã chọn đang được giữ. Bạn đang chờ thanh toán hóa đơn tiền phòng đầu tiên để hoàn tất thủ tục lưu trú; chưa có hợp đồng.</p>
         <?php endif; ?>
         <section class="student-stats" aria-label="Tổng quan lưu trú">
             <?php foreach ($stats as $label => $value): ?>

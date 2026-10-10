@@ -25,6 +25,11 @@ $cases = [
     'existing_session_wrong_password' => 'Có session cũ vẫn phải kiểm tra mật khẩu mới qua index.php',
 ];
 $failed = 0;
+foreach (['approval', 'approval-detail', 'approval-proof', 'approval-approve', 'approval-reject'] as $route) {
+    $cases['approval_guest_' . $route] = 'UC03: khách bị chặn tại ' . $route;
+    $cases['approval_forbidden_' . $route] = 'UC03: vai trò khác bị chặn tại ' . $route;
+}
+$cases['approval_staff_list'] = 'UC03: NVQL mở được danh sách qua route thực tế';
 foreach ($cases as $case => $description) {
     $process = proc_open(
         [PHP_BINARY, '-d', 'xdebug.mode=off', __DIR__ . '/worker.php', $case],

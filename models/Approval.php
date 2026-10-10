@@ -52,6 +52,97 @@ class Approval
         });
     }
 
+    public function billingContext(): array
+    {
+        $today = (new DateTimeImmutable('now', new DateTimeZone('Asia/Ho_Chi_Minh')))->format('Y-m-d');
+        $stmt = $this->db->prepare('SELECT * FROM hocky WHERE NgayBatDau <= ? AND NgayKetThuc >= ? ORDER BY NgayBatDau');
+        $stmt->execute([$today, $today]);
+        $current = $stmt->fetchAll();
+        if (count($current) !== 1) {
+            throw new DomainException('Cần có đúng một học kỳ hiện tại để xác định kỳ thu tiền tiếp theo.');
+        }
+        $stmt = $this->db->prepare('SELECT * FROM hocky WHERE NgayBatDau > ? ORDER BY NgayBatDau, MaHocKy LIMIT 2');
+        $stmt->execute([$current[0]['NgayKetThuc']]);
+        $next = $stmt->fetchAll();
+        if (!$next || $next[0]['NgayKetThuc'] < $next[0]['NgayBatDau']) {
+            throw new DomainException('Chưa có học kỳ kế tiếp hợp lệ để lập hóa đơn tiền phòng.');
+        }
+        if (isset($next[1]) && $next[1]['NgayBatDau'] <= $next[0]['NgayKetThuc']) {
+            throw new DomainException('Các học kỳ kế tiếp bị chồng lấn. Vui lòng kiểm tra dữ liệu học kỳ.');
+        }
+        $stmt = $this->db->prepare("SELECT * FROM dongia WHERE LoaiDonGia = 'Tiền phòng' AND NgayApDung <= ? ORDER BY NgayApDung DESC, MaDonGia LIMIT 1");
+        $stmt->execute([$today]);
+        $rate = $stmt->fetch();
+        if (!$rate || !preg_match('/^[0-9]+(?:\.[0-9]{1,2})?$/D', (string) $rate['GiaTri'])) {
+            throw new DomainException('Chưa có đơn giá tiền phòng hợp lệ đang có hiệu lực.');
+        }
+        if (mb_strtolower(trim($rate['DonViTinh'])) !== 'đồng/học kỳ') {
+            throw new DomainException('Đơn giá tiền phòng phải có đơn vị đồng/học kỳ để thu trọn một kỳ.');
+        }
+        return ['semester' => $next[0], 'rate' => $rate];
+    }
+
+    public function approve(string $id): array
+    {
+        return $this->process($id, function (array $application, array $room) use ($id): array {
+            if ($room['GioiTinhPhong'] !== $application['GioiTinh']) {
+                throw new DomainException('Phòng đã chọn không phù hợp giới tính của hồ sơ.');
+            }
+            $stmt = $this->db->prepare("SELECT
+                (SELECT COUNT(*) FROM hopdong WHERE MaPhong = ? AND TrangThai = 'Còn hạn') +
+                (SELECT COUNT(*) FROM dondangky WHERE MaPhong = ? AND
+                    (TrangThai = 'Chờ duyệt' OR (TrangThai = 'Đã duyệt' AND MaHopDong IS NULL)))");
+            $stmt->execute([$room['MaPhong'], $room['MaPhong']]);
+            if ((int) $stmt->fetchColumn() > (int) $room['SucChua']) {
+                throw new DomainException('Số chỗ đang sử dụng vượt sức chứa phòng. Vui lòng kiểm tra dữ liệu.');
+            }
+            if ($application['MaHoaDon'] !== null || $application['MaHopDong'] !== null) {
+                throw new DomainException('Đơn chờ duyệt đã có liên kết hóa đơn hoặc hợp đồng không hợp lệ.');
+            }
+            foreach (['MSSV', 'CCCD'] as $field) {
+                $stmt = $this->db->prepare("SELECT 1 FROM sinhvien WHERE $field = ? LIMIT 1");
+                $stmt->execute([$application[$field]]);
+                if ($stmt->fetchColumn()) {
+                    throw new DomainException($field . ' đã tồn tại trong hồ sơ sinh viên.');
+                }
+            }
+            $stmt = $this->db->prepare('SELECT 1 FROM taikhoan WHERE TenDangNhap = ? LIMIT 1');
+            $stmt->execute([$application['MSSV']]);
+            if ($stmt->fetchColumn()) {
+                throw new DomainException('Tên đăng nhập theo MSSV đã tồn tại.');
+            }
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM dondangky WHERE MSSV = ? AND TrangThai = 'Chờ duyệt'");
+            $stmt->execute([$application['MSSV']]);
+            if ((int) $stmt->fetchColumn() !== 1) {
+                throw new DomainException('MSSV có nhiều đơn chờ duyệt. Vui lòng kiểm tra hồ sơ trùng.');
+            }
+            // Giá và kỳ đều đọc lại từ CSDL; không nhận số tiền từ trình duyệt.
+            $billing = $this->billingContext();
+            $stmt = $this->db->prepare("INSERT INTO taikhoan (TenDangNhap, MatKhau, VaiTro, TrangThai) VALUES (?, ?, 'Sinh viên', 'Hoạt động')");
+            $stmt->execute([$application['MSSV'], password_hash('1', PASSWORD_DEFAULT)]);
+            $accountId = (int) $this->db->lastInsertId();
+            $fields = ['MSSV', 'MaUuTien', 'HoTen', 'NgaySinh', 'CCCD', 'GioiTinh', 'QueQuan', 'SDT', 'Lop', 'NienKhoa'];
+            $values = [$accountId];
+            foreach ($fields as $field) {
+                $values[] = $application[$field];
+            }
+            $stmt = $this->db->prepare('INSERT INTO sinhvien (MaTK, ' . implode(', ', $fields)
+                . ", TrangThaiLuuTru) VALUES (" . implode(', ', array_fill(0, count($values), '?')) . ", 'Chờ thanh toán')");
+            $stmt->execute($values);
+            $invoiceId = strtoupper(bin2hex(random_bytes(6)));
+            $stmt = $this->db->prepare("INSERT INTO hoadon (MaHoaDon, LoaiHoaDon, TongTien, TrangThai) VALUES (?, 'Tiền phòng', ?, 'Chưa thu')");
+            $stmt->execute([$invoiceId, $billing['rate']['GiaTri']]);
+            $stmt = $this->db->prepare('INSERT INTO hoadontienphong (MaHoaDon, MSSV, MaPhong, MaHocKy, MaDonGia) VALUES (?, ?, ?, ?, ?)');
+            $stmt->execute([$invoiceId, $application['MSSV'], $application['MaPhong'], $billing['semester']['MaHocKy'], $billing['rate']['MaDonGia']]);
+            $stmt = $this->db->prepare("UPDATE dondangky SET TrangThai = 'Đã duyệt', LyDoTuChoi = NULL, MaHoaDon = ? WHERE MaDonDangKy = ? AND TrangThai = 'Chờ duyệt'");
+            $stmt->execute([$invoiceId, $id]);
+            if ($stmt->rowCount() !== 1) {
+                throw new DomainException('Đơn đăng ký đã được xử lý.');
+            }
+            return ['username' => $application['MSSV'], 'invoice' => $invoiceId];
+        });
+    }
+
     private function process(string $id, callable $operation): mixed
     {
         // Dùng cùng khóa với UC02, kể cả kiểm tra MSSV giữa hai phòng khác nhau.

@@ -45,6 +45,37 @@ $users = $pdo->query('SELECT MaTK, TenDangNhap, MatKhau, VaiTro, TrangThai FROM 
 $active = array_values(array_filter($users, fn($user) => $user['TrangThai'] === 'Hoạt động'));
 $case = $argv[1] ?? '';
 try {
+    if (str_starts_with($case, 'approval_guest_') || str_starts_with($case, 'approval_forbidden_')) {
+        $guest = str_starts_with($case, 'approval_guest_');
+        $route = substr($case, strlen($guest ? 'approval_guest_' : 'approval_forbidden_'));
+        if ($guest) {
+            unset($_SESSION['user']);
+        } else {
+            $otherRoles = array_values(array_filter($active, fn($u) => $u['VaiTro'] !== 'Nhân viên quản lý KTX'));
+            check(count($otherRoles) > 0, 'Cần tài khoản vai trò khác NVQL.');
+            $_SESSION['user'] = $otherRoles[0];
+        }
+        $_GET = ['action' => $route, 'id' => 'test'];
+        $_SERVER['REQUEST_METHOD'] = in_array($route, ['approval-approve','approval-reject'], true) ? 'POST' : 'GET';
+        $_POST = ['id' => 'test', 'reason' => 'test'];
+        expectExit(fn() => check(http_response_code() === ($guest ? 302 : 403), 'Quyền route UC03 không đúng.'));
+        require __DIR__ . '/../index.php';
+        throw new RuntimeException('Route phải dừng khi không đủ quyền.');
+    }
+    if ($case === 'approval_staff_list') {
+        $staff = array_values(array_filter($active, fn($u) => $u['VaiTro'] === 'Nhân viên quản lý KTX'));
+        check(count($staff) > 0, 'Cần tài khoản NVQL.');
+        $_SESSION['user'] = $staff[0];
+        $_GET = ['action' => 'approval'];
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        ob_start();
+        register_shutdown_function(function () {
+            $html = ob_get_clean();
+            check(error_get_last() === null && str_contains($html, 'Danh sách đơn chờ duyệt'), 'NVQL không mở được trang xét duyệt.');
+            echo 'PASS';
+        });
+        require __DIR__ . '/../index.php';
+    }
     switch ($case) {
         case 'logout':
         case 'logout_invalid_token':

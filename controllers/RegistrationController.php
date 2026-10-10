@@ -66,6 +66,9 @@ class RegistrationController
                     if (!$errors && $model->hasPending($data['MSSV'])) {
                         $errors['MSSV'] = 'MSSV đã có hồ sơ đang được xử lý.';
                     }
+                    if (!$errors && ($conflict = $model->studentConflict($data['MSSV'], $data['CCCD']))) {
+                        $errors[str_starts_with($conflict, 'CCCD') ? 'CCCD' : 'MSSV'] = $conflict;
+                    }
                     $file = $_FILES['proof'] ?? null;
                     $proof = $draft['data']['FileMinhChung'] ?? null;
                     if ($file && ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
