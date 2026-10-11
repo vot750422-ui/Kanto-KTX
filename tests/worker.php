@@ -45,6 +45,28 @@ $users = $pdo->query('SELECT MaTK, TenDangNhap, MatKhau, VaiTro, TrangThai FROM 
 $active = array_values(array_filter($users, fn($user) => $user['TrangThai'] === 'Hoạt động'));
 $case = $argv[1] ?? '';
 try {
+    if ($case === 'room_information_guest') {
+        unset($_SESSION['user']);
+        $_GET = ['action' => 'rooms'];
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        http_response_code(200);
+        ob_start();
+        register_shutdown_function(function () {
+            $html = ob_get_clean();
+            try {
+                check(error_get_last() === null, 'Có lỗi PHP khi mở UC15.');
+                check(!isset($_SESSION['user']), 'UC15 không tạo phiên đăng nhập.');
+                check(http_response_code() === 200, 'UC15 phải trả HTTP 200 cho khách.');
+                check(str_contains($html, 'room-information-shell') && str_contains($html, 'Thông tin phòng'), 'Route phải hiển thị UC15.');
+                check(!str_contains($html, 'name="csrf_token"'), 'UC15 không có form ghi dữ liệu.');
+                echo 'PASS';
+            } catch (Throwable $error) {
+                echo 'FAIL: ' . $error->getMessage();
+                exit(1);
+            }
+        });
+        require __DIR__ . '/../index.php';
+    }
     if (str_starts_with($case, 'approval_guest_') || str_starts_with($case, 'approval_forbidden_')) {
         $guest = str_starts_with($case, 'approval_guest_');
         $route = substr($case, strlen($guest ? 'approval_guest_' : 'approval_forbidden_'));

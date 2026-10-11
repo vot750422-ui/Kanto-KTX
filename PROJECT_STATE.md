@@ -218,10 +218,11 @@ Không merge code chưa test vào `main`.
 
 - UC thanh toán (mô phỏng QR), chưa triển khai.
 
-### UC03 trên branch feature
+### UC03 hiện tại
 
 - UC03 đã có danh sách/phân trang, chi tiết, ảnh bảo vệ, duyệt và từ chối;
-  chưa push/merge/deploy. Xem `docs/UC03_IMPLEMENTATION_NOTES.md`.
+  code đã merge vào main qua PR #2. Chưa xác minh deployment trong phiên này.
+  Xem `docs/UC03_IMPLEMENTATION_NOTES.md`.
 
 ---
 
@@ -336,3 +337,27 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
   không đổi schema hoặc dữ liệu MySQL. Mức người dùng chốt: 200.000 đồng/sinh viên/tháng.
 - Test UC03 cập nhật sang đơn giá tháng, thêm kỳ 1/2/3, năm nhuận, một ngày và ngày đảo ngược;
   57 kiểm thử đạt. Chưa thử giao diện trực tiếp trong trình duyệt.
+
+## 16. UC15 - Xem thông tin phòng (11/10/2026)
+
+- Đơn giá tháng đã commit/push `1770093` trên `fix/approval-monthly-rate`.
+  Branch `fix/uc15-room-information` đã cập nhật nền bằng commit này.
+- UC15 tích hợp route công khai GET `index.php?action=rooms`, link trên header chung.
+  Chọn khu Nam/Nữ, tòa và tầng theo CSDL; mặc định tòa/tầng đầu tiên của khu Nam.
+- Model `Room` dùng chung truy vấn phòng với `Registration::rooms`; UC02 chỉ trả
+  phòng khả dụng > 0, UC15 trả cả phòng đầy. Không đổi transaction hoặc nghiệp vụ UC02/UC03.
+- Khả dụng = SucChua − hợp đồng Còn hạn − đơn Chờ duyệt − đơn Đã duyệt có
+  MaHopDong NULL. Hiển thị riêng đang ở/đang giữ/khả dụng; số khả dụng âm hiển thị 0/Đầy.
+- Bộ lọc sai trả 400, phương thức khác GET trả 405, lỗi CSDL trả 500 với thông báo an toàn.
+  Không đọc hồ sơ cá nhân hoặc ghi dữ liệu; không thay schema/config DB/auth/session/deploy.
+- Bản local `docs/Partner/uc15.php` chuyển về route mới; code MVC và CSS giao diện nằm trong
+  controllers/models/views/assets và không phụ thuộc file đối tác. Toàn bộ `docs/Partner`
+  không đưa vào commit theo yêu cầu người dùng. Không sửa UC5 hoặc commit bản dump SQL.
+- UC15 cần schema UC03 đã migrate. Dump `sql/qlktx_v2.sql` đang là thay đổi riêng,
+  chưa commit theo yêu cầu người dùng; không coi dump này là schema bàn giao UC15.
+- Đặc tả UC15 đã đồng bộ; Sequence/Wireframe còn cần sửa theo code và dữ liệu thật.
+- Kiểm tra: UC15 33, dữ liệu phòng 14, UC02 20, UC03 57, route/login/phân quyền 29
+  đều đạt (153 tổng), PHP lint đạt. HTTP local WAMP kiểm tra route/filter/redirect/CSS đạt.
+  Chưa kiểm tra bố cục trực quan trong trình duyệt hoặc production.
+- Công việc tiếp theo: thử giao diện UC15 trên desktop/mobile, cập nhật hai hình UC15;
+  kiểm tra migration UC03 trước deployment. Xem `docs/UC15_IMPLEMENTATION_NOTES.md`.

@@ -56,6 +56,10 @@ Phòng: 201
 Giới tính phòng: Nam
 Số người hiện tại / Sức chứa: 4 / 6
 Trạng thái: Còn chỗ
+```
+
+## 7. Quy tắc nghiệp vụ
+
 BR-UC15-02 - Chức năng chỉ đọc
 UC15 chỉ thực hiện:
 - lựa chọn dãy;
@@ -88,6 +92,9 @@ Có thể biểu diễn:
 SoChoDangGiu
 =
 Số DonDangKy của phòng có TrangThai = "Chờ duyệt"
+Theo luồng UC03 hiện tại, đơn `Đã duyệt` chưa có `MaHopDong` cũng tiếp tục giữ
+một chỗ trong lúc chờ thanh toán. Khi đã liên kết hợp đồng, đơn không giữ chỗ
+lần nữa; chỗ đang sử dụng được tính từ hợp đồng `Còn hạn`.
 BR-UC15-06 - Công thức xác định số chỗ khả dụng
 Số chỗ khả dụng của phòng được xác định:
 SoChoKhaDung
@@ -101,6 +108,7 @@ SoChoKhaDung
 Phong.SucChua
 - số HopDong "Còn hạn"
 - số DonDangKy "Chờ duyệt"
+- số DonDangKy "Đã duyệt" có MaHopDong NULL
 BR-UC15-07 - Xác định trạng thái phòng
 Nếu:
 SoChoKhaDung > 0
@@ -125,3 +133,15 @@ Khi:
 - một đơn đăng ký bị từ chối;
 hệ thống không thay đổi SucChua.
 Chỉ số chỗ khả dụng được tính lại từ dữ liệu hợp đồng và đơn đăng ký.
+
+## 8. Quy ước giao diện hiện tại
+
+- Khu Nam/Nữ dùng `GioiTinhPhong`; tòa dùng `MaToa`, hiển thị `TenToa`.
+- Tòa và tầng lấy từ CSDL, không cố định A/B hoặc 5 tầng.
+- Mặc định chọn tòa đầu tiên và tầng đầu tiên của khu Nam. Khi đổi khu hoặc tòa,
+  chọn lại tòa/tầng đầu tiên phù hợp; URL giữ bộ lọc khi tải lại trang.
+- Hiển thị riêng số sinh viên đang ở (`DangO`), chỗ đang giữ (`DangGiu`) và chỗ khả dụng.
+  Khi khả dụng <= 0, hiển thị `Đầy` và 0 chỗ khả dụng.
+- Không hiển thị tên, MSSV, CCCD hay hồ sơ của sinh viên trên trang công khai.
+- Bộ lọc không hợp lệ trả HTTP 400; lỗi truy vấn trả HTTP 500 với thông báo an toàn.
+  Danh sách rỗng được thông báo riêng.

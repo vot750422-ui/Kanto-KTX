@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/Room.php';
+
 class Registration
 {
     public function __construct(private PDO $db) {}
@@ -31,17 +33,7 @@ class Registration
 
     public function rooms(string $gender): array
     {
-        $stmt = $this->db->prepare("SELECT p.*, t.TenToa,
-            COALESCE(h.DangO, 0) AS DangO,
-            p.SucChua - COALESCE(h.DangO, 0) - COALESCE(d.DangGiu, 0) AS ConCho
-            FROM phong p JOIN toanha t ON t.MaToa = p.MaToa
-            LEFT JOIN (SELECT MaPhong, COUNT(*) AS DangO FROM hopdong WHERE TrangThai = 'Còn hạn' GROUP BY MaPhong) h ON h.MaPhong = p.MaPhong
-            LEFT JOIN (SELECT MaPhong, COUNT(*) AS DangGiu FROM dondangky
-                WHERE TrangThai = 'Chờ duyệt' OR (TrangThai = 'Đã duyệt' AND MaHopDong IS NULL)
-                GROUP BY MaPhong) d ON d.MaPhong = p.MaPhong
-            WHERE p.GioiTinhPhong = ? ORDER BY t.TenToa, p.Tang, p.SoPhong");
-        $stmt->execute([$gender]);
-        return array_values(array_filter($stmt->fetchAll(), fn($room) => (int) $room['ConCho'] > 0));
+        return (new Room($this->db))->rooms($gender, availableOnly: true);
     }
 
     public function submit(array $data, string $roomId): string

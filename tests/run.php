@@ -6,6 +6,7 @@ if (PHP_SAPI !== 'cli') {
 }
 
 $cases = [
+    'room_information_guest' => 'UC15: khách mở thông tin phòng qua route công khai',
     'logout' => 'Đăng xuất xóa session và chuyển về đăng nhập',
     'logout_invalid_token' => 'Token đăng xuất sai không xóa session',
     'logout_get' => 'Yêu cầu GET không được đăng xuất',
