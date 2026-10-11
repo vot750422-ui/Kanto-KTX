@@ -76,10 +76,31 @@ class Approval
         if (!$rate || !preg_match('/^[0-9]+(?:\.[0-9]{1,2})?$/D', (string) $rate['GiaTri'])) {
             throw new DomainException('Chưa có đơn giá tiền phòng hợp lệ đang có hiệu lực.');
         }
-        if (mb_strtolower(trim($rate['DonViTinh'])) !== 'đồng/học kỳ') {
-            throw new DomainException('Đơn giá tiền phòng phải có đơn vị đồng/học kỳ để thu trọn một kỳ.');
+        if (mb_strtolower(trim($rate['DonViTinh'])) !== 'đồng/tháng') {
+            throw new DomainException('Đơn giá tiền phòng phải có đơn vị đồng/tháng.');
         }
-        return ['semester' => $next[0], 'rate' => $rate];
+        return ['semester' => $next[0], 'rate' => $rate,
+            'total' => self::roomTotal($rate['GiaTri'], $next[0]['NgayBatDau'], $next[0]['NgayKetThuc'])];
+    }
+
+    public static function roomTotal(string $monthlyRate, string $start, string $end): string
+    {
+        $timezone = new DateTimeZone('Asia/Ho_Chi_Minh');
+        $cursor = new DateTimeImmutable($start, $timezone);
+        $last = new DateTimeImmutable($end, $timezone);
+        if ($last < $cursor) {
+            throw new DomainException('Ngày kết thúc phải từ ngày bắt đầu trở đi.');
+        }
+        $total = 0.0;
+        while ($cursor <= $last) {
+            $monthEnd = $cursor->modify('last day of this month');
+            $segmentEnd = $monthEnd < $last ? $monthEnd : $last;
+            $days = (int) $cursor->diff($segmentEnd)->days + 1;
+            $total += (float) $monthlyRate * $days / (int) $cursor->format('t');
+            $cursor = $monthEnd->modify('+1 day');
+        }
+        // Tính cả hai ngày biên; chỉ làm tròn tổng học kỳ đến đồng.
+        return number_format(round($total), 2, '.', '');
     }
 
     public function approve(string $id): array
@@ -131,7 +152,7 @@ class Approval
             $stmt->execute($values);
             $invoiceId = strtoupper(bin2hex(random_bytes(6)));
             $stmt = $this->db->prepare("INSERT INTO hoadon (MaHoaDon, LoaiHoaDon, TongTien, TrangThai) VALUES (?, 'Tiền phòng', ?, 'Chưa thu')");
-            $stmt->execute([$invoiceId, $billing['rate']['GiaTri']]);
+            $stmt->execute([$invoiceId, $billing['total']]);
             $stmt = $this->db->prepare('INSERT INTO hoadontienphong (MaHoaDon, MSSV, MaPhong, MaHocKy, MaDonGia) VALUES (?, ?, ?, ?, ?)');
             $stmt->execute([$invoiceId, $application['MSSV'], $application['MaPhong'], $billing['semester']['MaHocKy'], $billing['rate']['MaDonGia']]);
             $stmt = $this->db->prepare("UPDATE dondangky SET TrangThai = 'Đã duyệt', LyDoTuChoi = NULL, MaHoaDon = ? WHERE MaDonDangKy = ? AND TrangThai = 'Chờ duyệt'");

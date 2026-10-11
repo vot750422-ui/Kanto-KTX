@@ -81,7 +81,13 @@ try {
     expectApproval(deniedApproval(fn() => $model->approve('WAR'), 'kế tiếp'), 'Thiếu kỳ kế tiếp bị chặn');
     $stmt->execute(['NEXT','Học kỳ 1', ($year+1) . '-' . ($year+2), ($year+1) . '-01-01', ($year+1) . '-06-30']);
     expectApproval(deniedApproval(fn() => $model->approve('WAR'), 'đơn giá'), 'Thiếu đơn giá bị chặn');
-    $stmt = $pdo->prepare("INSERT INTO dongia VALUES (?, 'Tiền phòng', ?, 'đồng/học kỳ', ?)");
+    expectApproval(Approval::roomTotal('200000', '2026-09-01', '2027-01-15') === '896774.00', 'Kỳ 1: bốn tháng và 15/31 tháng một');
+    expectApproval(Approval::roomTotal('200000', '2027-01-16', '2027-05-31') === '903226.00', 'Kỳ 2: 16/31 tháng một và bốn tháng');
+    expectApproval(Approval::roomTotal('200000', '2027-06-01', '2027-08-31') === '600000.00', 'Kỳ 3: ba tháng đủ');
+    expectApproval(Approval::roomTotal('200000', '2028-02-01', '2028-02-29') === '200000.00', 'Tháng hai năm nhuận đủ tháng');
+    expectApproval(Approval::roomTotal('200000', '2028-02-29', '2028-02-29') === '6897.00', 'Một ngày tháng hai năm nhuận');
+    expectApproval(deniedApproval(fn() => Approval::roomTotal('200000', '2027-02-02', '2027-02-01')), 'Chặn khoảng ngày đảo ngược');
+    $stmt = $pdo->prepare("INSERT INTO dongia VALUES (?, 'Tiền phòng', ?, 'đồng/tháng', ?)");
     $stmt->execute(['OLD','1000000.00','2020-01-01']);
     $stmt->execute(['RATE','1500000.25',$today->format('Y-m-d')]);
     $stmt->execute(['FUTURE','9999999.00',$today->modify('+2 days')->format('Y-m-d')]);
@@ -94,10 +100,10 @@ try {
     $student = $pdo->query("SELECT * FROM sinhvien WHERE MSSV='ONLY'")->fetch();
     expectApproval($student['TrangThaiLuuTru'] === 'Chờ thanh toán' && (int) $student['MaTK'] === (int) $account['MaTK'], 'Hồ sơ liên kết tài khoản và Chờ thanh toán');
     $invoice = $pdo->query('SELECT h.*, p.MaHocKy, p.MaPhong, p.MaDonGia FROM hoadon h JOIN hoadontienphong p ON p.MaHoaDon=h.MaHoaDon')->fetch();
-    expectApproval($invoice['MaHocKy'] === 'NEXT' && $invoice['TongTien'] === '1500000.25' && $invoice['MaDonGia'] === 'RATE' && $invoice['TrangThai'] === 'Chưa thu', 'Thu trọn kỳ kế tiếp qua năm mới, giá hiệu lực chính xác DECIMAL');
-    $pdo->exec("UPDATE dongia SET DonViTinh='đồng/tháng' WHERE MaDonGia='RATE'");
-    expectApproval(deniedApproval(fn() => $model->billingContext(), 'đơn vị'), 'Không coi giá theo tháng là giá trọn học kỳ');
+    expectApproval($invoice['MaHocKy'] === 'NEXT' && $invoice['TongTien'] === '9000002.00' && $invoice['MaDonGia'] === 'RATE' && $invoice['TrangThai'] === 'Chưa thu', 'Thu sáu tháng kỳ kế tiếp, giá hiệu lực và làm tròn tổng đến đồng');
     $pdo->exec("UPDATE dongia SET DonViTinh='đồng/học kỳ' WHERE MaDonGia='RATE'");
+    expectApproval(deniedApproval(fn() => $model->billingContext(), 'đơn vị'), 'Chặn đơn giá học kỳ khi tính theo tháng');
+    $pdo->exec("UPDATE dongia SET DonViTinh='đồng/tháng' WHERE MaDonGia='RATE'");
     $stmt = $pdo->prepare('INSERT INTO hocky VALUES (?,?,?,?,?)');
     $stmt->execute(['OVERLAP','Kỳ trùng', "$year-" . ($year+1), "$year-01-01", "$year-12-31"]);
     expectApproval(deniedApproval(fn() => $model->billingContext(), 'đúng một'), 'Không xác định kỳ thu khi có nhiều kỳ hiện tại');

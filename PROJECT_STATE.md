@@ -218,10 +218,11 @@ Không merge code chưa test vào `main`.
 
 - UC thanh toán (mô phỏng QR), chưa triển khai.
 
-### UC03 trên branch feature
+### UC03 hiện tại
 
 - UC03 đã có danh sách/phân trang, chi tiết, ảnh bảo vệ, duyệt và từ chối;
-  chưa push/merge/deploy. Xem `docs/UC03_IMPLEMENTATION_NOTES.md`.
+  code đã merge vào main qua PR #2. Chưa xác minh deployment trong phiên này.
+  Xem `docs/UC03_IMPLEMENTATION_NOTES.md`.
 
 ---
 
@@ -298,7 +299,10 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
 - Người dùng đã cho phép sửa UC02/schema để duyệt tạo tài khoản, sinh viên và hóa đơn
   tiền phòng đầu tiên, giữ chỗ chờ thanh toán. Không tạo hợp đồng khi duyệt.
 - Hóa đơn thu trọn học kỳ kế tiếp gần nhất sau kỳ hiện tại, kể cả sang năm mới.
-  Giá tiền phòng mới nhất có hiệu lực tại ngày duyệt, đơn vị đồng/học kỳ.
+  Giá tiền phòng mới nhất có hiệu lực tại ngày duyệt, đơn vị đồng/tháng/sinh viên
+  (giá trị DonViTinh trong CSDL: `đồng/tháng`). Thu cả kỳ bằng tổng tiền từng tháng;
+  tháng không đủ = đơn giá × số ngày tính tiền / số ngày của tháng, tính cả hai ngày biên.
+  Chỉ làm tròn tổng hóa đơn đến đồng; UI hiển thị riêng đơn giá tháng và tổng kỳ.
   Chưa giới hạn thời gian mở UC02; không tính tiền theo phần kỳ cũ còn lại.
 - Tên đăng nhập MSSV, mật khẩu được băm theo quy ước demo. Không Gmail.
 - Trạng thái sinh viên mới Chờ thanh toán; thêm dondangky.MaHoaDon và MaHopDong
@@ -312,7 +316,8 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
   approval-approve và approval-reject chỉ dành NVQL. POST ghi dữ liệu có CSRF.
 - Ảnh tùy chọn; chỉ endpoint có quyền đọc, đường dẫn giới hạn storage/registration;
   UI phân biệt không nộp ảnh và tệp không còn. Không đổi storage/deployment.
-- Local chưa có học kỳ hoặc đơn giá tiền phòng: cần nhập dữ liệu nghiệp vụ thật
+- Dump `sql/qlktx_v2.sql` mới có sáu học kỳ của 2026-2027 và 2027-2028;
+  bảng đơn giá trong dump còn rỗng. Cần đơn giá tiền phòng `đồng/tháng` có hiệu lực
   để thử duyệt qua UI. Không tự thêm seed nghiệp vụ; test dùng TEMPORARY riêng.
 - Những việc tiếp theo: người dùng sửa Sequence/Wireframe; cập nhật ERD/bản thảo;
   chốt thời hạn hợp đồng, thời hạn giữ chỗ/hủy hồ sơ và giao tài khoản; triển khai UC
@@ -325,3 +330,34 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
   Chưa kiểm thử đồng thời hai tiến trình trên cùng dữ liệu vật lý hoặc UI trong trình duyệt.
 - Checklist bàn giao: `docs/UC03_IMPLEMENTATION_NOTES.md`. Giả định mở đăng ký một tháng
   trước hết kỳ chỉ dùng để trình bày đồ án; không có yêu cầu tự chặn UC02 theo lịch.
+
+## 15. Đơn giá tháng (10/10/2026)
+
+- Branch `fix/approval-monthly-rate`: Approval tính tổng kỳ kế tiếp theo đơn giá tháng,
+  không đổi schema hoặc dữ liệu MySQL. Mức người dùng chốt: 200.000 đồng/sinh viên/tháng.
+- Test UC03 cập nhật sang đơn giá tháng, thêm kỳ 1/2/3, năm nhuận, một ngày và ngày đảo ngược;
+  57 kiểm thử đạt. Chưa thử giao diện trực tiếp trong trình duyệt.
+
+## 16. UC15 - Xem thông tin phòng (11/10/2026)
+
+- Đơn giá tháng đã commit/push `1770093` trên `fix/approval-monthly-rate`.
+  Branch `fix/uc15-room-information` đã cập nhật nền bằng commit này.
+- UC15 tích hợp route công khai GET `index.php?action=rooms`, link trên header chung.
+  Chọn khu Nam/Nữ, tòa và tầng theo CSDL; mặc định tòa/tầng đầu tiên của khu Nam.
+- Model `Room` dùng chung truy vấn phòng với `Registration::rooms`; UC02 chỉ trả
+  phòng khả dụng > 0, UC15 trả cả phòng đầy. Không đổi transaction hoặc nghiệp vụ UC02/UC03.
+- Khả dụng = SucChua − hợp đồng Còn hạn − đơn Chờ duyệt − đơn Đã duyệt có
+  MaHopDong NULL. Hiển thị riêng đang ở/đang giữ/khả dụng; số khả dụng âm hiển thị 0/Đầy.
+- Bộ lọc sai trả 400, phương thức khác GET trả 405, lỗi CSDL trả 500 với thông báo an toàn.
+  Không đọc hồ sơ cá nhân hoặc ghi dữ liệu; không thay schema/config DB/auth/session/deploy.
+- Bản local `docs/Partner/uc15.php` chuyển về route mới; code MVC và CSS giao diện nằm trong
+  controllers/models/views/assets và không phụ thuộc file đối tác. Toàn bộ `docs/Partner`
+  không đưa vào commit theo yêu cầu người dùng. Không sửa UC5 hoặc commit bản dump SQL.
+- UC15 cần schema UC03 đã migrate. Dump `sql/qlktx_v2.sql` đang là thay đổi riêng,
+  chưa commit theo yêu cầu người dùng; không coi dump này là schema bàn giao UC15.
+- Đặc tả UC15 đã đồng bộ; Sequence/Wireframe còn cần sửa theo code và dữ liệu thật.
+- Kiểm tra: UC15 33, dữ liệu phòng 14, UC02 20, UC03 57, route/login/phân quyền 29
+  đều đạt (153 tổng), PHP lint đạt. HTTP local WAMP kiểm tra route/filter/redirect/CSS đạt.
+  Chưa kiểm tra bố cục trực quan trong trình duyệt hoặc production.
+- Công việc tiếp theo: thử giao diện UC15 trên desktop/mobile, cập nhật hai hình UC15;
+  kiểm tra migration UC03 trước deployment. Xem `docs/UC15_IMPLEMENTATION_NOTES.md`.

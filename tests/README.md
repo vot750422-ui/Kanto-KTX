@@ -1,5 +1,20 @@
 # Kiểm thử đăng nhập và phân quyền
 
+## UC15 - Xem thông tin phòng
+
+```powershell
+& 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/room-information.php
+```
+
+Test dùng bảng TEMPORARY theo schema local đã áp dụng migration UC03; không sửa
+CSDL thật. Kiểm tra tòa/tầng theo dữ liệu, chỗ đang ở và đang giữ, phòng đầy,
+đơn Đã duyệt chưa có hợp đồng/đã liên kết, đồng bộ UC02, GET chỉ đọc, bộ lọc sai,
+SQL injection, XSS, danh sách rỗng và lỗi CSDL. `tests/run.php` kiểm tra thêm khách
+mở UC15 qua route `index.php?action=rooms` thực tế, không cần đăng nhập.
+
+Giới hạn: test bảng tạm không chứng minh FK hoặc hành vi hai tiến trình đồng thời;
+chưa tự động kiểm tra bố cục trong trình duyệt.
+
 ## UC03 - Xét duyệt
 
 ```powershell
