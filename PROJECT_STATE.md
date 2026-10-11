@@ -298,7 +298,10 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
 - Người dùng đã cho phép sửa UC02/schema để duyệt tạo tài khoản, sinh viên và hóa đơn
   tiền phòng đầu tiên, giữ chỗ chờ thanh toán. Không tạo hợp đồng khi duyệt.
 - Hóa đơn thu trọn học kỳ kế tiếp gần nhất sau kỳ hiện tại, kể cả sang năm mới.
-  Giá tiền phòng mới nhất có hiệu lực tại ngày duyệt, đơn vị đồng/học kỳ.
+  Giá tiền phòng mới nhất có hiệu lực tại ngày duyệt, đơn vị đồng/tháng/sinh viên
+  (giá trị DonViTinh trong CSDL: `đồng/tháng`). Thu cả kỳ bằng tổng tiền từng tháng;
+  tháng không đủ = đơn giá × số ngày tính tiền / số ngày của tháng, tính cả hai ngày biên.
+  Chỉ làm tròn tổng hóa đơn đến đồng; UI hiển thị riêng đơn giá tháng và tổng kỳ.
   Chưa giới hạn thời gian mở UC02; không tính tiền theo phần kỳ cũ còn lại.
 - Tên đăng nhập MSSV, mật khẩu được băm theo quy ước demo. Không Gmail.
 - Trạng thái sinh viên mới Chờ thanh toán; thêm dondangky.MaHoaDon và MaHopDong
@@ -312,7 +315,8 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
   approval-approve và approval-reject chỉ dành NVQL. POST ghi dữ liệu có CSRF.
 - Ảnh tùy chọn; chỉ endpoint có quyền đọc, đường dẫn giới hạn storage/registration;
   UI phân biệt không nộp ảnh và tệp không còn. Không đổi storage/deployment.
-- Local chưa có học kỳ hoặc đơn giá tiền phòng: cần nhập dữ liệu nghiệp vụ thật
+- Dump `sql/qlktx_v2.sql` mới có sáu học kỳ của 2026-2027 và 2027-2028;
+  bảng đơn giá trong dump còn rỗng. Cần đơn giá tiền phòng `đồng/tháng` có hiệu lực
   để thử duyệt qua UI. Không tự thêm seed nghiệp vụ; test dùng TEMPORARY riêng.
 - Những việc tiếp theo: người dùng sửa Sequence/Wireframe; cập nhật ERD/bản thảo;
   chốt thời hạn hợp đồng, thời hạn giữ chỗ/hủy hồ sơ và giao tài khoản; triển khai UC
@@ -325,3 +329,10 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
   Chưa kiểm thử đồng thời hai tiến trình trên cùng dữ liệu vật lý hoặc UI trong trình duyệt.
 - Checklist bàn giao: `docs/UC03_IMPLEMENTATION_NOTES.md`. Giả định mở đăng ký một tháng
   trước hết kỳ chỉ dùng để trình bày đồ án; không có yêu cầu tự chặn UC02 theo lịch.
+
+## 15. Đơn giá tháng (10/10/2026)
+
+- Branch `fix/approval-monthly-rate`: Approval tính tổng kỳ kế tiếp theo đơn giá tháng,
+  không đổi schema hoặc dữ liệu MySQL. Mức người dùng chốt: 200.000 đồng/sinh viên/tháng.
+- Test UC03 cập nhật sang đơn giá tháng, thêm kỳ 1/2/3, năm nhuận, một ngày và ngày đảo ngược;
+  57 kiểm thử đạt. Chưa thử giao diện trực tiếp trong trình duyệt.
