@@ -431,3 +431,15 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
 - Checklist và README công cụ đã chỉ rõ bản mới nhất. Không sửa code/schema,
   không commit/push hoặc gửi thư. Tiếp theo: người dùng mở bản mới, cập nhật
   mục lục/danh mục hình khi ghép báo cáo tổng và tự gửi thầy.
+
+## 20. Lưu tài liệu bằng commit local (12/10/2026)
+
+- Branch `docs/project-handover-chapter2` lưu tài liệu UC15, danh sách đồng bộ
+  nghiệp vụ, báo cáo Chương 2 đã chốt, các bản thảo cũ và công cụ theo nhóm commit.
+- Theo yêu cầu mới, `docs/Partner` cũng đã commit local làm tài liệu tham khảo;
+  các ghi chú trước đó về việc giữ ngoài commit mô tả phạm vi bàn giao UC15 cũ.
+  Chưa tích hợp UC5; code đối tác vẫn giữ các hạn chế đã ghi trong tài liệu review.
+- Không push branch hoặc các commit tài liệu trong đợt này theo yêu cầu người dùng.
+- `sql/qlktx_v2.sql` vẫn giữ ngoài commit vì chứa dữ liệu tài khoản/đơn đăng ký.
+- PHP lint đạt cho 2 file đối tác và 7 công cụ PHP; không chạy công cụ dựng lại
+  báo cáo, không thay code ứng dụng hoặc schema trong đợt commit tài liệu này.
