@@ -350,9 +350,15 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
   MaHopDong NULL. Hiển thị riêng đang ở/đang giữ/khả dụng; số khả dụng âm hiển thị 0/Đầy.
 - Bộ lọc sai trả 400, phương thức khác GET trả 405, lỗi CSDL trả 500 với thông báo an toàn.
   Không đọc hồ sơ cá nhân hoặc ghi dữ liệu; không thay schema/config DB/auth/session/deploy.
-- Bản local `docs/Partner/uc15.php` chuyển về route mới; code MVC và CSS giao diện nằm trong
-  controllers/models/views/assets và không phụ thuộc file đối tác. Toàn bộ `docs/Partner`
-  không đưa vào commit theo yêu cầu người dùng. Không sửa UC5 hoặc commit bản dump SQL.
+- Code MVC và CSS giao diện nằm trong controllers/models/views/assets, không phụ thuộc
+  file đối tác. Toàn bộ `docs/Partner` không đưa vào commit theo yêu cầu người dùng.
+  UC15 đã commit/push `5d20973`; PR #3 đã merge vào main ngày 11/10/2026 bằng
+  commit `0766c7b`, gồm UC15 và đơn giá tháng. Chưa xác minh deployment sau merge.
+  Bản dump SQL vẫn chưa commit; các thay đổi local của đối tác vẫn giữ nguyên.
+- Sau khi push, người dùng muốn xem bản gốc đối tác: khôi phục code gốc UC15 trong
+  `docs/Partner/uc15.php` (không chuyển hướng), sửa đường dẫn config/CSS/logo và link
+  trang có sẵn cho UC15/UC5. Giữ logic đối tác để review; UC15 gốc vẫn truy vấn cột
+  `hienco` không có trong CSDL nên không hiện phòng. Không sửa schema để chạy bản gốc.
 - UC15 cần schema UC03 đã migrate. Dump `sql/qlktx_v2.sql` đang là thay đổi riêng,
   chưa commit theo yêu cầu người dùng; không coi dump này là schema bàn giao UC15.
 - Đặc tả UC15 đã đồng bộ; Sequence/Wireframe còn cần sửa theo code và dữ liệu thật.
@@ -361,3 +367,67 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
   Chưa kiểm tra bố cục trực quan trong trình duyệt hoặc production.
 - Công việc tiếp theo: thử giao diện UC15 trên desktop/mobile, cập nhật hai hình UC15;
   kiểm tra migration UC03 trước deployment. Xem `docs/UC15_IMPLEMENTATION_NOTES.md`.
+- Tài liệu đối chiếu cho thành viên: `docs/UC15_PARTNER_CODE_MAP.md`, chỉ rõ phần
+  UC15 gốc được viết lại ở model/controller/view/CSS, phần dùng chung UC02 và UC5
+  vẫn giữ tại docs/Partner. Tài liệu được tạo sau commit UC15, chưa commit/push.
+
+## 17. Bản thảo Chương 2 (11/10/2026)
+
+- Người dùng cần bản thảo để tự gửi thầy trước 20:00; xác nhận không có yêu cầu
+  riêng ngoài hướng dẫn đồ án trong repository. Không gửi thư, commit hoặc push trong task này.
+- Báo cáo nằm tại `docs/reports/chapter2/`, gồm bản Word, Markdown và checklist
+  `RA_SOAT_TRUOC_KHI_GUI.md` (có gợi ý thư gửi). Tên chương theo hướng dẫn:
+  “PHƯƠNG TIỆN NGHIÊN CỨU - PHƯƠNG PHÁP NGHIÊN CỨU”.
+- Nội dung: phương pháp phân tích yêu cầu, tác nhân/Use Case, quy trình, kiến trúc
+  MVC, dữ liệu 17 bảng, giao diện và kế hoạch kiểm thử; 11 hình mới, 13 bảng.
+  Dựa trên Chương 1, đặc tả chi tiết, code hiện hành và metadata schema local;
+  không dùng bản ghi cá nhân hoặc tự nhận đã khảo sát/triển khai đầy đủ các UC.
+- Đồng bộ thiết kế UC03: duyệt tạo tài khoản/sinh viên chờ thanh toán/hóa đơn,
+  chưa tạo hợp đồng; giữ chỗ tới bước tiếp nối. Tiền phòng theo đơn giá tháng;
+  UC02/UC15 dùng chung công thức khả dụng từ hợp đồng và đơn.
+- Checklist chỉ rõ mã UC tổng quan lệch đặc tả chi tiết; UC05.2/business rules
+  còn trống, UC13 thiếu đặc tả riêng; các chính sách giữ chỗ, hợp đồng sau thu,
+  điện nước và tác vụ định kỳ còn cần chốt. Không đổi nghiệp vụ hoặc schema.
+- Công cụ dựng/kiểm tra nằm tại `docs/reports/chapter2-tools/`; snapshot cấu trúc
+  chỉ có metadata, không có credential/bản ghi. XML, nội dung Word/Markdown,
+  11 hình nhúng và 13 bảng đã kiểm tra; Word đã mở và phân trang 29 trang.
+  Đã xem hình trang đầu, ERD và trang cuối; xuất PDF qua Word không hoàn tất
+  trên máy hiện tại, nên file nộp là Word/Markdown.
+- Tiếp theo: nhóm rà soát bản thảo, ghép vào báo cáo tổng, chỉnh số trang/mục lục
+  và định dạng theo phụ lục trường; hoàn thiện các đặc tả còn thiếu trước Chương 3.
+
+## 18. Danh sách cần sửa nghiệp vụ và sơ đồ (11/10/2026)
+
+- Tạo `docs/NGHIEP_VU_CAN_SUA_VA_DONG_BO.md`: 18 mục đối chiếu cụ thể,
+  phân biệt lỗi cần sửa, kiểm tra cần bổ sung và chính sách cần nhóm chốt.
+- Xem trực tiếp PNG: file `UC03-approval-sequence.png` đang chứa luồng tra cứu
+  sinh viên; UC15 thiếu lọc khu/tầng và đơn Đã duyệt chưa có MaHopDong; UC02 cần
+  làm rõ giữ chỗ bằng đơn; UC07.2 thiếu bước tiếp nối thanh toán đầu tiên;
+  UC10 thiếu thể hiện đủ bảng hóa đơn chi tiết/liên kết. ERD gốc thiếu liên kết UC03.
+- Bổ sung vấn đề hiệu lực hợp đồng: Room/Approval tính theo trạng thái Còn hạn,
+  dashboard có thêm kiểm tra ngày/trạng thái sinh viên; cần thống nhất ý nghĩa
+  và cơ chế cập nhật, chưa tự đổi công thức đã chốt.
+- Phát hiện lỗi trong bản thảo vừa tạo: UC06 phải là NVQL theo đặc tả, sequence,
+  Use Case và wireframe hiện hành. Đã sửa actor trong Markdown và hình Use Case,
+  dựng bản `BAN_THAO_CHUONG_2_KANTO_KTX_DONG_BO.docx`; không đổi actor trong
+  nghiệp vụ/code gốc. Word ban đầu đang được người dùng mở/chỉnh sửa nên không
+  ghi đè; các sửa thủ công cần ghép lại khi chọn dùng bản đồng bộ từ Markdown.
+- Chưa sửa các sơ đồ gốc, đặc tả, schema hay code ứng dụng; tài liệu hướng dẫn
+  nhóm ưu tiên UC03/UC15/UC02, thanh toán, tiền phòng và ERD trước.
+
+## 19. Bổ sung wireframe vào Chương 2 đã chốt (11/10/2026)
+
+- Người dùng chốt `docs/reports/chapter2/Chuong_2_Kanto_KTX_da_sua.docx` và
+  yêu cầu bổ sung mục 2.7.3 bằng wireframe đã cung cấp. Đây là nguồn ưu tiên cho
+  các lần chỉnh sửa báo cáo tiếp theo; không dựng lại từ Markdown bản thảo cũ.
+- Giữ nguyên nguồn, tạo `Chuong_2_Kanto_KTX_da_sua_bo_sung_wireframe.docx`
+  cùng thư mục; thêm 2.7.3 ngay sau 2.7.2 và trước tiêu đề 2.8.
+- Nhúng 25 PNG gốc từ `docs/05-ui/wireframes/`, chia 7 nhóm, có chú thích
+  Hình 2.8–2.32 và mô tả ngắn. Không chỉnh sửa ảnh hoặc nghiệp vụ đã chốt.
+- `add-approved-wireframes.php` giữ lại các phần DOCX và kiểm tra 285 thành phần
+  nội dung gốc ngoài mục bổ sung không đổi; XML hợp lệ, ảnh mới trùng byte nguồn.
+  Word mở/phân trang thành công: 60 trang, 32 hình (7 cũ + 25 mới).
+  Đã xem trang phần bổ sung, ảnh và chú thích cùng trang trong các trang đã xem.
+- Checklist và README công cụ đã chỉ rõ bản mới nhất. Không sửa code/schema,
+  không commit/push hoặc gửi thư. Tiếp theo: người dùng mở bản mới, cập nhật
+  mục lục/danh mục hình khi ghép báo cáo tổng và tự gửi thầy.
