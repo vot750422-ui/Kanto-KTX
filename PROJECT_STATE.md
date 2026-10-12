@@ -443,3 +443,18 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
 - `sql/qlktx_v2.sql` vẫn giữ ngoài commit vì chứa dữ liệu tài khoản/đơn đăng ký.
 - PHP lint đạt cho 2 file đối tác và 7 công cụ PHP; không chạy công cụ dựng lại
   báo cáo, không thay code ứng dụng hoặc schema trong đợt commit tài liệu này.
+
+## 21. UC16 - Xem hướng dẫn (12/10/2026)
+
+- Branch `feature/uc16-guide` tạo từ branch tài liệu local để giữ phần bàn giao.
+- Route công khai GET `index.php?action=guide`, link Hướng dẫn trên header chung.
+- `GuideController` và `views/guide/information.php` hiển thị nội dung tĩnh theo
+  đặc tả/wireframe UC16 và UC02 hiện tại: nhập thông tin, chọn phòng, xác nhận
+  gửi, chờ xét duyệt. CSS riêng `assets/css/guide.css` hỗ trợ màn hình nhỏ.
+- Không truy vấn CSDL, không tạo/sửa đơn hoặc phiên đăng ký; POST trả 405.
+  Không đổi schema, auth, UC02 hoặc cấu hình deployment.
+- Test route riêng `tests/guide.php` đạt 3/3; PHP lint các file thay đổi đạt.
+  PHP server tạm kiểm tra GET/CSS 200, POST 405. Apache local không kết nối được;
+  bộ test chung `tests/run.php` lỗi kết nối MySQL, chưa xác minh hồi quy toàn bộ.
+  Chưa kiểm tra bố cục bằng trình duyệt hoặc deployment.
+- Tiếp theo: kiểm tra giao diện desktop/mobile và chỉ push khi người dùng yêu cầu.

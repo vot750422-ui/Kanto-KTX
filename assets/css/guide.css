@@ -1,0 +1,17 @@
+.guide-page { background: #f5f7fb; }
+.guide-shell { max-width: 1100px; margin: 32px auto; padding: 36px; background: #fff; border: 1px solid #dce3ed; border-radius: 16px; }
+.guide-shell h1 { margin: 0 0 12px; font-size: 32px; }
+.guide-introduction { color: #64748b; line-height: 1.7; margin: 0 0 28px; }
+.guide-steps { list-style: none; counter-reset: guide-step; padding: 0; margin: 0; display: grid; gap: 26px; }
+.guide-steps > li { counter-increment: guide-step; position: relative; padding-left: 64px; }
+.guide-steps > li::before { content: counter(guide-step); position: absolute; top: 0; left: 0; width: 42px; height: 42px; display: grid; place-items: center; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; color: #1d4ed8; font-size: 20px; font-weight: 700; }
+.guide-shell h2 { font-size: 20px; margin: 0 0 8px; }
+.guide-steps ul, .guide-notes ul { padding-left: 20px; margin: 0; color: #475569; line-height: 1.8; }
+.guide-notes { background: #f8fafc; border: 1px solid #dce3ed; border-radius: 10px; margin-top: 30px; padding: 22px; }
+.guide-actions { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; margin-top: 28px; }
+.guide-actions a { color: #1d4ed8; text-underline-offset: 4px; }
+.guide-actions .guide-primary { background: #2563eb; color: #fff; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; }
+.guide-actions .guide-primary:hover { background: #1d4ed8; }
+.guide-shell a:focus-visible { outline: 3px solid #93c5fd; outline-offset: 4px; }
+@media (max-width: 800px) { .guide-shell { margin: 16px; padding: 24px; } }
+@media (max-width: 480px) { .guide-shell { padding: 20px; } .guide-shell h1 { font-size: 26px; } .guide-steps > li { padding-left: 50px; } .guide-steps > li::before { width: 34px; height: 34px; } .guide-notes { padding: 16px; } .guide-actions { align-items: stretch; flex-direction: column; } .guide-actions a { text-align: center; } }
