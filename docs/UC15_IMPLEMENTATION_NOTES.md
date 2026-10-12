@@ -14,9 +14,11 @@
   Không đổi schema, dữ liệu thật, auth, session hoặc cấu hình deploy.
 - Cần schema UC03 đã áp dụng (`dondangky.MaHopDong`). Không import bản dump chưa commit
   để chạy UC15; kiểm tra migration UC03 trước khi triển khai lên môi trường khác.
-- Bản local `docs/Partner/uc15.php` chuyển hướng về route mới; toàn bộ `docs/Partner`
-  giữ ở máy local, không đưa vào commit theo yêu cầu người dùng. Giao diện thực tế
-  dùng `assets/css/room-information.css` và không phụ thuộc file của đối tác.
+- Toàn bộ `docs/Partner` giữ ở máy local, không đưa vào commit theo yêu cầu người dùng.
+  Sau khi push UC15, đã khôi phục bản gốc đối tác và sửa đường dẫn UC15/UC5 để xem
+  riêng tại `docs/Partner/uc15.php` và `docs/Partner/uc5.php`. Bản gốc UC15 vẫn có
+  lỗi cột `hienco`/bộ lọc mã tòa. Giao diện thực tế dùng `assets/css/room-information.css`
+  và không phụ thuộc file của đối tác.
 - Đặc tả UC15 đã đồng bộ quy tắc giữ chỗ UC03. Sequence cũ còn thiếu trường hợp
   Đã duyệt chưa có hợp đồng; Wireframe ghi 5 tầng/10 phòng một tầng, trong khi seed
   hiện có 4 tầng với 13/13/12/12 phòng. Cần cập nhật hai hình khi hoàn thiện tài liệu.
