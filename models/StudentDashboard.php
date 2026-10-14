@@ -34,14 +34,14 @@ class StudentDashboard
                 $data['room'] = $contract['MaPhong'];
             }
         }
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM hoadon h WHERE h.TrangThai = 'Chưa thu' AND (
+        $stmt = $this->pdo->prepare("SELECT (SELECT COUNT(*) FROM hoadon h WHERE h.TrangThai = 'Chưa thu' AND (
             EXISTS (SELECT 1 FROM hoadontienphong p WHERE p.MaHoaDon = h.MaHoaDon AND p.MSSV = :room_student)
-            OR EXISTS (SELECT 1 FROM hoadondiennuocsinhvien d WHERE d.MaHoaDon = h.MaHoaDon AND d.MSSV = :utility_student))");
-        $stmt->execute(['room_student' => $student['MSSV'], 'utility_student' => $student['MSSV']]);
-        $data['invoices'] = (int) $stmt->fetchColumn();
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM phananhsuco WHERE MSSV = :student AND TrangThai = 'Chờ xử lý'");
-        $stmt->execute(['student' => $student['MSSV']]);
-        $data['reports'] = (int) $stmt->fetchColumn();
+            OR EXISTS (SELECT 1 FROM hoadondiennuocsinhvien d WHERE d.MaHoaDon = h.MaHoaDon AND d.MSSV = :utility_student))) AS invoices,
+            (SELECT COUNT(*) FROM phananhsuco WHERE MSSV = :report_student AND TrangThai = 'Chờ xử lý') AS reports");
+        $stmt->execute(['room_student' => $student['MSSV'], 'utility_student' => $student['MSSV'], 'report_student' => $student['MSSV']]);
+        $counts = $stmt->fetch();
+        $data['invoices'] = (int) $counts['invoices'];
+        $data['reports'] = (int) $counts['reports'];
         return $data;
     }
 }

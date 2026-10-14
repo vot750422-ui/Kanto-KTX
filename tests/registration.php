@@ -97,6 +97,14 @@ try {
     $model->submit(array_replace($data, ['MSSV' => 'COMPETING']), 'P2');
     $html = page($controller, ['operation' => 'submit', 'csrf_token' => $token]);
     verify($_SESSION['registration_draft']['step'] === 2 && str_contains($html, 'vừa hết chỗ') && !$model->hasPending('LAST'), 'Phòng hết chỗ sau bước chọn: quay lại bước 2 và không tạo đơn');
+    [, $invalidDateErrors] = RegistrationController::validate(array_replace($data, ['NgaySinh' => "2005-01-\0" ]));
+    verify(isset($invalidDateErrors['NgaySinh']), 'Ngày chứa NUL bị từ chối thay vì gây lỗi PHP');
+    [, $invalidEncodingErrors] = RegistrationController::validate(array_replace($data, ['HoTen' => "\xff"]));
+    verify(isset($invalidEncodingErrors['HoTen']), 'Dữ liệu không phải UTF-8 bị từ chối');
+    $_SERVER['REQUEST_METHOD'] = 'DELETE';
+    $beforeSession = $_SESSION;
+    ob_start(); $controller->show(); $methodResponse = ob_get_clean();
+    verify(http_response_code() === 405 && $methodResponse === '' && $_SESSION === $beforeSession, 'Phương thức ngoài GET/POST không thay đổi hồ sơ nháp');
     echo "\n$passed kiểm thử UC02 đạt.\n";
     ob_end_flush();
 } catch (Throwable $error) {

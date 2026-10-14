@@ -51,6 +51,8 @@ try {
     $model = new Registration($pdo);
     $male = $model->rooms('Nam');
     $female = $model->rooms('Nữ');
+    checkRoom($model->availableRoom('Nam', 'P0001') === $male[0], 'Tra cứu trực tiếp một phòng trả cùng dữ liệu danh sách');
+    checkRoom($model->availableRoom('Nữ', 'P0001') === null && $model->availableRoom('Nam', 'NOTFOUND') === null, 'Tra cứu một phòng vẫn chặn sai giới tính hoặc không tồn tại');
     checkRoom(count($male) === 100 && array_unique(array_column($male, 'MaToa')) === [0 => 'T01', 50 => 'T02'], 'Nam chỉ thấy 100 phòng Tòa A/B');
     checkRoom(count($female) === 100 && array_unique(array_column($female, 'MaToa')) === [0 => 'T03', 50 => 'T04'], 'Nữ chỉ thấy 100 phòng Tòa C/D');
     $data = ['MSSV' => 'SEEDTEST', 'HoTen' => 'Sinh viên kiểm thử', 'NgaySinh' => '2006-01-01', 'CCCD' => '000000000001', 'GioiTinh' => 'Nam', 'QueQuan' => 'Kiểm thử', 'SDT' => '0900000000', 'Lop' => 'TEST', 'NienKhoa' => '2024-2028', 'MaUuTien' => 'UT00'];

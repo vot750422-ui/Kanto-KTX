@@ -1,5 +1,14 @@
 # PROJECT_STATE
 
+## Tối ưu các chức năng đã công bố (15/10/2026)
+
+- Branch `refactor/published-code-optimization` tạo từ main e9d683d. Chỉ tối ưu phần đã có trên GitHub; không đưa UC11, thanh toán hoặc chatbot mới đang làm local vào branch này.
+- Dùng chung PDO trong một request qua config/connection.php; vẫn đọc lại quyền/tình trạng tài khoản và giữ factory tạo kết nối độc lập cho test. Không sửa credential/schema.
+- Room.availableRoom lọc phòng/giới tính ngay trong SQL, giới hạn subquery giữ chỗ/hợp đồng theo phòng; UC02 bước xác nhận chỉ đọc phòng đã chọn. Giữ nguyên công thức sức chứa và transaction.
+- Dashboard sinh viên gộp số đếm hóa đơn/phản ánh. JS cache tham chiếu lọc phòng và chặn gửi form dialog lặp, không bật nút bị server khóa. Validate UTF-8/NUL và HTTP method UC02; công cụ test-db chỉ CLI/loopback.
+- Kiểm tra trên chính branch này: run 30, registration 23, rooms 16, UC15 33, approval 58, guide 3 = 163/163; frontend 8/8, lint 52 PHP file và parse toàn bộ JS ứng dụng đạt. Không xác nhận đơn thật hoặc sửa dữ liệu thật. Chưa merge main/deploy Render.
+- Chi tiết: docs/PUBLISHED_CODE_OPTIMIZATION.md.
+
 ## Cập nhật giao diện UC16 (14/10/2026)
 
 - Bỏ hai liên kết hành động ở cuối trang hướng dẫn và CSS tương ứng; điều hướng vẫn nằm trên header chung.

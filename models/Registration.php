@@ -36,6 +36,11 @@ class Registration
         return (new Room($this->db))->rooms($gender, availableOnly: true);
     }
 
+    public function availableRoom(string $gender, string $roomId): ?array
+    {
+        return (new Room($this->db))->availableRoom($gender, $roomId);
+    }
+
     public function submit(array $data, string $roomId): string
     {
         // Khóa chung UC02: bảo vệ cả MSSV trùng ở hai phòng khác nhau.
@@ -59,7 +64,7 @@ class Registration
             if ($conflict = $this->studentConflict($data['MSSV'], $data['CCCD'])) {
                 throw new DomainException($conflict, 1);
             }
-            $room = array_filter($this->rooms($data['GioiTinh']), fn($r) => $r['MaPhong'] === $roomId);
+            $room = $this->availableRoom($data['GioiTinh'], $roomId);
             if (!$room) {
                 throw new DomainException('Phòng bạn chọn vừa hết chỗ. Vui lòng chọn phòng khác.', 2);
             }

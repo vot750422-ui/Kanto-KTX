@@ -6,6 +6,7 @@ if (PHP_SAPI !== 'cli') {
 }
 
 $cases = [
+    'connection_refresh' => 'Kết nối dùng chung nhưng quyền/trạng thái tài khoản vẫn đọc mới',
     'room_information_guest' => 'UC15: khách mở thông tin phòng qua route công khai',
     'logout' => 'Đăng xuất xóa session và chuyển về đăng nhập',
     'logout_invalid_token' => 'Token đăng xuất sai không xóa session',

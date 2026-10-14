@@ -76,3 +76,9 @@ Không thêm, sửa hoặc xóa dữ liệu. Session kiểm thử nằm trong RA
 Khi demo, chạy bộ kiểm thử rồi đăng nhập trên trình duyệt lần lượt với bốn tài khoản mẫu. Thử mở dashboard của vai trò khác để thấy HTTP 403, và mở dashboard trong cửa sổ riêng tư để thấy chuyển về trang đăng nhập.
 
 Giới hạn: chưa tự động kiểm thử đăng nhập thành công bằng mật khẩu thật, tài khoản bị khóa, cookie hoặc giao diện trình duyệt. Chuỗi mật khẩu băm được nhận diện không chứng minh mật khẩu demo nhập vào là đúng.
+# Kiểm tra sau tối ưu
+
+- `php -d xdebug.mode=off tests/run.php`: 30 ca, có kết nối dùng lại và quyền/trạng thái tài khoản vẫn được đọc mới.
+- `php -d xdebug.mode=off tests/registration.php`: 23 ca, gồm UTF-8/NUL và phương thức không hỗ trợ.
+- `php -d xdebug.mode=off tests/rooms.php`: 16 ca, gồm tra cứu trực tiếp một phòng và giới tính sai.
+- `node tests/frontend.js`: 8 ca dialog/lọc phòng, không cần cài npm package.

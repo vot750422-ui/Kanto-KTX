@@ -23,18 +23,34 @@ class Room
 
     public function rooms(string $gender, ?string $building = null, ?int $floor = null, bool $availableOnly = false): array
     {
+        return $this->queryRooms($gender, $building, $floor, $availableOnly);
+    }
+
+    public function availableRoom(string $gender, string $roomId): ?array
+    {
+        return $this->queryRooms($gender, availableOnly: true, roomId: $roomId)[0] ?? null;
+    }
+
+    private function queryRooms(string $gender, ?string $building = null, ?int $floor = null, bool $availableOnly = false, ?string $roomId = null): array
+    {
         // Dùng cùng công thức cho UC02/UC15; đơn đã chuyển sang hợp đồng không giữ chỗ lần hai.
+        $roomConstraint = $roomId === null ? '' : ' AND MaPhong = ?';
         $sql = "SELECT p.*, t.TenToa,
             COALESCE(h.DangO, 0) AS DangO, COALESCE(d.DangGiu, 0) AS DangGiu,
             p.SucChua - COALESCE(h.DangO, 0) - COALESCE(d.DangGiu, 0) AS ConCho
             FROM phong p JOIN toanha t ON t.MaToa = p.MaToa
             LEFT JOIN (SELECT MaPhong, COUNT(*) AS DangO FROM hopdong
-                WHERE TrangThai = 'Còn hạn' GROUP BY MaPhong) h ON h.MaPhong = p.MaPhong
+                WHERE TrangThai = 'Còn hạn' $roomConstraint GROUP BY MaPhong) h ON h.MaPhong = p.MaPhong
             LEFT JOIN (SELECT MaPhong, COUNT(*) AS DangGiu FROM dondangky
-                WHERE TrangThai = 'Chờ duyệt' OR (TrangThai = 'Đã duyệt' AND MaHopDong IS NULL)
+                WHERE (TrangThai = 'Chờ duyệt' OR (TrangThai = 'Đã duyệt' AND MaHopDong IS NULL)) $roomConstraint
                 GROUP BY MaPhong) d ON d.MaPhong = p.MaPhong
             WHERE p.GioiTinhPhong = ?";
-        $params = [$gender];
+        $params = $roomId === null ? [] : [$roomId, $roomId];
+        $params[] = $gender;
+        if ($roomId !== null) {
+            $sql .= ' AND p.MaPhong = ?';
+            $params[] = $roomId;
+        }
         if ($building !== null) {
             $sql .= ' AND p.MaToa = ?';
             $params[] = $building;
