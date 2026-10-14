@@ -1,5 +1,10 @@
 <?php
 require_once __DIR__ . '/middleware/Role.php';
+if (($_GET['action'] ?? '') === 'guide') {
+    require_once __DIR__ . '/controllers/GuideController.php';
+    (new GuideController())->show();
+    exit;
+}
 if (($_GET['action'] ?? '') === 'rooms') {
     require_once __DIR__ . '/config/db.php';
     require_once __DIR__ . '/controllers/RoomController.php';

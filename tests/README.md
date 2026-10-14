@@ -1,5 +1,15 @@
 # Kiểm thử đăng nhập và phân quyền
 
+## UC16 - Xem hướng dẫn
+
+```powershell
+& 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/guide.php
+```
+
+Kiểm tra route thực tế cho khách, người có phiên đăng nhập và POST (405).
+Không kết nối CSDL; xác nhận trang không thay đổi phiên đăng ký/đăng nhập,
+không tải config DB, không có form ghi dữ liệu và có link tới UC02/UC15.
+
 ## UC15 - Xem thông tin phòng
 
 ```powershell
