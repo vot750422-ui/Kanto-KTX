@@ -1,5 +1,11 @@
 # PROJECT_STATE
 
+## Cập nhật giao diện UC16 (14/10/2026)
+
+- Bỏ hai liên kết hành động ở cuối trang hướng dẫn và CSS tương ứng; điều hướng vẫn nằm trên header chung.
+- Branch guide đã có dispatch `index.php?action=guide` tới `GuideController::show()`. Không đưa các thay đổi chatbot, đăng nhập, cấu hình DB hoặc dump SQL từ workspace hiện tại vào commit guide.
+- Kiểm tra route hướng dẫn bằng `tests/guide.php` đạt 3/3; PHP lint index/controller/view đạt.
+
 ## 1. Tổng quan dự án
 
 Tên dự án:

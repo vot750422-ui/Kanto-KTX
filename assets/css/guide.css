@@ -8,10 +8,6 @@
 .guide-shell h2 { font-size: 20px; margin: 0 0 8px; }
 .guide-steps ul, .guide-notes ul { padding-left: 20px; margin: 0; color: #475569; line-height: 1.8; }
 .guide-notes { background: #f8fafc; border: 1px solid #dce3ed; border-radius: 10px; margin-top: 30px; padding: 22px; }
-.guide-actions { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; margin-top: 28px; }
-.guide-actions a { color: #1d4ed8; text-underline-offset: 4px; }
-.guide-actions .guide-primary { background: #2563eb; color: #fff; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; }
-.guide-actions .guide-primary:hover { background: #1d4ed8; }
 .guide-shell a:focus-visible { outline: 3px solid #93c5fd; outline-offset: 4px; }
 @media (max-width: 800px) { .guide-shell { margin: 16px; padding: 24px; } }
-@media (max-width: 480px) { .guide-shell { padding: 20px; } .guide-shell h1 { font-size: 26px; } .guide-steps > li { padding-left: 50px; } .guide-steps > li::before { width: 34px; height: 34px; } .guide-notes { padding: 16px; } .guide-actions { align-items: stretch; flex-direction: column; } .guide-actions a { text-align: center; } }
+@media (max-width: 480px) { .guide-shell { padding: 20px; } .guide-shell h1 { font-size: 26px; } .guide-steps > li { padding-left: 50px; } .guide-steps > li::before { width: 34px; height: 34px; } .guide-notes { padding: 16px; } }

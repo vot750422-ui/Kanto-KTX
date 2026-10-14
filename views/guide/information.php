@@ -62,10 +62,6 @@ $escape = fn($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
             <li>Phòng đã chọn có thể hết chỗ trước lúc gửi cuối cùng. Khi hệ thống thông báo, hãy quay lại chọn phòng còn chỗ.</li>
         </ul>
     </aside>
-    <div class="guide-actions">
-        <a class="guide-primary" href="<?= $escape(appUrl('index.php?action=register')) ?>">Đăng ký lưu trú <span aria-hidden="true">→</span></a>
-        <a href="<?= $escape(appUrl('index.php?action=rooms')) ?>">Xem thông tin phòng</a>
-    </div>
 </main>
 </body>
 </html>
