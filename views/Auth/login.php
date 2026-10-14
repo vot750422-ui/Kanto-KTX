@@ -58,6 +58,9 @@ unset($_SESSION['error']);
                     Đăng nhập
                 </button>
             </form>
+            <a class="btn-home" href="<?= htmlspecialchars(appUrl('index.php'), ENT_QUOTES, 'UTF-8') ?>">
+                Trở về trang chủ
+            </a>
         </div>
     </main>
 
