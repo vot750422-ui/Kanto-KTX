@@ -45,6 +45,27 @@ $users = $pdo->query('SELECT MaTK, TenDangNhap, MatKhau, VaiTro, TrangThai FROM 
 $active = array_values(array_filter($users, fn($user) => $user['TrangThai'] === 'Hoạt động'));
 $case = $argv[1] ?? '';
 try {
+    if ($case === 'connection_refresh') {
+        $firstConnection = $pdo;
+        require __DIR__ . '/../config/db.php';
+        check($pdo === $firstConnection, 'Module phải dùng lại kết nối trong request.');
+        $independent = createDatabaseConnection();
+        check($independent !== $pdo, 'Kết nối độc lập không được dùng chung transaction.');
+        $ddl = $pdo->query('SHOW CREATE TABLE taikhoan')->fetch(PDO::FETCH_NUM)[1];
+        $pdo->exec(str_replace('CREATE TABLE', 'CREATE TEMPORARY TABLE', $ddl));
+        $stmt = $pdo->prepare("INSERT INTO taikhoan (MaTK,TenDangNhap,MatKhau,VaiTro,TrangThai) VALUES (1,'TESTAUTH',?,'Sinh viên','Hoạt động')");
+        $stmt->execute([password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT)]);
+        $_SESSION['user'] = ['MaTK'=>1];
+        check(requireAuth()['VaiTro'] === 'Sinh viên', 'Đọc quyền sinh viên từ CSDL.');
+        $pdo->exec("UPDATE taikhoan SET VaiTro='Nhân viên kế toán' WHERE MaTK=1");
+        check(requireAuth()['VaiTro'] === 'Nhân viên kế toán', 'Không cache quyền cũ trong cùng request.');
+        $pdo->exec("UPDATE taikhoan SET TrangThai='Khóa' WHERE MaTK=1");
+        expectExit(function () {
+            check(http_response_code() === 302 && !isset($_SESSION['user']), 'Tài khoản bị khóa phải mất quyền ngay.');
+        });
+        requireAuth();
+        throw new RuntimeException('Tài khoản bị khóa chưa bị chặn.');
+    }
     if (str_starts_with($case, 'payment_')) {
         $forbiddenRoles = ['payment_student' => 'Sinh viên', 'payment_staff' => 'Nhân viên quản lý KTX', 'payment_manager' => 'Quản lý KTX'];
         unset($_SESSION['user']);

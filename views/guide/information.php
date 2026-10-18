@@ -26,8 +26,8 @@ $escape = fn($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
             <ul>
                 <li>Mở mục Đăng ký, nhập đầy đủ thông tin cá nhân và học tập.</li>
                 <li>Chọn diện ưu tiên phù hợp, hoặc chọn Không ưu tiên.</li>
-                <li>Có thể tải ảnh minh chứng diện ưu tiên nếu có: ảnh JPG/PNG, dung lượng dưới 5 MB.</li>
-                <li>Nhấn Tiếp tục để chuyển sang chọn phòng; sửa thông tin nếu hệ thống báo lỗi.</li>
+                <li>Có thể tải ảnh minh chứng diện ưu tiên nếu có.</li>
+                <li>Nhấn Tiếp tục để chuyển sang chọn phòng.</li>
             </ul>
         </li>
         <li>
@@ -41,9 +41,8 @@ $escape = fn($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
         <li>
             <h2>Xác nhận và gửi đăng ký</h2>
             <ul>
-                <li>Kiểm tra lại thông tin cá nhân, diện ưu tiên và phòng đã chọn. Nhấn Quay lại nếu cần sửa.</li>
-                <li>Nhấn Gửi đăng ký. Hệ thống kiểm tra lại thông tin và chỗ trống trước khi tạo đơn.</li>
-                <li>Khi gửi thành công, lưu mã đơn được hiển thị; đơn ở trạng thái Chờ duyệt.</li>
+                <li>Kiểm tra lại thông tin cá nhân, diện ưu tiên và phòng đã chọn.</li>
+                <li>Nhấn Gửi đăng ký.</li>
             </ul>
         </li>
         <li>

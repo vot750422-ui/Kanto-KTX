@@ -12,7 +12,7 @@ class RegistrationController
         $data = $errors = [];
         foreach ($limits as $field => $limit) {
             $data[$field] = is_string($input[$field] ?? null) ? trim($input[$field]) : '';
-            if ($data[$field] === '' || mb_strlen($data[$field]) > $limit) {
+            if ($data[$field] === '' || !mb_check_encoding($data[$field], 'UTF-8') || str_contains($data[$field], "\0") || mb_strlen($data[$field]) > $limit) {
                 $errors[$field] = 'Vui lòng nhập đầy đủ thông tin, đúng độ dài cho phép.';
             }
         }
@@ -29,7 +29,8 @@ class RegistrationController
         if (!in_array($data['GioiTinh'], ['Nam', 'Nữ'], true)) {
             $errors['GioiTinh'] = 'Vui lòng chọn giới tính hợp lệ.';
         }
-        $date = DateTimeImmutable::createFromFormat('!Y-m-d', $data['NgaySinh']);
+        $date = preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/D', $data['NgaySinh'])
+            ? DateTimeImmutable::createFromFormat('!Y-m-d', $data['NgaySinh']) : false;
         $today = new DateTimeImmutable('today', new DateTimeZone('Asia/Ho_Chi_Minh'));
         if (!$date || $date->format('Y-m-d') !== $data['NgaySinh'] || $date >= $today) {
             $errors['NgaySinh'] = 'Ngày sinh phải hợp lệ và trước ngày hiện tại.';
@@ -40,6 +41,11 @@ class RegistrationController
     public function show(): void
     {
         header('Cache-Control: no-store');
+        if (!in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['GET', 'POST'], true)) {
+            http_response_code(405);
+            header('Allow: GET, POST');
+            return;
+        }
         $model = new Registration($this->db);
         $priorities = $model->priorities();
         $_SESSION['registration_token'] ??= bin2hex(random_bytes(32));
@@ -99,7 +105,7 @@ class RegistrationController
                     $step = max(1, $step - 1);
                 } elseif ($operation === 'room' && $draft && $step === 2) {
                     $id = is_string($_POST['MaPhong'] ?? null) ? $_POST['MaPhong'] : '';
-                    if (!array_filter($model->rooms($data['GioiTinh']), fn($r) => $r['MaPhong'] === $id)) {
+                    if (!$model->availableRoom($data['GioiTinh'], $id)) {
                         $message = 'Vui lòng chọn phòng phù hợp còn chỗ.';
                     } else {
                         $draft['room'] = $id;
@@ -131,17 +137,13 @@ class RegistrationController
                 $_SESSION['registration_draft'] = $draft;
             }
         }
-        $rooms = $step > 1 ? $model->rooms($data['GioiTinh']) : [];
-        $selected = null;
-        foreach ($rooms as $room) {
-            if ($room['MaPhong'] === ($draft['room'] ?? null)) {
-                $selected = $room;
-            }
-        }
+        $rooms = $step === 2 ? $model->rooms($data['GioiTinh']) : [];
+        $selected = $step === 3 ? $model->availableRoom($data['GioiTinh'], $draft['room'] ?? '') : null;
         if ($step === 3 && !$selected) {
             $step = 2;
             $_SESSION['registration_draft']['step'] = 2;
             $message = 'Phòng bạn chọn vừa hết chỗ. Vui lòng chọn phòng khác.';
+            $rooms = $model->rooms($data['GioiTinh']);
         }
         require __DIR__ . '/../views/registration/form.php';
     }

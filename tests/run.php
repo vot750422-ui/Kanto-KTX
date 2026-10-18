@@ -6,6 +6,7 @@ if (PHP_SAPI !== 'cli') {
 }
 
 $cases = [
+    'connection_refresh' => 'Kết nối dùng chung nhưng quyền/trạng thái tài khoản vẫn đọc mới',
     'payment_guest' => 'Thanh toán: khách phải đăng nhập',
     'payment_student' => 'Thanh toán: sinh viên bị chặn',
     'payment_staff' => 'Thanh toán: NVQL bị chặn',

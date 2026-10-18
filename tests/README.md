@@ -87,3 +87,10 @@ Giới hạn: chưa tự động kiểm thử đăng nhập thành công bằng 
 - `php -d xdebug.mode=off tests/payment.php`: 29 ca bằng bảng TEMPORARY, từ duyệt UC03 đến hợp đồng UC11, kiểm tra rollback/gửi lặp/giữ tài khoản/token form.
 - `php -d xdebug.mode=off tests/run.php`: có 9 ca route/phân quyền/CSRF cho thanh toán.
 - Phạm vi demo và quy tắc học kỳ: `docs/UC07_PAYMENT_IMPLEMENTATION_NOTES.md`.
+
+# Kiểm tra sau tối ưu ứng dụng
+
+- `tests/run.php` có ca kết nối dùng lại nhưng thay đổi quyền/khóa tài khoản vẫn được xác thực lại, bằng bảng tài khoản TEMPORARY.
+- `tests/registration.php` có đầu vào NUL/UTF-8 sai và phương thức ngoài GET/POST.
+- `tests/rooms.php` đối chiếu truy vấn phòng đơn với danh sách và chặn sai giới tính.
+- `node tests/frontend.js` chạy 8 ca dialog/lọc phòng bằng Node VM và DOM mô phỏng; không cần npm package. Đây không thay cho kiểm tra bố cục trong trình duyệt.

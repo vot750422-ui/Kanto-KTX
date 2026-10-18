@@ -137,7 +137,7 @@ try {
         && (int) $pdo->query('SELECT COUNT(*) FROM hoadon')->fetchColumn() === 1
         && $model->find('FAIL')['TrangThai'] === 'Chờ duyệt' && !$pdo->inTransaction(), 'Lỗi hóa đơn con rollback tài khoản, sinh viên, hóa đơn cha, đơn');
     $lockName = 'kanto_uc02_' . substr(hash('sha256', (string) $pdo->query('SELECT DATABASE()')->fetchColumn()),0,32);
-    $second = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4",$username,$password,[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
+    $second = createDatabaseConnection();
     $stmt = $second->prepare('SELECT GET_LOCK(?,0)');$stmt->execute([$lockName]);
     expectApproval((int) $stmt->fetchColumn() === 1, 'Transaction thành công/thất bại đều giải phóng named lock cho kết nối khác');
     $stmt = $second->prepare('SELECT RELEASE_LOCK(?)');$stmt->execute([$lockName]);
@@ -171,8 +171,11 @@ try {
     approvalPage($controller,'approval-reject',[],['id'=>'WAR','csrf_token'=>$token,'reason'=>'Không đủ điều kiện']);
     expectApproval(http_response_code() === 303 && $model->find('WAR')['TrangThai'] === 'Từ chối' && $_SESSION['approval_token'] !== $token, 'POST từ chối chuyển hướng 303 và xoay token');
     fixtureApplication($pdo,'UIAPPROVE');
+    $staleToken = $_SESSION['approval_token'];
     approvalPage($controller,'approval-approve',[],['id'=>'UIAPPROVE','csrf_token'=>$_SESSION['approval_token'],'TongTien'=>'1']);
     expectApproval(http_response_code() === 303 && $model->find('UIAPPROVE')['TrangThai'] === 'Đã duyệt', 'POST duyệt thành công, không dùng số tiền do client gửi');
+    approvalPage($controller,'approval-approve',[],['id'=>'UIAPPROVE','csrf_token'=>$staleToken]);
+    expectApproval(http_response_code() === 403 && (int) $pdo->query("SELECT COUNT(*) FROM taikhoan WHERE TenDangNhap='UIAPPROVE'")->fetchColumn() === 1, 'Form cũ sau duyệt bị chặn CSRF và không tạo trùng tài khoản');
     $token = $_SESSION['approval_token'];
     approvalPage($controller,'approval-approve',[],['id'=>'UIAPPROVE','csrf_token'=>$token]);
     expectApproval(http_response_code() === 409 && (int) $pdo->query("SELECT COUNT(*) FROM taikhoan WHERE TenDangNhap='UIAPPROVE'")->fetchColumn() === 1, 'POST lặp với token mới vẫn không tạo thêm tài khoản');

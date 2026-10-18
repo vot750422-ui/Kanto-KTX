@@ -65,7 +65,6 @@ if (($_GET['action'] ?? '') === 'login') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php require __DIR__ . '/includes/head.php'; ?>
     <title>Trang chủ — Kanto KTX</title>
     <link rel="stylesheet" href="<?= htmlspecialchars(appUrl('assets/css/style.css'), ENT_QUOTES, 'UTF-8') ?>">
 </head>
@@ -76,7 +75,6 @@ if (($_GET['action'] ?? '') === 'login') {
             <div class="home-hero-content">
                 <p class="home-eyebrow"><span aria-hidden="true"></span> KANTO · KÝ TÚC XÁ SINH VIÊN</p>
                 <h1>Nơi khởi đầu<br><span>hành trình đại học</span><br>của bạn</h1>
-                <p class="home-description">Theo dõi thông tin lưu trú, cập nhật thông báo và quản lý các nhu cầu cá nhân trong một hệ thống.</p>
                 <div class="home-hero-actions">
                     <a class="home-register" href="<?= htmlspecialchars(appUrl('index.php?action=register'), ENT_QUOTES, 'UTF-8') ?>" style="text-decoration: none">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>

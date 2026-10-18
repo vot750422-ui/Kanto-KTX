@@ -472,3 +472,10 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
 - Không thay schema, không đưa chatbot UC13 hoặc dump SQL local vào nhánh bàn giao.
 - Kiểm thử trên nhánh bàn giao: payment 29/29, accommodation 6/6, đăng nhập/phân quyền/route 45/45, approval 57/57; dùng bảng TEMPORARY cho các ca ghi dữ liệu.
 - Chưa kiểm tra giao diện trực quan hoặc triển khai Render. Tiếp theo: review/merge nhánh và kiểm tra demo trên môi trường triển khai.
+## Đồng bộ giao diện và tối ưu code (18/10/2026)
+
+- Bổ sung dashboard quản lý KTX, chỉnh menu tài khoản NVQL và rút gọn nội dung trang chủ/hướng dẫn/hộp thoại hóa đơn theo bản local.
+- Tái sử dụng PDO trong request; giữ factory kết nối độc lập. Tối ưu truy vấn phòng được chọn, lọc phòng phía trình duyệt và chống gửi lặp hộp thoại; giữ kiểm tra quyền và nghiệp vụ hiện hành.
+- Không thay schema hoặc đưa chức năng chatbot/dump SQL vào đợt này. Dashboard và menu UC07/UC11 đã được merge trước đó.
+- Kiểm thử: run 46, registration 23, rooms 16, room-information 33, approval 58, payment 29, accommodation 6, guide 3 đều đạt (214 ca PHP); frontend 8/8 đạt.
+- Chưa kiểm tra trực quan giao diện hoặc deployment Render. Tiếp theo: kiểm tra giao diện và luồng demo trên môi trường triển khai.

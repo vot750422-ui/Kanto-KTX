@@ -45,7 +45,6 @@ $stats = ['applications' => 'Đơn đăng ký chờ xét duyệt', 'students' =>
             </summary>
             <div class="staff-account-menu">
                 <span>Nhân viên quản lý KTX</span>
-                <a href="<?= htmlspecialchars(appUrl('index.php'), ENT_QUOTES, 'UTF-8') ?>">Về trang chủ Kanto</a>
                 <?php require __DIR__ . '/../../includes/logout.php'; ?>
             </div>
         </details>
