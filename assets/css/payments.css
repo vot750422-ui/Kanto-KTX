@@ -1,0 +1,10 @@
+.payment-main { min-width: 0; }
+.payment-filters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; gap: 16px; margin: 24px 0; }
+.payment-filters label { display: grid; gap: 8px; min-width: 0; }
+.payment-filters input, .payment-filters select { padding: 11px; border: 1px solid #cbd5e1; border-radius: 6px; font: inherit; max-width: 100%; width: 100%; box-sizing: border-box; }
+.payment-table-scroll { overflow-x: auto; }
+.payment-table { width: 100%; border-collapse: collapse; }
+.payment-table th, .payment-table td { border-bottom: 1px solid #e2e8f0; padding: 14px 10px; text-align: left; line-height: 1.6; }
+.payment-table th { background: #f8fafc; }
+.payment-table .approval-button { white-space: nowrap; }
+ .payment-filter-actions { display: flex; gap: 12px; align-items: center; } @media (max-width: 1000px) { .payment-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } } @media (max-width: 600px) { .payment-filters { grid-template-columns: 1fr; } }

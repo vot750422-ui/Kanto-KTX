@@ -464,3 +464,11 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
   bộ test chung `tests/run.php` lỗi kết nối MySQL, chưa xác minh hồi quy toàn bộ.
   Chưa kiểm tra bố cục bằng trình duyệt hoặc deployment.
 - Tiếp theo: kiểm tra giao diện desktop/mobile và chỉ push khi người dùng yêu cầu.
+
+## Bàn giao UC07 và UC11 (18/10/2026)
+
+- Nhánh `feature/uc07-uc11-demo` tách từ `origin/main`, gồm tra cứu hóa đơn, xác nhận thu tiền phòng đầu tiên, tạo hợp đồng và xem thông tin lưu trú của sinh viên.
+- Tích hợp route `payments`, `payment-confirm`, `accommodation`, menu theo vai trò, header sinh viên và dashboard sinh viên/kế toán. Giữ tài khoản đã tạo ở UC03; không xác nhận thu điện nước/gia hạn trong phạm vi này.
+- Không thay schema, không đưa chatbot UC13 hoặc dump SQL local vào nhánh bàn giao.
+- Kiểm thử trên nhánh bàn giao: payment 29/29, accommodation 6/6, đăng nhập/phân quyền/route 45/45, approval 57/57; dùng bảng TEMPORARY cho các ca ghi dữ liệu.
+- Chưa kiểm tra giao diện trực quan hoặc triển khai Render. Tiếp theo: review/merge nhánh và kiểm tra demo trên môi trường triển khai.

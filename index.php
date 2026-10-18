@@ -1,5 +1,16 @@
 <?php
 require_once __DIR__ . '/middleware/Role.php';
+if (in_array($_GET['action'] ?? '', ['payments', 'payment-confirm'], true)) {
+    require_once __DIR__ . '/controllers/PaymentController.php';
+    (new PaymentController())->handle($_GET['action']);
+    exit;
+}
+if (($_GET['action'] ?? '') === 'accommodation') {
+    require_once __DIR__ . '/controllers/AccommodationController.php';
+    (new AccommodationController())->show();
+    exit;
+}
+
 if (($_GET['action'] ?? '') === 'guide') {
     require_once __DIR__ . '/controllers/GuideController.php';
     (new GuideController())->show();

@@ -167,14 +167,30 @@ Không tạo tài khoản cho:
 - đơn đã `Từ chối`.
 
 Tên đăng nhập lấy MSSV. Mật khẩu khởi tạo theo quy ước demo đã thống nhất và được
-băm bằng `password_hash()`. Không gửi Gmail; cách giao tài khoản cần bổ sung.
+băm bằng `password_hash()`. Không ghi giá trị mật khẩu vào tài liệu.
+
+Sau khi duyệt thành công, hệ thống hiển thị tên đăng nhập và mã hóa đơn cho
+Nhân viên quản lý KTX. Đây là kết quả cấp tài khoản, chưa phải thông báo đã
+bàn giao tài khoản cho sinh viên. Hệ thống hiện chưa gửi Gmail hoặc cung cấp
+luồng kích hoạt/thiết lập mật khẩu qua liên kết.
+
+Khi demo UC01 bằng tài khoản vừa cấp, người trình diễn sử dụng thông tin đăng
+nhập đã chuẩn bị theo quy ước demo; không mô tả bước này là sinh viên đã nhận
+email tự động. Kênh bàn giao tài khoản thực tế vẫn cần được chốt trước khi
+triển khai sử dụng thực tế, không tự mặc định một kênh giao nhận mới.
+
+Sinh viên có tài khoản ngay sau UC03 và có thể đăng nhập trước khi thanh toán.
+Khi đó UC11 hiển thị hồ sơ nhưng chưa có hợp đồng. UC07.2 giữ nguyên tài khoản
+này và chỉ bổ sung hợp đồng sau khi kế toán xác nhận thu tiền thành công.
 
 ### BR-UC03-08 - Hóa đơn tiền phòng đầu tiên
 
 - Xác định đúng một học kỳ hiện tại theo ngày Việt Nam.
 - Lấy học kỳ kế tiếp có ngày bắt đầu gần nhất sau ngày kết thúc kỳ hiện tại,
   kể cả chuyển năm học; không thu lại kỳ hiện tại sắp kết thúc.
-- Thu trọn đơn giá Tiền phòng mới nhất có hiệu lực tại ngày duyệt, đơn vị đồng/học kỳ.
+- Dùng đơn giá Tiền phòng mới nhất có hiệu lực tại ngày duyệt, đơn vị **đồng/tháng**. Đơn giá sai đơn vị bị từ chối.
+- Thu cho toàn bộ thời gian học kỳ kế tiếp, tính cả ngày bắt đầu và ngày kết thúc. Với mỗi tháng, tiền phòng bằng đơn giá tháng nhân số ngày thuộc học kỳ trong tháng, chia số ngày thực tế của tháng đó.
+- Tháng đủ ngày thu một đơn giá tháng; tháng không đủ ngày thu theo tỷ lệ. Cộng các tháng rồi làm tròn tổng đến đồng, lưu dạng DECIMAL hai chữ số thập phân; không làm tròn riêng từng tháng.
 - Ghi hoadon và hoadontienphong, giữ chính xác giá trị DECIMAL, không nhận tiền từ client.
 - Thiếu/chồng lấn dữ liệu kỳ hoặc không có đơn giá hợp lệ: không duyệt, rollback toàn bộ.
 - Chưa thêm quy tắc mở/đóng cổng đăng ký theo lịch vào UC02.
@@ -283,5 +299,5 @@ Hóa đơn phòng
 Giữ chỗ chờ thanh toán
 ```
 
-Khi thanh toán hóa đơn đầu tiên ở UC riêng: tạo hợp đồng, liên kết MaHopDong và
+Khi xác nhận thanh toán hóa đơn đầu tiên ở **UC07.2**: tạo hợp đồng, liên kết MaHopDong và
 đổi sinh viên sang Đang ở trong cùng transaction. UC03 chưa thực hiện bước này.

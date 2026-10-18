@@ -6,6 +6,22 @@ if (PHP_SAPI !== 'cli') {
 }
 
 $cases = [
+    'payment_guest' => 'Thanh toán: khách phải đăng nhập',
+    'payment_student' => 'Thanh toán: sinh viên bị chặn',
+    'payment_staff' => 'Thanh toán: NVQL bị chặn',
+    'payment_manager' => 'Thanh toán: quản lý bị chặn',
+    'payment_accountant' => 'Thanh toán: kế toán mở danh sách',
+    'payment_csrf' => 'Thanh toán: CSRF sai bị chặn',
+    'payment_missing' => 'Thanh toán: thiếu hóa đơn bị chặn',
+    'payment_get_confirm' => 'Thanh toán: GET không được xác nhận',
+    'payment_filters' => 'Thanh toán: bộ lọc dạng mảng bị chặn',
+    'accommodation_view_contract' => 'UC11: view có hợp đồng và escape dữ liệu',
+    'accommodation_view_pending' => 'UC11: chưa có hợp đồng vẫn hiển thị hồ sơ',
+    'accommodation_view_missing' => 'UC11: tài khoản chưa có hồ sơ',
+    'accommodation_guest' => 'UC11: khách phải đăng nhập',
+    'accommodation_forbidden' => 'UC11: vai trò khác sinh viên bị chặn',
+    'accommodation_student' => 'UC11: sinh viên chỉ xem hồ sơ từ phiên đăng nhập',
+    'accommodation_post' => 'UC11: không cho phép POST',
     'room_information_guest' => 'UC15: khách mở thông tin phòng qua route công khai',
     'logout' => 'Đăng xuất xóa session và chuyển về đăng nhập',
     'logout_invalid_token' => 'Token đăng xuất sai không xóa session',

@@ -24,6 +24,14 @@ class StaffDashboard
         return array_map('intval', $stmt->fetch());
     }
 
+    public function invoiceSummary(): array
+    {
+        $stmt = $this->pdo->query("SELECT COUNT(*) AS applications,
+            COALESCE(SUM(TrangThai = 'Đã thu'), 0) AS students,
+            COALESCE(SUM(TrangThai = 'Chưa thu'), 0) AS rooms,
+            COALESCE(SUM(CASE WHEN TrangThai = 'Chưa thu' THEN TongTien ELSE 0 END), 0) AS reports FROM hoadon");
+        return array_map('intval', $stmt->fetch());
+    }
     public function nameForAccount(int $accountId): ?string
     {
         $stmt = $this->pdo->prepare('SELECT HoTen FROM nhanvien WHERE MaTK = :id LIMIT 1');

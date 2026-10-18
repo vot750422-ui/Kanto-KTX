@@ -76,3 +76,14 @@ Không thêm, sửa hoặc xóa dữ liệu. Session kiểm thử nằm trong RA
 Khi demo, chạy bộ kiểm thử rồi đăng nhập trên trình duyệt lần lượt với bốn tài khoản mẫu. Thử mở dashboard của vai trò khác để thấy HTTP 403, và mở dashboard trong cửa sổ riêng tư để thấy chuyển về trang đăng nhập.
 
 Giới hạn: chưa tự động kiểm thử đăng nhập thành công bằng mật khẩu thật, tài khoản bị khóa, cookie hoặc giao diện trình duyệt. Chuỗi mật khẩu băm được nhận diện không chứng minh mật khẩu demo nhập vào là đúng.
+
+# UC11 - Xem thông tin lưu trú
+
+- `php -d xdebug.mode=off tests/accommodation.php`: kiểm thử model bằng bảng TEMPORARY, không sửa dữ liệu demo.
+- `php -d xdebug.mode=off tests/run.php`: gồm các ca UC11 khách/sai vai trò/POST, tài khoản hiện tại thay vì MSSV trong URL, và view có/chưa có hợp đồng/thiếu hồ sơ/escape dữ liệu.
+- Cần MySQL local và tài khoản hoạt động cho các vai trò của bộ kiểm thử chung.
+# Xác nhận thanh toán tiền phòng đầu tiên
+
+- `php -d xdebug.mode=off tests/payment.php`: 29 ca bằng bảng TEMPORARY, từ duyệt UC03 đến hợp đồng UC11, kiểm tra rollback/gửi lặp/giữ tài khoản/token form.
+- `php -d xdebug.mode=off tests/run.php`: có 9 ca route/phân quyền/CSRF cho thanh toán.
+- Phạm vi demo và quy tắc học kỳ: `docs/UC07_PAYMENT_IMPLEMENTATION_NOTES.md`.

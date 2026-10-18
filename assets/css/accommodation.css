@@ -1,0 +1,12 @@
+.accommodation-main { min-width: 0; }
+.accommodation-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+.accommodation-details { display: grid; gap: 20px; }
+.accommodation-card { background: #fff; border: 1px solid #dce3ed; border-radius: 10px; padding: 24px; min-width: 0; }
+.accommodation-card h2 { margin: 0 0 12px; font-size: 21px; }
+.accommodation-card dl { margin: 0; }
+.accommodation-card dl > div { display: grid; grid-template-columns: minmax(120px, 40%) minmax(0, 1fr); gap: 16px; padding: 13px 0; border-top: 1px solid #edf0f5; }
+.accommodation-card dt { color: #596579; }
+.accommodation-card dd { margin: 0; overflow-wrap: anywhere; }
+.accommodation-card p { line-height: 1.7; }
+@media (max-width: 1000px) { .accommodation-grid { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .accommodation-card { padding: 18px; } .accommodation-card dl > div { grid-template-columns: 1fr; gap: 6px; } }

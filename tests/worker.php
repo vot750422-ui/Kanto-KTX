@@ -45,6 +45,106 @@ $users = $pdo->query('SELECT MaTK, TenDangNhap, MatKhau, VaiTro, TrangThai FROM 
 $active = array_values(array_filter($users, fn($user) => $user['TrangThai'] === 'Hoạt động'));
 $case = $argv[1] ?? '';
 try {
+    if (str_starts_with($case, 'payment_')) {
+        $forbiddenRoles = ['payment_student' => 'Sinh viên', 'payment_staff' => 'Nhân viên quản lý KTX', 'payment_manager' => 'Quản lý KTX'];
+        unset($_SESSION['user']);
+        if ($case !== 'payment_guest') {
+            $role = $forbiddenRoles[$case] ?? 'Nhân viên kế toán';
+            $usersForRole = array_values(array_filter($active, fn($u) => $u['VaiTro'] === $role));
+            check(count($usersForRole) > 0, 'Cần tài khoản hoạt động cho vai trò kiểm thử.');
+            $_SESSION['user'] = $usersForRole[0];
+        }
+        $post = in_array($case, ['payment_csrf','payment_missing'], true);
+        $_GET = ['action' => $post || $case === 'payment_get_confirm' ? 'payment-confirm' : 'payments'];
+        if ($case === 'payment_filters') { $_GET['student'] = ['bad']; }
+        $_SESSION['payment_token'] = bin2hex(random_bytes(32));
+        $_POST = $post ? ['csrf_token' => $case === 'payment_csrf' ? [] : $_SESSION['payment_token']] : [];
+        $_SERVER['REQUEST_METHOD'] = $post ? 'POST' : 'GET';
+        http_response_code(200);
+        ob_start();
+        register_shutdown_function(function () use ($case, $forbiddenRoles) {
+            $html = ob_get_clean();
+            try {
+                check(error_get_last() === null, 'Có lỗi PHP trong thanh toán.');
+                $expected = match (true) {
+                    $case === 'payment_guest' => 302,
+                    isset($forbiddenRoles[$case]), $case === 'payment_csrf' => 403,
+                    $case === 'payment_missing', $case === 'payment_filters' => 400,
+                    $case === 'payment_get_confirm' => 405,
+                    default => 200,
+                };
+                check(http_response_code() === $expected, 'HTTP status thanh toán không đúng.');
+                if ($case === 'payment_accountant') {
+                    check(str_contains($html, '<h1>Quản lý hóa đơn</h1>') && str_contains($html, 'Danh sách hóa đơn'), 'NVKT phải mở được danh sách hóa đơn.');
+                    check(str_contains($html, 'aria-current="page"'), 'Navbar thanh toán được đánh dấu.');
+                }
+                echo 'PASS';
+            } catch (Throwable $error) { echo 'FAIL: ' . $error->getMessage(); exit(1); }
+        });
+        require __DIR__ . '/../index.php';
+    }
+    if (in_array($case, ['accommodation_view_contract', 'accommodation_view_pending', 'accommodation_view_missing'], true)) {
+        $students = array_values(array_filter($active, fn($u) => $u['VaiTro'] === 'Sinh viên'));
+        check(count($students) > 0, 'Cần tài khoản sinh viên để kiểm tra view.');
+        $_SESSION['user'] = $students[0];
+        $data = ['student' => null, 'accommodation' => null];
+        if ($case !== 'accommodation_view_missing') {
+            $data['student'] = ['MSSV' => 'VIEWTEST', 'HoTen' => '<script>alert(1)</script>', 'GioiTinh' => 'Nam', 'NgaySinh' => '2005-01-01', 'CCCD' => 'TEST', 'SDT' => '0900000000', 'Email' => null, 'Lop' => 'TEST', 'NienKhoa' => '2024-2028', 'QueQuan' => 'Kiểm thử', 'TrangThaiLuuTru' => 'Chờ thanh toán'];
+        }
+        if ($case === 'accommodation_view_contract') {
+            $data['accommodation'] = ['MaHopDong' => 'HVIEW', 'NgayBatDau' => '2026-09-01', 'NgayKetThuc' => '2027-08-31', 'TrangThai' => 'Còn hạn', 'SoPhong' => 'A101', 'Tang' => 1, 'TenToa' => 'Tòa kiểm thử', 'SucChua' => 8, 'GioiTinhPhong' => 'Nam'];
+        }
+        $_GET = ['action' => 'accommodation'];
+        ob_start();
+        require __DIR__ . '/../views/student/accommodation.php';
+        $html = ob_get_clean();
+        check(!str_contains($html, '<script>alert(1)</script>'), 'View phải escape dữ liệu hồ sơ.');
+        if ($case === 'accommodation_view_missing') {
+            check(str_contains($html, 'Tài khoản chưa có hồ sơ sinh viên'), 'View phải xử lý tài khoản thiếu hồ sơ.');
+        } else {
+            check(str_contains($html, '&lt;script&gt;alert(1)&lt;/script&gt;') && str_contains($html, '01/01/2005'), 'Hiển thị hồ sơ và định dạng ngày.');
+            check(str_contains($html, $case === 'accommodation_view_contract' ? 'HVIEW' : 'Hiện tại bạn không có hợp đồng lưu trú còn hiệu lực.'), 'Hiển thị đúng trạng thái hợp đồng.');
+            check($case === 'accommodation_view_contract' || !str_contains($html, 'Thông tin hợp đồng'), 'Chưa có hợp đồng không hiển thị hợp đồng/phòng giả.');
+        }
+        echo 'PASS';
+        exit;
+    }
+    if (in_array($case, ['accommodation_guest', 'accommodation_forbidden', 'accommodation_student', 'accommodation_post'], true)) {
+        unset($_SESSION['user']);
+        if ($case !== 'accommodation_guest') {
+            $isStudent = $case !== 'accommodation_forbidden';
+            $candidates = array_values(array_filter($active, fn($u) => ($u['VaiTro'] === 'Sinh viên') === $isStudent));
+            check(count($candidates) > 0, 'Cần tài khoản kiểm thử cho vai trò tương ứng.');
+            $_SESSION['user'] = $candidates[0];
+        }
+        $_GET = ['action' => 'accommodation', 'MSSV' => 'OTHER_STUDENT', 'MaTK' => '999999'];
+        $_SERVER['REQUEST_METHOD'] = $case === 'accommodation_post' ? 'POST' : 'GET';
+        http_response_code(200);
+        ob_start();
+        register_shutdown_function(function () use ($case) {
+            $html = ob_get_clean();
+            try {
+                check(error_get_last() === null, 'Có lỗi PHP trong UC11.');
+                $status = match ($case) { 'accommodation_guest' => 302, 'accommodation_forbidden' => 403, 'accommodation_post' => 405, default => 200 };
+                check(http_response_code() === $status, 'HTTP status UC11 không đúng.');
+                if ($case === 'accommodation_student') {
+                    check(str_contains($html, '<h1>Thông tin lưu trú</h1>'), 'Route không hiển thị UC11.');
+                    require __DIR__ . '/../config/db.php';
+                    $stmt = $pdo->prepare('SELECT MSSV FROM sinhvien WHERE MaTK = ?');
+                    $stmt->execute([$_SESSION['user']['MaTK']]);
+                    $mssv = $stmt->fetchColumn();
+                    check($mssv ? str_contains($html, htmlspecialchars($mssv, ENT_QUOTES, 'UTF-8')) : str_contains($html, 'Tài khoản chưa có hồ sơ sinh viên'), 'UC11 phải đọc hồ sơ từ tài khoản hiện tại.');
+                    check(!str_contains($html, 'OTHER_STUDENT'), 'Không nhận MSSV từ URL.');
+                    check(str_contains($html, 'aria-current="page"'), 'Có đánh dấu điều hướng hiện tại.');
+                }
+                echo 'PASS';
+            } catch (Throwable $error) {
+                echo 'FAIL: ' . $error->getMessage();
+                exit(1);
+            }
+        });
+        require __DIR__ . '/../index.php';
+    }
     if ($case === 'room_information_guest') {
         unset($_SESSION['user']);
         $_GET = ['action' => 'rooms'];
