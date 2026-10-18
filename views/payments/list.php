@@ -20,17 +20,7 @@ $filters ??= ['invoice'=>'','name'=>'','room'=>'','type'=>'','period'=>''];
             <img class="site-logo" src="<?= $escape(appUrl('assets/images/logo.png')) ?>" alt="Logo Kanto">
             <span class="site-brand-text"><strong>KANTO</strong><span>HỆ THỐNG QUẢN LÝ KÝ TÚC XÁ</span></span>
         </a>
-        <details class="staff-account">
-            <summary>
-                <span class="staff-avatar" aria-hidden="true"><svg viewBox="0 0 32 32" fill="currentColor"><circle cx="16" cy="11" r="6"/><path d="M4 29a12 12 0 0 1 24 0Z"/></svg></span>
-                <span class="staff-account-text"><strong><?= $escape($displayName ?? $_SESSION['user']['TenDangNhap']) ?></strong><small>Nhân viên kế toán</small></span>
-                <span class="staff-chevron" aria-hidden="true"></span>
-            </summary>
-            <div class="staff-account-menu">
-                <span>Nhân viên kế toán</span>
-                <?php require __DIR__ . '/../../includes/logout.php'; ?>
-            </div>
-        </details>
+        <?php require __DIR__ . '/../../includes/account-menu.php'; ?>
     </header>
     <div class="dashboard-layout">
         <?php require __DIR__ . '/../../includes/navbar.php'; ?>

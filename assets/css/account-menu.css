@@ -1,0 +1,26 @@
+.account-menu { position: relative; }
+.account-menu summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    background: #fff;
+    border: 1px solid #dce3ed;
+    border-radius: 12px;
+    list-style: none;
+    cursor: pointer;
+}
+.account-menu summary::-webkit-details-marker { display: none; }
+.account-avatar { display: grid; place-items: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: #eaf2ff; color: #2563eb; }
+.account-avatar svg { width: 30px; height: 30px; }
+.account-text { display: grid; gap: 4px; max-width: 240px; overflow-wrap: anywhere; }
+.account-text strong { font-size: 15px; }
+.account-text small { color: #64748b; font-size: 12px; }
+.account-chevron { width: 8px; height: 8px; border-right: 2px solid; border-bottom: 2px solid; transform: rotate(45deg); margin-left: 8px; }
+.account-dropdown { position: absolute; top: calc(100% + 8px); right: 0; z-index: 3; display: grid; gap: 14px; width: 250px; padding: 20px; background: #fff; border: 1px solid #dce3ed; border-radius: 12px; box-shadow: 0 8px 24px #20376412; }
+.account-dropdown span { color: #64748b; font-size: 14px; }
+.account-dropdown a { color: #1d4ed8; }
+
+.account-menu summary:focus-visible { outline: 3px solid #2459b8; outline-offset: 4px; }
+.account-dropdown { box-sizing: border-box; max-width: calc(100vw - 32px); }
+@media (max-width: 480px) { .account-menu { margin-left: auto; } .account-text { max-width: 180px; } }

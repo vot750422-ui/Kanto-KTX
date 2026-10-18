@@ -24,13 +24,7 @@ $url = static fn(string $value): string => htmlspecialchars(appUrl($value), ENT_
             <img class="site-logo" src="<?= $url('assets/images/logo.png') ?>" alt="">
             <span class="site-brand-text"><strong>KANTO</strong><span>HỆ THỐNG QUẢN LÝ KÝ TÚC XÁ</span></span>
         </a>
-        <details class="staff-account">
-            <summary><span class="staff-account-text"><strong><?= $escape($displayName) ?></strong><small>NVQL KTX</small></span><span class="staff-chevron" aria-hidden="true"></span></summary>
-            <div class="staff-account-menu">
-                <a href="<?= $url('index.php') ?>">Về trang chủ Kanto</a>
-                <?php require __DIR__ . '/../../includes/logout.php'; ?>
-            </div>
-        </details>
+        <?php require __DIR__ . '/../../includes/account-menu.php'; ?>
     </header>
     <div class="dashboard-layout">
         <?php require __DIR__ . '/../../includes/navbar.php'; ?>

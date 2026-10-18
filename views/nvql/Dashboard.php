@@ -37,17 +37,7 @@ $stats = ['applications' => 'Đơn đăng ký chờ xét duyệt', 'students' =>
             <img class="site-logo" src="<?= htmlspecialchars(appUrl('assets/images/logo.png'), ENT_QUOTES, 'UTF-8') ?>" alt="">
             <span class="site-brand-text"><strong>KANTO</strong><span>HỆ THỐNG QUẢN LÝ KÝ TÚC XÁ</span></span>
         </a>
-        <details class="staff-account">
-            <summary>
-                <span class="staff-avatar" aria-hidden="true"><svg viewBox="0 0 32 32" fill="currentColor"><circle cx="16" cy="11" r="6"/><path d="M4 29a12 12 0 0 1 24 0Z"/></svg></span>
-                <span class="staff-account-text"><strong><?= htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8') ?></strong><small>NVQL KTX</small></span>
-                <span class="staff-chevron" aria-hidden="true"></span>
-            </summary>
-            <div class="staff-account-menu">
-                <span>Nhân viên quản lý KTX</span>
-                <?php require __DIR__ . '/../../includes/logout.php'; ?>
-            </div>
-        </details>
+        <?php require __DIR__ . '/../../includes/account-menu.php'; ?>
     </header>
     <div class="dashboard-layout">
         <?php require __DIR__ . '/../../includes/navbar.php'; ?>
