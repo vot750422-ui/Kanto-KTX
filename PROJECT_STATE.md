@@ -1,5 +1,10 @@
 # PROJECT_STATE
 
+## Bắt buộc minh chứng cho diện ưu tiên (19/10/2026)
+
+- UC02 yêu cầu tải ảnh minh chứng khi chọn diện ưu tiên khác `UT00` (Không có). Kiểm tra được thực hiện phía server; thiếu ảnh thì giữ người dùng ở bước nhập thông tin và báo lỗi tại trường minh chứng.
+- Kiểm tra: `tests/registration.php` đạt 24/24; PHP lint `RegistrationController.php` và test đạt.
+
 ## Cập nhật giao diện UC16 (14/10/2026)
 
 - Bỏ hai liên kết hành động ở cuối trang hướng dẫn và CSS tương ứng; điều hướng vẫn nằm trên header chung.

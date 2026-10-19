@@ -98,6 +98,9 @@ class RegistrationController
                             $proof = 'storage/registration/' . $name;
                         }
                     }
+                    if (!$errors && $data['MaUuTien'] !== 'UT00' && !$proof) {
+                        $errors['proof'] = 'Vui lòng tải ảnh minh chứng cho diện ưu tiên đã chọn.';
+                    }
                     $data['FileMinhChung'] = $proof;
                     $step = $errors ? 1 : 2;
                     $draft = ['data' => $data, 'step' => $step];
