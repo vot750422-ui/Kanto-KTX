@@ -77,6 +77,8 @@ try {
     $html = page($controller, ['operation' => 'information', 'csrf_token' => $token] + $next);
     verify(str_contains($html, 'Chọn ảnh JPG/PNG') && $_SESSION['registration_draft']['step'] === 1, 'Từ chối ảnh giả, giữ tại bước nhập thông tin');
     $_FILES = [];
+    $html = page($controller, ['operation' => 'information', 'csrf_token' => $token] + array_replace($next, ['MaUuTien' => 'UT01']));
+    verify(str_contains($html, 'Vui lòng tải ảnh minh chứng') && $_SESSION['registration_draft']['step'] === 1, 'Diện ưu tiên bắt buộc có ảnh minh chứng');
     page($controller, ['operation' => 'information', 'csrf_token' => $token] + $next);
     verify($_SESSION['registration_draft']['step'] === 2, 'Thông tin hợp lệ chuyển sang chọn phòng');
     page($controller, ['operation' => 'room', 'csrf_token' => $token, 'MaPhong' => 'P2']);
