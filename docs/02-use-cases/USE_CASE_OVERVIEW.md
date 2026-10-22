@@ -47,7 +47,7 @@ Chi tiết luồng xử lý, tiền điều kiện, hậu điều kiện và cá
 | UC10 | Gửi phản ánh sự cố | Sinh viên |
 | UC11 | Xử lý phản ánh sự cố | Nhân viên quản lý KTX |
 | UC12 | Xem thông báo | Sinh viên |
-| UC13 | Sử dụng trợ lý AI | Sinh viên |
+| UC13 | Sử dụng trợ lý AI | Khách vãng lai, Sinh viên |
 | UC14 | Xem thống kê và báo cáo | Quản lý KTX |
 | UC15 | Xem thông tin phòng | Khách vãng lai |
 | UC16 | Xem hướng dẫn | Khách vãng lai |
@@ -71,6 +71,7 @@ Các chức năng yêu cầu đăng nhập sử dụng Session và kiểm tra qu
 - UC02 - Đăng ký lưu trú
 - UC15 - Xem thông tin phòng
 - UC16 - Xem hướng dẫn
+- UC13 - Sử dụng trợ lý AI
 
 Khách vãng lai không cần tài khoản để sử dụng các chức năng trên.
 
@@ -83,7 +84,7 @@ Khách vãng lai không cần tài khoản để sử dụng các chức năng t
 - UC12 - Xem thông báo
 - UC13 - Sử dụng trợ lý AI
 
-Các chức năng này chỉ được sử dụng sau khi sinh viên đăng nhập thành công.
+Các chức năng cá nhân cần đăng nhập; UC13 là chức năng thông tin công khai theo đặc tả Word gốc.
 
 ---
 

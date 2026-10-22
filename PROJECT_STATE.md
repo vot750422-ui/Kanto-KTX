@@ -484,3 +484,37 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
 - Không thay schema hoặc đưa chức năng chatbot/dump SQL vào đợt này. Dashboard và menu UC07/UC11 đã được merge trước đó.
 - Kiểm thử: run 46, registration 23, rooms 16, room-information 33, approval 58, payment 29, accommodation 6, guide 3 đều đạt (214 ca PHP); frontend 8/8 đạt.
 - Chưa kiểm tra trực quan giao diện hoặc deployment Render. Tiếp theo: kiểm tra giao diện và luồng demo trên môi trường triển khai.
+
+## UC13 dự phòng và thống kê token (22/10/2026)
+
+- Thêm ChatbotGateway: model chính theo GEMINI_MODEL (mặc định 3.1 Flash Lite),
+  model dự phòng GEMINI_FALLBACK_MODEL (mặc định 3.5 Flash Lite), sau đó thử lại
+  model dự phòng một lần. Tối đa ba lần, tối đa 9 giây/lần và ngân sách API 28 giây;
+  có backoff/jitter. 429 tôn trọng Retry-After/retryDelay và dừng nếu chờ quá ngân sách.
+  Lỗi cấu hình/400/401/403/404/CA không retry. AI từ chối phạm vi không gọi tiếp.
+- Khi dịch vụ không dùng được, chỉ các chủ đề khớp chính xác đăng ký/xem phòng/
+  đăng nhập có câu trả lời biên soạn, ghi rõ Hướng dẫn có sẵn. Không suy đoán dữ liệu
+  phòng. Hướng dẫn chung không gửi snapshot phòng để giảm input token; câu hỏi
+  phòng vẫn dùng snapshot mới, giữ nghiệp vụ/CSRF/phân quyền/CSDL hiện hành.
+- Log attempt/result JSONL theo ngày UTC tại C:\ProgramData\KantoKTX\chatbot-metrics
+  trên Windows, ngoài webroot/Git. Ghi request_id/model/lỗi/thời gian/usageMetadata;
+  không ghi nội dung chat, dữ liệu phòng, tài khoản hoặc secret. Mock không vào log thật.
+  Thiếu usage là unknown, tổng chỉ gồm token được API báo, không phải quota còn lại.
+  JSON thành công có metrics để đối chiếu trong DevTools Network.
+- CLI tools/chatbot-usage.php [YYYY-MM-DD] [log-directory] tổng hợp theo model và nguồn.
+  PHP Apache cần quyền ghi log. Xem hướng dẫn chi tiết tại UC13-ai-assistant.md.
+- Kiểm thử: chatbot 60/60, gateway 19/19, nguồn phòng 9/9; lint PHP các file mới/sửa đạt.
+  Gọi route thật hai lần cùng câu quy trình đăng ký lưu trú: đều HTTP 200, dùng model
+  dự phòng, lần đầu khoảng 8,8 giây và 5.985 token được báo; sau bỏ snapshot không cần,
+  khoảng 10,4 giây và 1.189 token (input 1.104, output 85). Hai lần model chính lỗi
+  không có usage; không coi là không tốn token. CLI đọc log thật thành công.
+- Chưa kiểm tra trực quan browser hoặc Render, chưa commit/push. Chưa có limiter
+  RPM/TPM toàn project hoặc circuit breaker liên request; hiện giới hạn session và
+  chuỗi retry. Tiếp theo: người dùng kiểm thử chất lượng, đối chiếu log với AI Studio
+  rồi chọn model/hạn mức phù hợp; không xoay key để tăng quota cùng project.
+
+### Kiểm tra bản bàn giao UC13
+
+- Nhánh feature/uc13-chatbot-resilience tạo từ origin/main; chỉ gồm UC13 và tích hợp route/widget/tài liệu.
+- Trên worktree sạch: chatbot 60/60, gateway 19/19, nguồn phòng 9/9, đăng nhập/phân quyền/route 46/46; lint 10 file PHP đạt.
+- Chưa kiểm tra Render; PNG Use Case chưa dựng lại, nguồn PlantUML đã thêm actor khách cho UC13.

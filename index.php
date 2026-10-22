@@ -1,5 +1,10 @@
 <?php
 require_once __DIR__ . '/middleware/Role.php';
+if (($_GET['action'] ?? '') === 'chatbot-send') {
+    require_once __DIR__ . '/controllers/ChatbotController.php';
+    (new ChatbotController())->send();
+    exit;
+}
 if (in_array($_GET['action'] ?? '', ['payments', 'payment-confirm'], true)) {
     require_once __DIR__ . '/controllers/PaymentController.php';
     (new PaymentController())->handle($_GET['action']);
