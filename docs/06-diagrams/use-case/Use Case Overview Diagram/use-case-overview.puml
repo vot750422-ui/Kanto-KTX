@@ -44,6 +44,7 @@ rectangle "HỆ THỐNG QUẢN LÝ KÝ TÚC XÁ" {
 Guest --> UC15
 Guest --> UC02
 Guest --> UC16
+Guest --> UC13
 
 Student --> UC12
 Student --> UC08
