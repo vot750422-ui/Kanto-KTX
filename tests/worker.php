@@ -45,6 +45,45 @@ $users = $pdo->query('SELECT MaTK, TenDangNhap, MatKhau, VaiTro, TrangThai FROM 
 $active = array_values(array_filter($users, fn($user) => $user['TrangThai'] === 'Hoạt động'));
 $case = $argv[1] ?? '';
 try {
+    if (str_starts_with($case, 'checkout_')) {
+        $_SESSION = [];
+        $_SESSION['checkout_csrf'] = bin2hex(random_bytes(32));
+        $confirm = in_array($case, ['checkout_get_confirm','checkout_csrf'], true);
+        $_GET = ['action'=>$confirm ? 'payment-checkout-confirm' : 'payment-checkout'];
+        $_SERVER['REQUEST_METHOD'] = in_array($case, ['checkout_invalid','checkout_csrf'], true) ? 'POST' : 'GET';
+        $_POST = ['link_token'=>'invalid','csrf_token'=>$case === 'checkout_csrf' ? 'wrong' : $_SESSION['checkout_csrf']];
+        http_response_code(200);
+        ob_start();
+        register_shutdown_function(function () use ($case) {
+            $html = ob_get_clean();
+            try {
+                check(error_get_last() === null, 'Có lỗi PHP ở route QR công khai.');
+                $expected = ['checkout_open'=>200,'checkout_invalid'=>409,'checkout_get_confirm'=>405,'checkout_csrf'=>403][$case];
+                check(http_response_code() === $expected, 'HTTP status QR không đúng.');
+                check(!isset($_SESSION['user']), 'QR công khai không được tạo phiên sinh viên.');
+                if ($case === 'checkout_open') { check(str_contains($html,'data-checkout-open'), 'Chưa đăng nhập phải mở được trang QR.'); }
+                echo 'PASS';
+            } catch (Throwable $e) { echo 'FAIL: ' . $e->getMessage(); exit(1); }
+        });
+        require __DIR__ . '/../index.php';
+    }
+    if (preg_match('/^uc17_(guest|accountant|staff|manager)_(.+)$/D', $case, $parts)) {
+        [, $actor, $route] = $parts;
+        unset($_SESSION['user']);
+        if ($actor !== 'guest') {
+            $role = ['accountant'=>'Nhân viên kế toán','staff'=>'Nhân viên quản lý KTX','manager'=>'Quản lý KTX'][$actor];
+            $matches = array_values(array_filter($active, fn($user) => $user['VaiTro'] === $role));
+            check(count($matches)>0, 'Cần tài khoản hoạt động cho kiểm thử phân quyền.');
+            $_SESSION['user'] = $matches[0];
+        }
+        $_GET = ['action'=>$route,'invoice'=>'TEST17'];
+        $_POST = ['invoice'=>'TEST17'];
+        $_SERVER['REQUEST_METHOD'] = in_array($route, ['student-payment-confirm','student-qr-create'], true) ? 'POST' : 'GET';
+        expectExit(function () use ($actor) {
+            check(http_response_code() === ($actor === 'guest' ? 302 : 403), 'Sai phân quyền UC17.');
+        });
+        require __DIR__ . '/../index.php';
+    }
     if ($case === 'connection_refresh') {
         $firstConnection = $pdo;
         require __DIR__ . '/../config/db.php';

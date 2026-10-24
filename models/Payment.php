@@ -39,6 +39,51 @@ class Payment
     }
     public function confirm(string $invoice): array
     {
+        return $this->settle($invoice);
+    }
+
+    public function studentForAccount(int $accountId): ?array
+    {
+        $stmt = $this->db->prepare("SELECT s.MSSV, s.HoTen FROM sinhvien s JOIN taikhoan t ON t.MaTK=s.MaTK
+            WHERE s.MaTK=? AND t.VaiTro='Sinh viên' AND t.TrangThai='Hoạt động'");
+        $stmt->execute([$accountId]);
+        return $stmt->fetch() ?: null;
+    }
+
+    public function studentInvoice(string $invoice, int $accountId, bool $forUpdate = false): ?array
+    {
+        // The utility invoice is shared by its recorded students, not by current room occupants.
+        $stmt = $this->db->prepare("SELECT h.*, r.SoPhong, k.TenHocKy, k.NamHoc,
+                u.Thang, u.Nam, u.DienTieuThu, u.NuocTieuThu, u.TienDien, u.TienNuoc
+            FROM hoadon h
+            LEFT JOIN hoadontienphong p ON p.MaHoaDon=h.MaHoaDon AND h.LoaiHoaDon='Tiền phòng'
+            LEFT JOIN hoadondiennuoc u ON u.MaHoaDon=h.MaHoaDon AND h.LoaiHoaDon='Điện nước'
+            LEFT JOIN hoadondiennuocsinhvien us ON us.MaHoaDon=u.MaHoaDon
+            JOIN sinhvien s ON s.MSSV=COALESCE(p.MSSV,us.MSSV)
+            JOIN taikhoan t ON t.MaTK=s.MaTK
+            JOIN phong r ON r.MaPhong=COALESCE(p.MaPhong,u.MaPhong)
+            LEFT JOIN hocky k ON k.MaHocKy=p.MaHocKy
+            WHERE h.MaHoaDon=? AND s.MaTK=? AND t.VaiTro='Sinh viên' AND t.TrangThai='Hoạt động'"
+            . ($forUpdate ? ' FOR UPDATE' : ''));
+        $stmt->execute([$invoice, $accountId]);
+        return $stmt->fetch() ?: null;
+    }
+
+    public function confirmForStudent(string $invoice, int $accountId, string $expectedAmount): array
+    {
+        return $this->settle($invoice, $accountId, $expectedAmount);
+    }
+
+    public function confirmLink(string $token): array
+    {
+        if (!preg_match('/^[a-f0-9]{64}$/D', $token)) {
+            throw new DomainException('Liên kết thanh toán không hợp lệ.');
+        }
+        return $this->settle('', null, null, $token);
+    }
+
+    private function settle(string $invoice, ?int $accountId = null, ?string $expectedAmount = null, ?string $linkToken = null): array
+    {
         $name = 'kanto_uc02_' . substr(hash('sha256', (string)$this->db->query('SELECT DATABASE()')->fetchColumn()), 0, 32);
         $lock = $this->db->prepare('SELECT GET_LOCK(?, 10)');
         $lock->execute([$name]);
@@ -46,6 +91,43 @@ class Payment
         try {
             $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
             $this->db->beginTransaction();
+            if ($linkToken !== null) {
+                $hash = hash('sha256', $linkToken);
+                $stmt = $this->db->prepare('SELECT MaHoaDon,MaTK,SoTien FROM phienthanhtoan WHERE MaPhien=? AND DaDungLuc IS NULL AND HetHanLuc>NOW() AND DATE_ADD(TaoLuc,INTERVAL 5 MINUTE)>NOW() FOR UPDATE');
+                $stmt->execute([$hash]);
+                $link = $stmt->fetch();
+                if (!$link) { throw new DomainException('Liên kết thanh toán không hợp lệ hoặc đã hết hiệu lực.'); }
+                $latest = $this->db->prepare('SELECT MaPhien FROM phienthanhtoan WHERE MaHoaDon=? AND DaDungLuc IS NULL AND HetHanLuc>NOW() AND DATE_ADD(TaoLuc,INTERVAL 5 MINUTE)>NOW() ORDER BY TaoLuc DESC,MaPhien DESC LIMIT 1 FOR UPDATE');
+                $latest->execute([$link['MaHoaDon']]);
+                if (!hash_equals((string)$latest->fetchColumn(), $hash)) { throw new DomainException('Liên kết thanh toán không còn hiệu lực.'); }
+                $invoice = $link['MaHoaDon'];
+                $accountId = (int)$link['MaTK'];
+                $expectedAmount = (string)$link['SoTien'];
+                // Consuming the link rolls back together with payment/contract on any failure.
+                $stmt = $this->db->prepare('UPDATE phienthanhtoan SET DaDungLuc=NOW() WHERE MaPhien=?');
+                $stmt->execute([$hash]);
+            }
+            if ($accountId !== null) {
+                // UC17 and accounting share the same lock and first-payment transaction below.
+                $stmt = $this->db->prepare('SELECT MaHoaDon FROM hoadon WHERE MaHoaDon=? FOR UPDATE');
+                $stmt->execute([$invoice]);
+                $stmt->fetchColumn();
+                $owned = $this->studentInvoice($invoice, $accountId, true);
+                if (!$owned) { throw new DomainException('Hóa đơn không tồn tại hoặc không thuộc về bạn.'); }
+                if ($owned['TrangThai'] !== 'Chưa thu') { throw new DomainException('Hóa đơn đã được thanh toán. Không thể xác nhận lại.'); }
+                if ((string)$owned['TongTien'] !== $expectedAmount) {
+                    throw new DomainException('Số tiền hóa đơn đã thay đổi. Vui lòng mở lại trang thanh toán.');
+                }
+                $stmt = $this->db->prepare('SELECT MaDonDangKy FROM dondangky WHERE MaHoaDon=? FOR UPDATE');
+                $stmt->execute([$invoice]);
+                $initialApplication = $stmt->fetchColumn();
+                if ($initialApplication === false) {
+                    // Periodic room and utility invoices only change payment status.
+                    $this->markPaid($invoice);
+                    $this->db->commit();
+                    return ['contract' => null];
+                }
+            }
             $stmt = $this->db->prepare('SELECT MaPhong FROM hoadontienphong WHERE MaHoaDon=?');
             $stmt->execute([$invoice]);
             $roomId = $stmt->fetchColumn();
@@ -97,9 +179,7 @@ class Payment
             if ($stmt->rowCount() !== 1) { throw new DomainException('Đơn đăng ký đã thay đổi. Vui lòng tải lại trang.'); }
             $stmt = $this->db->prepare("UPDATE sinhvien SET TrangThaiLuuTru='Đang ở' WHERE MSSV=?");
             $stmt->execute([$detail['MSSV']]);
-            $stmt = $this->db->prepare("UPDATE hoadon SET TrangThai='Đã thu', ThoiGianThanhToan=NOW() WHERE MaHoaDon=? AND TrangThai='Chưa thu'");
-            $stmt->execute([$invoice]);
-            if ($stmt->rowCount() !== 1) { throw new DomainException('Hóa đơn đã thay đổi.'); }
+            $this->markPaid($invoice);
             $this->db->commit();
             return ['contract' => $contract, 'username' => $student['TenDangNhap']];
         } catch (Throwable $error) {
@@ -109,5 +189,12 @@ class Payment
             $lock = $this->db->prepare('SELECT RELEASE_LOCK(?)');
             $lock->execute([$name]);
         }
+    }
+
+    private function markPaid(string $invoice): void
+    {
+        $stmt = $this->db->prepare("UPDATE hoadon SET TrangThai='Đã thu', ThoiGianThanhToan=NOW() WHERE MaHoaDon=? AND TrangThai='Chưa thu'");
+        $stmt->execute([$invoice]);
+        if ($stmt->rowCount() !== 1) { throw new DomainException('Hóa đơn đã thay đổi.'); }
     }
 }

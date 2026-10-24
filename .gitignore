@@ -1,3 +1,4 @@
 /storage/registration/
 .env
 .env.*
+/config/payment.local.php

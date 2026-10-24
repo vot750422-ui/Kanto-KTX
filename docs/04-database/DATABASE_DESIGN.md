@@ -1,5 +1,14 @@
 # Thiết kế CSDL — Tòa nhà và Phòng
 
+## UC17 — Phiên thanh toán QR liên thiết bị (25/10/2026)
+
+- Migration: `sql/uc17-payment-links.sql`, CLI `php scripts/migrate-payment-links.php`.
+- Bảng `phienthanhtoan`: `MaPhien` CHAR(64) ASCII/binary là SHA-256 token và khóa chính; `MaHoaDon` VARCHAR(12) FK đến `hoadon`; `MaTK` INT FK đến `taikhoan`; `SoTien` DECIMAL(12,2); `TaoLuc`, `HetHanLuc`, `DaDungLuc` DATETIME.
+- Token gốc ngẫu nhiên 32 byte chỉ giữ trong session trình duyệt đã tạo; CSDL chỉ lưu hash. Liên kết có hiệu lực tối đa 5 phút kể từ `TaoLuc`, kể cả bản ghi cũ có `HetHanLuc` dài hơn; mất quyền thu sớm khi hóa đơn đã thu/tài khoản gốc không còn hợp lệ/số tiền thay đổi.
+- Mỗi hóa đơn chỉ được phát hành một link còn hiệu lực tại một thời điểm. POST tạo QR dùng named lock và transaction chung với thanh toán, trả lại token trong cùng session nếu mã cũ còn hạn; trình duyệt khác phải đợi mã đó hết hạn. Nếu dữ liệu cũ có nhiều link, trang mở QR và xác nhận chỉ chấp nhận link mới nhất, POST tạo QR vô hiệu hóa các link còn lại. `DaDungLuc` cập nhật trong cùng transaction với hóa đơn/hợp đồng, rollback đồng thời khi lỗi.
+- FK dùng ON DELETE CASCADE/ON UPDATE CASCADE. Không chỉnh sửa cấu trúc hoặc dữ liệu của bảng nghiệp vụ hiện có. Bản ghi hết hạn/đã dùng hiện được giữ lại; chưa có tác vụ tự dọn lịch sử.
+- Khi tạo CSDL mới từ dump, cần chạy thêm migration này; không chỉnh sửa dump SQL local có dữ liệu sẵn trong lượt triển khai.
+
 ## Bảng hiện có
 
 - `toanha`: `MaToa` (khóa chính), `TenToa` (duy nhất).
@@ -52,3 +61,7 @@ Wireframe UC02 minh họa tầng 5 và phòng đầy; bộ dữ liệu mới ch�
 - Giữ cột Email nullable. Không ghi đè hồ sơ sinh viên đã tồn tại.
 - Không tự backfill hóa đơn/hợp đồng cho đơn cũ: kiểm tra dữ liệu trước khi deploy,
   đặc biệt đơn Đã duyệt trước migration có MaHopDong NULL nhưng đã có hợp đồng cũ.
+
+## Email xét duyệt (20/10/2026)
+
+Migration mới sql/uc03-email.sql tạo emailthongbao: MaDonDangKy là khóa chính và tham chiếu logic đến đơn (không thêm FK), NguoiNhan, TieuDe, NoiDung, TrangThai, SoLanThu, ThoiGianTao, ThoiGianGui. Trạng thái gồm Chờ gửi, Đã gửi, Lỗi, Không có email. Mỗi đơn tối đa một thông báo, ghi cùng transaction xét duyệt; SMTP sau commit. Email của đơn được sao chép vào sinhvien khi duyệt. Giữ Email nullable cho dữ liệu cũ; bắt buộc trong UC02 cho đơn mới. PHP và MySQL session thống nhất giờ Việt Nam. Không sửa DATETIME lịch sử. Xem ../UC03_EMAIL_SETUP.md; không nhập lại dump để nâng cấp.

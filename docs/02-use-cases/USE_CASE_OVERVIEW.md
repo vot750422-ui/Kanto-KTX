@@ -51,6 +51,7 @@ Chi tiết luồng xử lý, tiền điều kiện, hậu điều kiện và cá
 | UC14 | Xem thống kê và báo cáo | Quản lý KTX |
 | UC15 | Xem thông tin phòng | Khách vãng lai |
 | UC16 | Xem hướng dẫn | Khách vãng lai |
+| UC17 | Thanh toán hóa đơn (QR mô phỏng) | Sinh viên |
 
 ---
 
@@ -83,6 +84,7 @@ Khách vãng lai không cần tài khoản để sử dụng các chức năng t
 - UC10 - Gửi phản ánh sự cố
 - UC12 - Xem thông báo
 - UC13 - Sử dụng trợ lý AI
+- UC17 - Thanh toán hóa đơn (QR mô phỏng)
 
 Các chức năng cá nhân cần đăng nhập; UC13 là chức năng thông tin công khai theo đặc tả Word gốc.
 
@@ -199,3 +201,4 @@ Tên file nên sử dụng:
 - `UC14-statistics-report.md`
 - `UC15-room-info.md`
 - `UC16-guide.md`
+- `UC17-student-payment.md`

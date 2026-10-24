@@ -43,6 +43,14 @@ $cases = [
     'existing_session_wrong_password' => 'Có session cũ vẫn phải kiểm tra mật khẩu mới qua index.php',
 ];
 $failed = 0;
+foreach (['open','invalid','get_confirm','csrf'] as $case) {
+    $cases['checkout_' . $case] = 'UC17 QR công khai: ' . $case;
+}
+foreach (['student-payments', 'student-invoice', 'student-qr-create', 'student-payment', 'student-payment-confirm'] as $route) {
+    foreach (['guest', 'accountant', 'staff', 'manager'] as $actor) {
+        $cases['uc17_' . $actor . '_' . $route] = 'UC17: chặn ' . $actor . ' tại ' . $route;
+    }
+}
 foreach (['approval', 'approval-detail', 'approval-proof', 'approval-approve', 'approval-reject'] as $route) {
     $cases['approval_guest_' . $route] = 'UC03: khách bị chặn tại ' . $route;
     $cases['approval_forbidden_' . $route] = 'UC03: vai trò khác bị chặn tại ' . $route;
