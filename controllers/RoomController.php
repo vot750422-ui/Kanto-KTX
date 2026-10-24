@@ -8,7 +8,6 @@ class RoomController
 
     public function show(): void
     {
-        header('Cache-Control: no-store');
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {
             http_response_code(405);
             header('Allow: GET');

@@ -2,14 +2,7 @@
 require_once __DIR__ . '/../config/app.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start([
-        'use_strict_mode' => true,
-        'use_only_cookies' => true,
-        'cookie_httponly' => true,
-        'cookie_secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-            || getenv('RENDER') === 'true',
-        'cookie_samesite' => 'Lax',
-    ]);
+    session_start();
 }
 
 function requireAuth(): array
@@ -33,7 +26,6 @@ function requireAuth(): array
 
     if (!$user || $user['TrangThai'] !== 'Hoạt động') {
         unset($_SESSION['user']);
-        session_regenerate_id(true);
         $_SESSION['error'] = 'Phiên đăng nhập không còn hợp lệ. Vui lòng đăng nhập lại.';
         header('Location: ' . appUrl('index.php?action=login'));
         exit;
@@ -44,6 +36,5 @@ function requireAuth(): array
         'TenDangNhap' => $user['TenDangNhap'],
         'VaiTro' => $user['VaiTro'],
     ];
-    header('Cache-Control: no-store');
     return $_SESSION['user'];
 }

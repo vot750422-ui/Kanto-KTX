@@ -11,16 +11,3 @@ if (opening) {
         document.getElementById('checkout-opening').textContent = 'Liên kết không hợp lệ. Vui lòng mở lại mã QR từ hóa đơn.';
     }
 }
-const confirmation = document.querySelector('[data-checkout-confirm]');
-if (confirmation) {
-    confirmation.addEventListener('submit', (event) => {
-        if (confirmation.dataset.submitting) { event.preventDefault(); return; }
-        confirmation.dataset.submitting = 'true';
-        const button = confirmation.querySelector('button[type="submit"]');
-        button.disabled = true;
-        button.textContent = 'Đang xác nhận…';
-    });
-}
-window.addEventListener('pageshow', (event) => {
-    if (event.persisted) window.location.reload();
-});

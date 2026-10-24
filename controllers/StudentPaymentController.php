@@ -19,12 +19,9 @@ class StudentPaymentController
             echo 'Phương thức không được hỗ trợ.';
             return;
         }
-        header('Referrer-Policy: same-origin');
         require __DIR__ . '/../config/db.php';
         $model = new Payment($pdo);
         $accountId = (int)$_SESSION['user']['MaTK'];
-        $_SESSION['student_payment_csrf'] ??= bin2hex(random_bytes(32));
-        $csrf = $_SESSION['student_payment_csrf'];
         $screen = $action;
         $error = '';
         $success = $_SESSION['student_payment_success'] ?? '';
@@ -54,10 +51,6 @@ class StudentPaymentController
                 if (!$validInvoice) {
                     http_response_code(400);
                     throw new DomainException('Mã hóa đơn không hợp lệ.');
-                }
-                if ($write && (!is_string($_POST['csrf_token'] ?? null) || !hash_equals($csrf, $_POST['csrf_token']))) {
-                    http_response_code(403);
-                    throw new DomainException('Phiên xác nhận không hợp lệ. Vui lòng mở lại trang thanh toán.');
                 }
                 $bill = $model->studentInvoice($invoice, $accountId);
                 if (!$bill) {

@@ -5,7 +5,6 @@ if (!isset($priorities, $step, $data)) {
 }
 $escape = fn($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 $labels = ['HoTen' => 'Họ tên', 'NgaySinh' => 'Ngày sinh', 'CCCD' => 'CCCD', 'GioiTinh' => 'Giới tính', 'QueQuan' => 'Quê quán', 'SDT' => 'Số điện thoại', 'MSSV' => 'MSSV', 'Lop' => 'Lớp', 'NienKhoa' => 'Niên khóa'];
-$token = $escape($_SESSION['registration_token']);
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -38,7 +37,6 @@ $token = $escape($_SESSION['registration_token']);
         <?php if ($message): ?><div class="registration-error" role="alert"><?= $escape($message) ?></div><?php endif; ?>
         <?php if ($step === 1): ?>
         <form method="post" enctype="multipart/form-data">
-            <input type="hidden" name="csrf_token" value="<?= $token ?>">
             <input type="hidden" name="operation" value="information">
             <div class="registration-layout">
                 <div class="registration-fields">
@@ -85,7 +83,6 @@ $token = $escape($_SESSION['registration_token']);
             </div>
             <p class="registration-subtitle">Chỉ hiển thị phòng phù hợp còn chỗ. Chỗ được giữ sau khi gửi đăng ký thành công.</p>
             <form method="post">
-                <input type="hidden" name="csrf_token" value="<?= $token ?>">
                 <div class="room-grid">
                     <?php foreach ($rooms as $room): ?>
                     <label class="room-card" data-building="<?= $escape($room['MaToa']) ?>" data-floor="<?= $escape($room['Tang']) ?>">
@@ -112,7 +109,6 @@ $token = $escape($_SESSION['registration_token']);
             </dl></section>
             <p class="registration-info">Kiểm tra kỹ thông tin trước khi xác nhận. Sau khi gửi, hồ sơ sẽ được chuyển đến nhân viên quản lý KTX để xét duyệt.</p>
             <form method="post" class="registration-actions">
-                <input type="hidden" name="csrf_token" value="<?= $token ?>">
                 <button name="operation" value="back">Quay lại</button><button class="primary" name="operation" value="submit">Gửi đăng ký</button>
             </form>
         <?php endif; ?>

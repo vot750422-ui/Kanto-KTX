@@ -11,15 +11,10 @@ class PaymentController
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== ($write ? 'POST' : 'GET')) {
             header('Allow: ' . ($write ? 'POST' : 'GET')); http_response_code(405); return;
         }
-        $_SESSION['payment_token'] ??= bin2hex(random_bytes(32));
         $error = '';
         require __DIR__ . '/../config/db.php';
         $model = new Payment($pdo);
         if ($write) {
-            $token = $_POST['csrf_token'] ?? null;
-            if (!is_string($token) || !hash_equals($_SESSION['payment_token'], $token)) {
-                http_response_code(403); echo 'Phiên xác nhận không hợp lệ. Vui lòng tải lại danh sách hóa đơn.'; return;
-            }
             $invoice = $_POST['invoice'] ?? '';
             if (!is_string($invoice) || !preg_match('/^[A-Za-z0-9_-]{1,12}$/D', $invoice)) {
                 http_response_code(400); echo 'Vui lòng chọn hóa đơn cần xác nhận thanh toán.'; return;
@@ -27,7 +22,6 @@ class PaymentController
             try {
                 $result = $model->confirm($invoice);
                 $_SESSION['payment_success'] = 'Xác nhận thành công. Hợp đồng: ' . $result['contract'] . '. Tài khoản sinh viên: ' . $result['username'] . ' (đã cấp khi duyệt đơn).';
-                $_SESSION['payment_token'] = bin2hex(random_bytes(32));
                 header('Location: ' . appUrl('index.php?action=payments&status=paid'), true, 303); return;
             } catch (DomainException $exception) {
                 http_response_code(409); $error = $exception->getMessage();

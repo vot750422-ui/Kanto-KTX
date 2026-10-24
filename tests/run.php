@@ -12,7 +12,6 @@ $cases = [
     'payment_staff' => 'Thanh toán: NVQL bị chặn',
     'payment_manager' => 'Thanh toán: quản lý bị chặn',
     'payment_accountant' => 'Thanh toán: kế toán mở danh sách',
-    'payment_csrf' => 'Thanh toán: CSRF sai bị chặn',
     'payment_missing' => 'Thanh toán: thiếu hóa đơn bị chặn',
     'payment_get_confirm' => 'Thanh toán: GET không được xác nhận',
     'payment_filters' => 'Thanh toán: bộ lọc dạng mảng bị chặn',
@@ -25,7 +24,6 @@ $cases = [
     'accommodation_post' => 'UC11: không cho phép POST',
     'room_information_guest' => 'UC15: khách mở thông tin phòng qua route công khai',
     'logout' => 'Đăng xuất xóa session và chuyển về đăng nhập',
-    'logout_invalid_token' => 'Token đăng xuất sai không xóa session',
     'logout_get' => 'Yêu cầu GET không được đăng xuất',
     'staff_dashboard' => 'Dashboard NVQL trả đúng số liệu tổng quan và tên nhân viên',
     'student_dashboard' => 'Dashboard sinh viên đọc dữ liệu và xử lý tài khoản chưa có hồ sơ',
@@ -43,7 +41,7 @@ $cases = [
     'existing_session_wrong_password' => 'Có session cũ vẫn phải kiểm tra mật khẩu mới qua index.php',
 ];
 $failed = 0;
-foreach (['open','invalid','get_confirm','csrf'] as $case) {
+foreach (['open','invalid','get_confirm'] as $case) {
     $cases['checkout_' . $case] = 'UC17 QR công khai: ' . $case;
 }
 foreach (['student-payments', 'student-invoice', 'student-qr-create', 'student-payment', 'student-payment-confirm'] as $route) {

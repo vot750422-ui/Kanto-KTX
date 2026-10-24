@@ -1,8 +1,5 @@
 <?php
 require_once __DIR__ . '/../middleware/Auth.php';
-if (empty($_SESSION['chatbot_token'])) {
-    $_SESSION['chatbot_token'] = bin2hex(random_bytes(32));
-}
 ?>
 <link rel="stylesheet" href="<?= htmlspecialchars(appUrl('assets/css/chatbot.css'), ENT_QUOTES, 'UTF-8') ?>">
 <button class="chatbot-launcher" id="chatbot-launcher" type="button" aria-controls="chatbot-panel" aria-expanded="false">
@@ -28,7 +25,6 @@ if (empty($_SESSION['chatbot_token'])) {
         <p class="chatbot-message chatbot-message-bot">Xin chào! Tôi có thể hướng dẫn đăng ký lưu trú, cho biết sức chứa và chỗ còn trống của phòng. Bạn muốn hỏi gì?</p>
     </div>
     <form id="chatbot-form" action="<?= htmlspecialchars(appUrl('index.php?action=chatbot-send'), ENT_QUOTES, 'UTF-8') ?>" method="post">
-        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['chatbot_token'], ENT_QUOTES, 'UTF-8') ?>">
         <label class="chatbot-label" for="chatbot-question">Nội dung câu hỏi</label>
         <div class="chatbot-input-row">
             <input id="chatbot-question" name="question" type="text" maxlength="500" autocomplete="off" placeholder="Ví dụ: Cách đăng ký? Phòng A101 còn chỗ không?" required>

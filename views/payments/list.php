@@ -90,7 +90,6 @@ $filters ??= ['invoice'=>'','name'=>'','room'=>'','type'=>'','period'=>''];
                         <p><?= $escape($item['MSSV']) ?> · <?= $escape($item['MaHoaDon']) ?> · <strong><?= $escape(number_format((float)$item['TongTien'], 0, ',', '.')) ?> đồng</strong></p>
                         <p>Chỉ xác nhận sau khi đã nhận đủ tiền. Hợp đồng sẽ theo kỳ <?= $escape($item['NgayBatDau'] . ' → ' . $item['NgayKetThuc']) ?>. Sinh viên dùng tài khoản đã được cấp khi duyệt đơn để xem thông tin lưu trú.</p>
                         <input type="hidden" name="invoice" value="<?= $escape($item['MaHoaDon']) ?>">
-                        <input type="hidden" name="csrf_token" value="<?= $escape($_SESSION['payment_token']) ?>">
                         <div class="approval-actions"><button class="approval-button" type="button" data-close>Hủy</button><button class="approval-button primary" type="submit">Có, đã nhận đủ tiền</button></div>
                     </form>
                 </dialog>

@@ -31,7 +31,7 @@ sequence UC13 và wireframe UC13. Đặc tả gốc được ưu tiên khi bản
 
 ## Chi tiết triển khai
 
-- POST `index.php?action=chatbot-send`; CSRF riêng; tối đa 500 ký tự, 5 câu/phút/session.
+- POST `index.php?action=chatbot-send`; tối đa 500 ký tự mỗi câu hỏi.
 - Chat ở trang chủ và các trang sinh viên qua nút chat; navbar không còn mục Chatbot AI theo yêu cầu người dùng.
 - Không tạo bảng, không lưu câu hỏi/câu trả lời vào CSDL hoặc log. `ChatbotRoomSource` dùng PDO trong transaction chỉ đọc, tái sử dụng `Room::rooms` và công thức UC15. Chỉ gửi cột công khai và tổng theo tòa, không gửi mã đơn, MSSV, thông tin người đang ở hoặc credential.
 - Cửa sổ giữ tối đa 40 tin nhắn trong DOM, mất khi tải lại trang. Mỗi câu gửi độc lập, chưa có ngữ cảnh hội thoại nhiều lượt.
@@ -102,7 +102,7 @@ Xem thống kê:
 
 Có thể truyền thư mục log làm đối số thứ hai sau ngày. Đối chiếu usage/quota thực tế
 ở https://aistudio.google.com/rate-limit, chọn đúng project/model.
-Giới hạn session 5 câu/phút và tối đa ba lần gọi giúp hạn chế khuếch đại lưu lượng;
+Tối đa ba lần gọi API cho một câu hỏi giúp tránh chờ kéo dài;
 chưa có bộ giới hạn RPM/TPM toàn project hoặc bộ đếm quota còn lại. Khi nhiều người
 kiểm thử đồng thời, cần căn theo hạn mức thực tế và theo dõi AI Studio.
 Dữ liệu phòng chỉ được đưa vào prompt khi câu hỏi cần; câu hướng dẫn chung bỏ snapshot
