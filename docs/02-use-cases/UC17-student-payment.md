@@ -73,7 +73,7 @@ QR được tạo trong trình duyệt bằng bản thư viện qrcode-generator
 
 ## Kiểm thử
 
-Trước khi dùng phiên bản mới trên CSDL đích, chạy `php scripts/migrate-payment-links.php` một lần để thêm bảng `phienthanhtoan` và các khóa ngoại. Migration không sửa dữ liệu hóa đơn/hợp đồng. Không import lại SQL dump. Các bảng đang tồn tại không bị tự thay đổi cấu trúc bởi `CREATE TABLE IF NOT EXISTS`.
+Docker container chạy `php scripts/migrate-payment-links.php` trước khi Apache nhận request, để thêm bảng `phienthanhtoan` và các khóa ngoại trên CSDL đã cấu hình. Nếu chạy ứng dụng ngoài Docker, chạy lệnh đó trước khi dùng UC17. Migration không sửa dữ liệu hóa đơn/hợp đồng; `CREATE TABLE IF NOT EXISTS` có thể chạy lặp. Không import lại SQL dump. Khi khởi động container thất bại, kiểm tra log và quyền `CREATE TABLE` của tài khoản CSDL.
 
 ```powershell
 php -d xdebug.mode=off tests/student-payments.php

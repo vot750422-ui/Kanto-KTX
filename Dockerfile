@@ -15,3 +15,7 @@ COPY . /var/www/html/
 WORKDIR /var/www/html/
 RUN mkdir -p storage/registration && chown -R www-data:www-data /var/www/html
 EXPOSE 80
+
+# UC17 reads phienthanhtoan when an unpaid invoice is opened. Prepare the
+# additive, idempotent table before Apache accepts requests.
+CMD ["sh", "-c", "php scripts/migrate-payment-links.php && exec apache2-foreground"]
