@@ -1,5 +1,11 @@
 # PROJECT_STATE
 
+## UC17 - Thanh toán hóa đơn bằng QR trên điện thoại (25/10/2026)
+
+- Sinh viên mở danh sách, bấm **Xem hóa đơn**, rồi bấm **Tạo mã QR** trong chi tiết. GET không phát hành mã. Mỗi hóa đơn chỉ có một token hiệu lực 5 phút; tải lại trong cùng phiên giữ mã cũ. Điện thoại quét QR mở trang xác nhận riêng không cần đăng nhập; chỉ POST xác nhận hợp lệ mới đánh dấu hóa đơn Đã thu. Hóa đơn tiền phòng đầu tiên tạo hợp đồng cùng transaction; hóa đơn định kỳ/điện nước chỉ ghi thu.
+- QR dùng origin được cấu hình bằng `PAYMENT_PUBLIC_ORIGIN` hoặc `config/payment.local.php` (tệp local bị bỏ qua bởi Git). Trên WAMP, dùng IP Wi-Fi của máy chạy Apache, cho phép điện thoại cùng mạng truy cập site và cổng 80. Không đưa IP cá nhân hoặc token vào commit. Môi trường triển khai phải chạy `scripts/migrate-payment-links.php` trước khi dùng UC17.
+- Kiểm thử nhánh UC17: 83 ca UC17, 29 ca thanh toán, 70 ca route/phân quyền, 17 ca frontend đạt. Chưa quét bằng điện thoại vật lý hoặc xác nhận trên dữ liệu thật. Trên WAMP hiện tại đã viết cấu hình Apache cho Wi-Fi và kiểm tra cú pháp; cần quyền quản trị để khởi động lại dịch vụ Apache và mở inbound TCP/80 trong Windows Firewall, nên chưa xác nhận được điện thoại thật truy cập. PR này chưa tự động triển khai.
+
 ## Bắt buộc minh chứng cho diện ưu tiên (19/10/2026)
 
 - UC02 yêu cầu tải ảnh minh chứng khi chọn diện ưu tiên khác `UT00` (Không có). Kiểm tra được thực hiện phía server; thiếu ảnh thì giữ người dùng ở bước nhập thông tin và báo lỗi tại trường minh chứng.

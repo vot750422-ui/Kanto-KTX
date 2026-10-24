@@ -1,5 +1,15 @@
 <?php
 require_once __DIR__ . '/middleware/Role.php';
+if (in_array($_GET['action'] ?? '', ['payment-checkout', 'payment-checkout-confirm'], true)) {
+    require_once __DIR__ . '/controllers/PaymentCheckoutController.php';
+    (new PaymentCheckoutController())->handle($_GET['action']);
+    exit;
+}
+if (in_array($_GET['action'] ?? '', ['student-payments', 'student-invoice', 'student-qr-create', 'student-payment', 'student-payment-confirm'], true)) {
+    require_once __DIR__ . '/controllers/StudentPaymentController.php';
+    (new StudentPaymentController())->handle($_GET['action']);
+    exit;
+}
 if (($_GET['action'] ?? '') === 'chatbot-send') {
     require_once __DIR__ . '/controllers/ChatbotController.php';
     (new ChatbotController())->send();

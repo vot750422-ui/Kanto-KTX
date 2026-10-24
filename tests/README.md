@@ -88,6 +88,14 @@ Giới hạn: chưa tự động kiểm thử đăng nhập thành công bằng 
 - `php -d xdebug.mode=off tests/run.php`: có 9 ca route/phân quyền/CSRF cho thanh toán.
 - Phạm vi demo và quy tắc học kỳ: `docs/UC07_PAYMENT_IMPLEMENTATION_NOTES.md`.
 
+# UC17 - Sinh viên thanh toán QR trên điện thoại
+
+- `php -d xdebug.mode=off tests/student-payments.php`: dùng bảng TEMPORARY để kiểm tra quyền sở hữu, nút tạo QR bằng POST, một mã hiệu lực 5 phút, tải lại không cấp mã mới, thanh toán từ phiên điện thoại chưa đăng nhập, thu lặp và rollback.
+- `php -d xdebug.mode=off tests/run.php`: kiểm tra phân quyền các route sinh viên và bốn trường hợp route QR công khai.
+- `node tests/frontend.js`: kiểm tra tạo ảnh QR, chỉ chấp nhận origin được cấu hình, chuyển token fragment thành POST và nút xác nhận không gửi lặp.
+- Preview giao diện: `php tests/student-payments.php --preview-dir <thu-muc-tam-da-ton-tai>`; dùng HTML từ bảng TEMPORARY, không phải thanh toán thật qua HTTP.
+- Môi trường mới cần chạy `php scripts/migrate-payment-links.php` để thêm bảng `phienthanhtoan`. Cấu hình địa chỉ điện thoại theo `docs/02-use-cases/UC17-student-payment.md`.
+
 # Kiểm tra sau tối ưu ứng dụng
 
 - `tests/run.php` có ca kết nối dùng lại nhưng thay đổi quyền/khóa tài khoản vẫn được xác thực lại, bằng bảng tài khoản TEMPORARY.

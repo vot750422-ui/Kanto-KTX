@@ -1,0 +1,47 @@
+.student-payments-main { min-width: 0; }
+.checkout-page { margin: 0; background: #f3f6fc; color: #263953; font: 16px/1.6 system-ui, sans-serif; }
+.checkout-page * { box-sizing: border-box; }
+.checkout-shell { width: min(100%, 560px); margin: 0 auto; padding: 32px 16px; }
+.checkout-brand { text-align: center; font-size: 13px; font-weight: 700; letter-spacing: .05em; color: #315bc8; margin-bottom: 24px; }
+.checkout-page h1 { font-size: 26px; margin: 0 0 20px; }
+.checkout-page .payment-button { width: 100%; }
+.payment-success,.payment-error { padding: 14px 18px; border-radius: 10px; line-height: 1.6; margin: 16px 0; }
+.payment-success { background: #eaf7ef; color: #22643b; }
+.payment-error { background: #fff0ee; color: #a32b24; }
+.payment-filters { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 24px 0 16px; }
+.payment-filters select { border: 1px solid #d8dfeb; background: white; border-radius: 8px; padding: 10px 14px; font: inherit; }
+.payment-button { display: inline-block; border: 0; border-radius: 9px; background: #315bc8; color: white; padding: 12px 18px; font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; line-height: 1.4; text-align: center; }
+.payment-button:hover { background: #2449ab; color: white; }
+.payment-button:disabled { opacity: .65; cursor: wait; }
+.payment-secondary { background: #eef1f7; color: #263953; }
+.payment-table-wrap { overflow-x: auto; background: white; border: 1px solid #e0e6f0; border-radius: 12px; }
+.payment-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.payment-table caption { text-align: left; font-weight: 700; padding: 18px; color: #253954; }
+.payment-table th,.payment-table td { text-align: left; padding: 16px; border-top: 1px solid #e8edf5; }
+.payment-table th { background: #f6f8fc; color: #53627a; white-space: nowrap; }
+.payment-table a,.payment-back,.payment-cancel,.payment-pagination a { color: #315bc8; }
+.payment-table a.payment-view-button { display: inline-block; white-space: nowrap; border: 1px solid #315bc8; border-radius: 8px; padding: 8px 12px; background: #eef3ff; color: #254bb1; font-weight: 600; text-decoration: none; }
+.payment-table a.payment-view-button:hover { background: #315bc8; color: #fff; }
+.payment-amount { white-space: nowrap; font-weight: 600; }
+.payment-badge { display: inline-block; padding: 5px 10px; border-radius: 20px; background: #fff1d9; color: #80520d; font-size: 13px; white-space: nowrap; }
+.payment-badge.is-paid { background: #e6f5eb; color: #246d3e; }
+.payment-pagination { display: flex; gap: 20px; align-items: center; justify-content: center; padding: 20px; flex-wrap: wrap; }
+.payment-back { display: inline-block; margin: 10px 0 20px; }
+.payment-detail-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 24px; }
+.payment-card { background: white; border: 1px solid #e0e6f0; border-radius: 16px; padding: 26px; min-width: 0; }
+.payment-card h2 { font-size: 20px; margin: 0 0 18px; overflow-wrap: anywhere; }
+.payment-card p { line-height: 1.65; }
+.payment-total { font-size: 32px; font-weight: 700; color: #244aab; margin: 18px 0; }
+.payment-card dl { margin: 0; }
+.payment-card dl div { display: flex; justify-content: space-between; gap: 20px; padding: 12px 0; border-bottom: 1px solid #edf0f5; }
+.payment-card dt { color: #62718a; }
+.payment-card dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
+.payment-help { font-size: 13px; color: #64748b; margin-top: 20px; }
+.payment-checkout { text-align: center; }
+.payment-qr { margin: 0 auto 12px; max-width: 260px; }
+.payment-qr img { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+.payment-qr-timer { color: #315bc8; font-weight: 500; }
+.payment-cancel { display: inline-block; margin-top: 18px; }
+.payment-button:focus-visible,.payment-table a:focus-visible,.payment-cancel:focus-visible { outline: 3px solid #93b4ff; outline-offset: 3px; }
+@media (max-width: 1050px) { .payment-detail-grid { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .payment-card { padding: 18px; } .payment-total { font-size: 28px; } .payment-table th,.payment-table td { padding: 12px; } .payment-filters { align-items: stretch; } .payment-filters label { width: 100%; } }

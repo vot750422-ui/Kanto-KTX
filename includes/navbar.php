@@ -3,7 +3,7 @@
 (static function (): void {
     $role = $_SESSION['user']['VaiTro'] ?? '';
     $menus = [
-        'Sinh viên' => [['Thông tin lưu trú', 'room', 'accommodation'], ['Thanh toán', 'money'], ['Gửi phản ánh sự cố', 'report']],
+        'Sinh viên' => [['Thông tin lưu trú', 'room', 'accommodation'], ['Thanh toán', 'money', 'student-payments'], ['Gửi phản ánh sự cố', 'report']],
         'Nhân viên quản lý KTX' => [['Xét duyệt đơn đăng ký', 'document', 'approval'], ['Quản lý sinh viên', 'users'], ['Quản lý hợp đồng', 'document'], ['Ghi chỉ số điện nước', 'bolt'], ['Xử lý phản ánh sự cố', 'report']],
         'Nhân viên kế toán' => [['Quản lý hóa đơn', 'document', 'payments']],
         'Quản lý KTX' => [['Tổng quan và báo cáo', 'chart']],
@@ -27,6 +27,7 @@
         'approval' => ['approval', 'approval-detail', 'approval-proof', 'approval-approve', 'approval-reject'],
         'payments' => ['payments', 'payment-confirm'],
         'accommodation' => ['accommodation'],
+        'student-payments' => ['student-payments', 'student-invoice', 'student-qr-create', 'student-payment', 'student-payment-confirm'],
     ];
     $dashboardUrl = dashboardForRole($role);
     $items = [['Trang chủ', 'home', $dashboardUrl, $currentPath === $dashboardUrl]];
