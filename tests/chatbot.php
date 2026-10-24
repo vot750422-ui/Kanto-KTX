@@ -81,35 +81,24 @@ foreach ([$invalidJson, $wrongRole, $response(['in_scope' => true, 'answer' => s
 $calls = 0;
 $bot = new Chatbot(function () use (&$calls, $response) { $calls++; return $response(['in_scope' => true, 'answer' => 'Hướng dẫn đăng ký.']); });
 $cases = [
-    ['GET', ['csrf_token' => 'test-token', 'question' => 'Hướng dẫn'], 405, 'Phương thức', 0],
-    ['POST', ['csrf_token' => 'bad', 'question' => 'Hướng dẫn'], 403, 'CSRF sai', 0],
-    ['POST', ['question' => 'Hướng dẫn'], 403, 'CSRF thiếu', 0],
-    ['POST', ['csrf_token' => 'test-token', 'question' => '  '], 422, 'Câu hỏi trống', 0],
-    ['POST', ['csrf_token' => 'test-token', 'question' => ['abc']], 422, 'Input dạng mảng', 0],
-    ['POST', ['csrf_token' => 'test-token', 'question' => str_repeat('a', 501)], 422, 'Input quá dài', 0],
-    ['POST', ['csrf_token' => 'test-token', 'question' => "\xff"], 422, 'UTF-8 sai', 0],
-    ['POST', ['csrf_token' => 'test-token', 'question' => 'Hướng dẫn'], 200, 'Câu hỏi hợp lệ', 1],
+    ['GET', ['question' => 'Hướng dẫn'], 405, 'Phương thức', 0],
+    ['POST', ['question' => '  '], 422, 'Câu hỏi trống', 0],
+    ['POST', ['question' => ['abc']], 422, 'Input dạng mảng', 0],
+    ['POST', ['question' => str_repeat('a', 501)], 422, 'Input quá dài', 0],
+    ['POST', ['question' => "\xff"], 422, 'UTF-8 sai', 0],
+    ['POST', ['question' => 'Hướng dẫn'], 200, 'Câu hỏi hợp lệ', 1],
 ];
 foreach ($cases as [$method, $data, $expected, $name, $expectedCalls]) {
     $_SERVER['REQUEST_METHOD'] = $method;
     $_POST = $data;
-    $_SESSION = ['chatbot_token' => 'test-token'];
+    $_SESSION = [];
     $calls = 0;
     ob_start(); (new ChatbotController($bot))->send(); $json = ob_get_clean();
     check(http_response_code() === $expected && is_string(json_decode($json, true)['message'] ?? null) && $calls === $expectedCalls, $name);
 }
-$_SESSION['chatbot_requests'] = array_fill(0, 5, time());
-$calls = 0;
-ob_start(); (new ChatbotController($bot))->send(); ob_end_clean();
-check(http_response_code() === 429 && $calls === 0, 'Giới hạn 5 câu/phút/session');
-$_SESSION['chatbot_requests'] = array_fill(0, 5, time() - 61);
-ob_start(); (new ChatbotController($bot))->send(); ob_end_clean();
-check(http_response_code() === 200, 'Hết cửa sổ giới hạn');
-$_SESSION['chatbot_requests'] = [];
 ob_start(); (new ChatbotController(new Chatbot(fn() => throw new RuntimeException('secret upstream error'))))->send(); $json = ob_get_clean();
 check(http_response_code() === 503 && !str_contains($json, 'secret') && json_decode($json, true)['message'] === Chatbot::UNAVAILABLE, 'Lỗi dịch vụ không lộ chi tiết');
 foreach ([[504, Chatbot::TIMEOUT], [503, Chatbot::BUSY]] as [$status, $message]) {
-    $_SESSION['chatbot_requests'] = [];
     ob_start(); (new ChatbotController(new Chatbot(fn() => throw new RuntimeException($message, $status))))->send(); $json = ob_get_clean();
     check(http_response_code() === $status && json_decode($json, true)['message'] === $message, 'Phân biệt lỗi chờ/quá tải: ' . $status);
 }

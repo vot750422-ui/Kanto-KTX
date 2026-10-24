@@ -105,7 +105,6 @@ $date = static fn($value) => $value ? date('d/m/Y H:i', strtotime($value)) : '�
                             <p>Nhấn nút dưới đây để mô phỏng thanh toán thành công số tiền <strong><?= $escape($money($bill['TongTien'])) ?></strong>.</p>
                             <form method="post" action="<?= $escape(appUrl('index.php?action=student-payment-confirm')) ?>" data-payment-confirm>
                                 <input type="hidden" name="invoice" value="<?= $escape($bill['MaHoaDon']) ?>">
-                                <input type="hidden" name="csrf_token" value="<?= $escape($csrf) ?>">
                                 <input type="hidden" name="transaction_token" value="<?= $escape($intent) ?>">
                                 <button class="payment-button" type="submit">Xác nhận thanh toán mô phỏng</button>
                             </form>
@@ -123,7 +122,6 @@ $date = static fn($value) => $value ? date('d/m/Y H:i', strtotime($value)) : '�
                                 <p>Tạo mã QR khi bạn sẵn sàng thanh toán. Mã có hiệu lực 5 phút và chỉ dùng một lần.</p>
                                 <form method="post" action="<?= $escape(appUrl('index.php?action=student-qr-create')) ?>" data-qr-create>
                                     <input type="hidden" name="invoice" value="<?= $escape($bill['MaHoaDon']) ?>">
-                                    <input type="hidden" name="csrf_token" value="<?= $escape($csrf) ?>">
                                     <button class="payment-button" type="submit">Tạo mã QR</button>
                                 </form>
                             <?php endif; ?>

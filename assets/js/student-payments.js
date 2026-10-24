@@ -15,16 +15,6 @@ document.querySelectorAll('[data-payment-qr]').forEach((element) => {
         element.textContent = 'Chưa thể hiển thị QR. Vui lòng tải lại trang.';
     }
 });
-document.querySelectorAll('[data-payment-confirm], [data-qr-create]').forEach((form) => {
-    form.addEventListener('submit', (event) => {
-        if (form.dataset.submitting) { event.preventDefault(); return; }
-        form.dataset.submitting = 'true';
-        const button = form.querySelector('button[type="submit"]');
-        button.disabled = true;
-        button.textContent = form.hasAttribute('data-qr-create') ? 'Đang tạo…' : 'Đang xác nhận…';
-    });
-});
-
 document.querySelectorAll('[data-qr-expires]').forEach((element) => {
     const expires = Number(element.dataset.qrExpires);
     const serverNow = Number(element.dataset.serverNow);
@@ -39,7 +29,4 @@ document.querySelectorAll('[data-qr-expires]').forEach((element) => {
     };
     update();
     setInterval(update, 1000);
-});
-window.addEventListener('pageshow', (event) => {
-    if (event.persisted) window.location.reload();
 });

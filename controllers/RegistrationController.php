@@ -40,7 +40,6 @@ class RegistrationController
 
     public function show(): void
     {
-        header('Cache-Control: no-store');
         if (!in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['GET', 'POST'], true)) {
             http_response_code(405);
             header('Allow: GET, POST');
@@ -48,7 +47,6 @@ class RegistrationController
         }
         $model = new Registration($this->db);
         $priorities = $model->priorities();
-        $_SESSION['registration_token'] ??= bin2hex(random_bytes(32));
         $draft = $_SESSION['registration_draft'] ?? [];
         $data = $draft['data'] ?? [];
         $errors = [];
@@ -58,87 +56,80 @@ class RegistrationController
         $step = (int) ($draft['step'] ?? 1);
 
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
-            $token = $_POST['csrf_token'] ?? null;
-            if (!is_string($token) || !hash_equals($_SESSION['registration_token'], $token)) {
-                http_response_code(403);
-                $message = 'Phiên xác nhận không hợp lệ. Vui lòng thử lại.';
-            } else {
-                $operation = $_POST['operation'] ?? '';
-                if ($operation === 'information') {
-                    [$data, $errors] = self::validate($_POST);
-                    if (!array_filter($priorities, fn($p) => $p['MaUuTien'] === $data['MaUuTien'])) {
-                        $errors['MaUuTien'] = 'Vui lòng chọn diện ưu tiên hợp lệ.';
-                    }
-                    if (!$errors && $model->hasPending($data['MSSV'])) {
-                        $errors['MSSV'] = 'MSSV đã có hồ sơ đang được xử lý.';
-                    }
-                    if (!$errors && ($conflict = $model->studentConflict($data['MSSV'], $data['CCCD']))) {
-                        $errors[str_starts_with($conflict, 'CCCD') ? 'CCCD' : 'MSSV'] = $conflict;
-                    }
-                    $file = $_FILES['proof'] ?? null;
-                    $proof = $draft['data']['FileMinhChung'] ?? null;
-                    if ($file && ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
-                        $tmp = $file['tmp_name'] ?? '';
-                        $valid = is_string($tmp) && is_uploaded_file($tmp);
-                        $mime = $valid ? (new finfo(FILEINFO_MIME_TYPE))->file($tmp) : '';
-                        if (($file['error'] ?? -1) !== UPLOAD_ERR_OK || !$valid || filesize($tmp) >= 5 * 1024 * 1024 || !in_array($mime, ['image/jpeg', 'image/png'], true) || !@getimagesize($tmp)) {
-                            $errors['proof'] = 'Chọn ảnh JPG/PNG có dung lượng dưới 5 MB.';
-                        } elseif (!$errors) {
-                            $dir = __DIR__ . '/../storage/registration';
-                            if (!is_dir($dir) && !mkdir($dir, 0700, true)) {
-                                throw new RuntimeException('Không thể lưu ảnh minh chứng.');
-                            }
-                            $name = bin2hex(random_bytes(24)) . ($mime === 'image/png' ? '.png' : '.jpg');
-                            if (!move_uploaded_file($tmp, $dir . '/' . $name)) {
-                                throw new RuntimeException('Không thể lưu ảnh minh chứng.');
-                            }
-                            if ($proof) {
-                                @unlink(__DIR__ . '/../' . $proof);
-                            }
-                            $proof = 'storage/registration/' . $name;
-                        }
-                    }
-                    if (!$errors && $data['MaUuTien'] !== 'UT00' && !$proof) {
-                        $errors['proof'] = 'Vui lòng tải ảnh minh chứng cho diện ưu tiên đã chọn.';
-                    }
-                    $data['FileMinhChung'] = $proof;
-                    $step = $errors ? 1 : 2;
-                    $draft = ['data' => $data, 'step' => $step];
-                } elseif ($operation === 'back' && $draft) {
-                    $step = max(1, $step - 1);
-                } elseif ($operation === 'room' && $draft && $step === 2) {
-                    $id = is_string($_POST['MaPhong'] ?? null) ? $_POST['MaPhong'] : '';
-                    if (!$model->availableRoom($data['GioiTinh'], $id)) {
-                        $message = 'Vui lòng chọn phòng phù hợp còn chỗ.';
-                    } else {
-                        $draft['room'] = $id;
-                        $step = 3;
-                    }
-                } elseif ($operation === 'submit' && $draft && $step === 3) {
-                    [, $errors] = self::validate($data);
-                    if ($errors) {
-                        $step = 1;
-                    } else {
-                        try {
-                            $id = $model->submit($data, $draft['room']);
-                            unset($_SESSION['registration_draft']);
-                            $_SESSION['registration_success'] = $id;
-                            $_SESSION['registration_token'] = bin2hex(random_bytes(32));
-                            header('Location: ' . appUrl('index.php?action=register'), true, 303);
-                            return;
-                        } catch (DomainException $error) {
-                            $message = $error->getMessage();
-                            $step = $error->getCode() === 2 ? 2 : 1;
-                        } catch (Throwable $error) {
-                            $message = 'Chưa thể gửi đăng ký. Vui lòng thử lại sau.';
-                        }
-                    }
-                } else {
-                    $message = 'Vui lòng thực hiện lần lượt các bước đăng ký.';
+            $operation = $_POST['operation'] ?? '';
+            if ($operation === 'information') {
+                [$data, $errors] = self::validate($_POST);
+                if (!array_filter($priorities, fn($p) => $p['MaUuTien'] === $data['MaUuTien'])) {
+                    $errors['MaUuTien'] = 'Vui lòng chọn diện ưu tiên hợp lệ.';
                 }
-                $draft['step'] = $step;
-                $_SESSION['registration_draft'] = $draft;
+                if (!$errors && $model->hasPending($data['MSSV'])) {
+                    $errors['MSSV'] = 'MSSV đã có hồ sơ đang được xử lý.';
+                }
+                if (!$errors && ($conflict = $model->studentConflict($data['MSSV'], $data['CCCD']))) {
+                    $errors[str_starts_with($conflict, 'CCCD') ? 'CCCD' : 'MSSV'] = $conflict;
+                }
+                $file = $_FILES['proof'] ?? null;
+                $proof = $draft['data']['FileMinhChung'] ?? null;
+                if ($file && ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+                    $tmp = $file['tmp_name'] ?? '';
+                    $valid = is_string($tmp) && is_uploaded_file($tmp);
+                    $mime = $valid ? (new finfo(FILEINFO_MIME_TYPE))->file($tmp) : '';
+                    if (($file['error'] ?? -1) !== UPLOAD_ERR_OK || !$valid || filesize($tmp) >= 5 * 1024 * 1024 || !in_array($mime, ['image/jpeg', 'image/png'], true) || !@getimagesize($tmp)) {
+                        $errors['proof'] = 'Chọn ảnh JPG/PNG có dung lượng dưới 5 MB.';
+                    } elseif (!$errors) {
+                        $dir = __DIR__ . '/../storage/registration';
+                        if (!is_dir($dir) && !mkdir($dir, 0700, true)) {
+                            throw new RuntimeException('Không thể lưu ảnh minh chứng.');
+                        }
+                        $name = bin2hex(random_bytes(24)) . ($mime === 'image/png' ? '.png' : '.jpg');
+                        if (!move_uploaded_file($tmp, $dir . '/' . $name)) {
+                            throw new RuntimeException('Không thể lưu ảnh minh chứng.');
+                        }
+                        if ($proof) {
+                            @unlink(__DIR__ . '/../' . $proof);
+                        }
+                        $proof = 'storage/registration/' . $name;
+                    }
+                }
+                if (!$errors && $data['MaUuTien'] !== 'UT00' && !$proof) {
+                    $errors['proof'] = 'Vui lòng tải ảnh minh chứng cho diện ưu tiên đã chọn.';
+                }
+                $data['FileMinhChung'] = $proof;
+                $step = $errors ? 1 : 2;
+                $draft = ['data' => $data, 'step' => $step];
+            } elseif ($operation === 'back' && $draft) {
+                $step = max(1, $step - 1);
+            } elseif ($operation === 'room' && $draft && $step === 2) {
+                $id = is_string($_POST['MaPhong'] ?? null) ? $_POST['MaPhong'] : '';
+                if (!$model->availableRoom($data['GioiTinh'], $id)) {
+                    $message = 'Vui lòng chọn phòng phù hợp còn chỗ.';
+                } else {
+                    $draft['room'] = $id;
+                    $step = 3;
+                }
+            } elseif ($operation === 'submit' && $draft && $step === 3) {
+                [, $errors] = self::validate($data);
+                if ($errors) {
+                    $step = 1;
+                } else {
+                    try {
+                        $id = $model->submit($data, $draft['room']);
+                        unset($_SESSION['registration_draft']);
+                        $_SESSION['registration_success'] = $id;
+                        header('Location: ' . appUrl('index.php?action=register'), true, 303);
+                        return;
+                    } catch (DomainException $error) {
+                        $message = $error->getMessage();
+                        $step = $error->getCode() === 2 ? 2 : 1;
+                    } catch (Throwable $error) {
+                        $message = 'Chưa thể gửi đăng ký. Vui lòng thử lại sau.';
+                    }
+                }
+            } else {
+                $message = 'Vui lòng thực hiện lần lượt các bước đăng ký.';
             }
+            $draft['step'] = $step;
+            $_SESSION['registration_draft'] = $draft;
         }
         $rooms = $step === 2 ? $model->rooms($data['GioiTinh']) : [];
         $selected = $step === 3 ? $model->availableRoom($data['GioiTinh'], $draft['room'] ?? '') : null;

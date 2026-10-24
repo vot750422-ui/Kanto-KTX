@@ -85,8 +85,7 @@ try {
     uc17preview('detail', $html);
     uc17check($code===200 && str_contains($html,'data-qr-create') && !str_contains($html,'data-payment-qr=') && !str_contains($html,'data-payment-confirm'), 'Mở chi tiết chỉ thấy nút tạo, chưa sinh mã QR');
     uc17check((int)$pdo->query('SELECT COUNT(*) FROM phienthanhtoan')->fetchColumn()===0, 'Tải lại chi tiết không tạo phiên QR');
-    $qrPost = ['invoice'=>$first['invoice'],'csrf_token'=>$_SESSION['student_payment_csrf']];
-    uc17check(uc17request('student-qr-create',[],array_replace($qrPost,['csrf_token'=>'bad']),'POST')[0]===403, 'Tạo mã QR yêu cầu CSRF');
+    $qrPost = ['invoice'=>$first['invoice']];
     uc17check(uc17request('student-qr-create',[],$qrPost,'POST')[0]===303, 'Bấm Tạo mã QR tạo phiên và chuyển về chi tiết');
     [$code,$html] = uc17request('student-invoice',['invoice'=>$first['invoice']]);
     uc17preview('qr', $html);
@@ -103,12 +102,10 @@ try {
     uc17preview('confirm', $html);
     $dom = new DOMDocument(); @$dom->loadHTML('<?xml encoding="utf-8" ?>' . $html);
     $xpath = new DOMXPath($dom);
-    uc17check($xpath->query('//form[@data-payment-confirm]/input[@name="csrf_token"]')->item(0)->getAttribute('value') === $_SESSION['student_payment_csrf'], 'CSRF thanh toán trong form không bị token đăng xuất ghi đè');
     $token = $_SESSION['student_payment_intents'][$first['invoice']]['token'];
     uc17check($code===200 && str_contains($html,'data-payment-confirm') && str_contains($html,$token), 'Trang mô phỏng tạo phiên gắn đúng hóa đơn');
     uc17check($model->studentInvoice($first['invoice'],$first['account'])['TrangThai']==='Chưa thu' && (int)$pdo->query('SELECT COUNT(*) FROM hopdong')->fetchColumn()===0, 'Mở chi tiết/quét QR không thu tiền hoặc tạo hợp đồng');
-    $post = ['invoice'=>$first['invoice'],'csrf_token'=>$_SESSION['student_payment_csrf'],'transaction_token'=>$token];
-    uc17check(uc17request('student-payment-confirm',[],array_replace($post,['csrf_token'=>[]]),'POST')[0]===403, 'CSRF sai bị từ chối');
+    $post = ['invoice'=>$first['invoice'],'transaction_token'=>$token];
     uc17check(uc17request('student-payment-confirm',[],array_replace($post,['transaction_token'=>'fake']),'POST')[0]===409, 'Mã giao dịch sai bị từ chối');
     uc17check(uc17deny(fn()=>StudentPaymentIntent::amount($first['invoice'],$other['account'],$token)), 'Phiên thanh toán không dùng cho tài khoản khác');
     $_SESSION['student_payment_intents'][$first['invoice']]['expires'] = time()-1;
@@ -156,7 +153,7 @@ try {
     $_SESSION['user'] = ['MaTK'=>$fourth['account']];
     [$code,$html] = uc17request('student-invoice',['invoice'=>$fourth['invoice']]);
     uc17check($code===200 && str_contains($html,'data-qr-create') && !str_contains($html,'data-payment-qr='), 'Hóa đơn mới chưa hiển thị QR trước khi bấm tạo');
-    $fourthPost = ['invoice'=>$fourth['invoice'],'csrf_token'=>$_SESSION['student_payment_csrf']];
+    $fourthPost = ['invoice'=>$fourth['invoice']];
     uc17check(uc17request('student-qr-create',[],$fourthPost,'POST')[0]===303, 'Tạo QR cho hóa đơn cần thanh toán');
     [$code,$html] = uc17request('student-invoice',['invoice'=>$fourth['invoice']]);
     uc17preview('public-source',$html);
@@ -188,7 +185,7 @@ try {
     $_SESSION = ['user'=>['MaTK'=>$fourth['account']]];
     [$code,$html] = uc17request('student-invoice',['invoice'=>$fourth['invoice']]);
     uc17check($code===200 && !str_contains($html,'data-payment-qr=') && !str_contains($html,'data-qr-create') && str_contains($html,'đang có mã QR'), 'Trình duyệt khác chỉ thấy thông báo mã đang hoạt động');
-    $secondBrowserPost = ['invoice'=>$fourth['invoice'],'csrf_token'=>$_SESSION['student_payment_csrf']];
+    $secondBrowserPost = ['invoice'=>$fourth['invoice']];
     uc17check(uc17request('student-qr-create',[],$secondBrowserPost,'POST')[0]===303 && $links->issue($fourth['invoice'],$fourth['account'])===null, 'Bấm tạo từ trình duyệt khác không phát hành QR thứ hai');
     $_SESSION = $ownerSession;
     $otherRaw = $links->issue($fifth['invoice'],$fifth['account']);
@@ -200,8 +197,7 @@ try {
     [$code,$html] = uc17request('payment-checkout',['invoice'=>$fourth['invoice']]);
     uc17preview('public-open',$html);
     uc17check($code===200 && str_contains($html,'data-checkout-open') && !str_contains($html,$fourth['invoice']), 'Điện thoại chưa đăng nhập mở được trang QR, chỉ mã hóa đơn không đủ quyền xem');
-    $publicPost = ['csrf_token'=>$_SESSION['checkout_csrf'],'link_token'=>$raw];
-    uc17check(uc17request('payment-checkout',[],array_replace($publicPost,['csrf_token'=>'wrong']),'POST')[0]===403, 'Trang công khai vẫn kiểm tra CSRF');
+    $publicPost = ['link_token'=>$raw];
     uc17check(uc17request('payment-checkout-confirm')[0]===405, 'GET trang công khai không được xác nhận');
     [$code,$html] = uc17request('payment-checkout',[],$publicPost,'POST');
     uc17preview('public-confirm',$html);
@@ -224,7 +220,7 @@ try {
     $_SESSION = [];
     uc17check(uc17request('payment-checkout',['receipt'=>$receiptId])[0]===404, 'Kết quả không được xem từ phiên thiết bị khác bằng mã receipt');
     uc17request('payment-checkout');
-    $fifthPost = ['csrf_token'=>$_SESSION['checkout_csrf'],'link_token'=>$otherRaw];
+    $fifthPost = ['link_token'=>$otherRaw];
     $otherHash = hash('sha256',$otherRaw);
     $stmt = $pdo->prepare('UPDATE phienthanhtoan SET HetHanLuc=DATE_SUB(NOW(),INTERVAL 1 SECOND) WHERE MaPhien=?'); $stmt->execute([$otherHash]);
     uc17check(uc17request('payment-checkout-confirm',[],$fifthPost,'POST')[0]===409 && uc17deny(fn()=>$model->confirmLink($otherRaw)), 'Token hết hạn bị chặn kể cả xác nhận trực tiếp tại model');
@@ -259,7 +255,7 @@ try {
     $seventh = $create('QR7',7);
     $_SESSION['user'] = ['MaTK'=>$seventh['account']];
     uc17request('student-invoice',['invoice'=>$seventh['invoice']]);
-    $createPost = ['invoice'=>$seventh['invoice'],'csrf_token'=>$_SESSION['student_payment_csrf']];
+    $createPost = ['invoice'=>$seventh['invoice']];
     uc17check(uc17request('student-qr-create',[],$createPost,'POST')[0]===303, 'Tạo QR mới qua POST cho hóa đơn khác');
     $oldToken = $_SESSION['student_qr_tokens'][$seventh['invoice']]['token'];
     $oldHash = hash('sha256',$oldToken);

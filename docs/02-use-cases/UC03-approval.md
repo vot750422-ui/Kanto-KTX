@@ -200,7 +200,7 @@ này và chỉ bổ sung hợp đồng sau khi kế toán xác nhận thu tiền
 Không duyệt nếu MSSV/CCCD đã có trong sinhvien, tên đăng nhập đã tồn tại hoặc
 MSSV có nhiều đơn Chờ duyệt. Không ghi đè/tái sử dụng hồ sơ cũ.
 Sử dụng cùng named lock với UC02, READ COMMITTED, FOR UPDATE phòng và đơn.
-Từ chối/duyệt lại đơn đã xử lý bị chặn; POST có CSRF, thành công chuyển hướng 303.
+Từ chối/duyệt lại đơn đã xử lý bị chặn; POST thành công chuyển hướng 303.
 
 ### E4 - Ảnh không có hoặc không còn tệp
 

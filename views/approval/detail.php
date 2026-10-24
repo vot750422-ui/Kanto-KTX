@@ -41,7 +41,6 @@
     <form method="post" action="<?= $url('index.php?action=approval-reject') ?>">
         <h2>Từ chối đơn đăng ký</h2>
         <input type="hidden" name="id" value="<?= $escape($application['MaDonDangKy']) ?>">
-        <input type="hidden" name="csrf_token" value="<?= $escape($_SESSION['approval_token']) ?>">
         <label for="reason">Lý do từ chối</label><textarea id="reason" name="reason" maxlength="500" required><?= $escape($reason) ?></textarea>
         <div class="approval-actions"><button type="button" class="approval-button" data-close>Hủy</button><button type="submit" class="approval-button danger">Xác nhận từ chối</button></div>
     </form>
@@ -52,7 +51,6 @@
         <p>Bạn có chắc chắn muốn duyệt đơn đăng ký này không?</p>
         <p>Sinh viên được cấp tài khoản và giữ chỗ chờ thanh toán hóa đơn tiền phòng đầu tiên.</p>
         <input type="hidden" name="id" value="<?= $escape($application['MaDonDangKy']) ?>">
-        <input type="hidden" name="csrf_token" value="<?= $escape($_SESSION['approval_token']) ?>">
         <?php require __DIR__ . '/invoice-fields.php'; ?>
         <div class="approval-actions"><button type="button" class="approval-button" data-close>Hủy</button><button type="submit" class="approval-button primary"<?= !$billing ? ' disabled' : '' ?>>Xác nhận</button></div>
     </form>

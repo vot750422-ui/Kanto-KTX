@@ -36,7 +36,7 @@ gỡ FK để tạo fixture riêng; giữ CHECK/UNIQUE. Không sửa dữ liệu
 Kiểm tra ưu tiên/phân trang, từ chối/giải phóng chỗ, duyệt phòng đã được giữ đầy,
 tài khoản băm, kỳ kế tiếp sang năm mới, giá DECIMAL, hồ sơ Chờ thanh toán,
 không tạo hợp đồng, trùng hồ sơ/tài khoản, rollback lỗi hóa đơn con, giải phóng khóa,
-CSRF/phương thức/input/XSS và endpoint ảnh. tests/run.php thêm kiểm tra quyền
+phương thức/input/XSS và endpoint ảnh. tests/run.php thêm kiểm tra quyền
 toàn bộ route UC03 cho khách/vai trò khác và NVQL mở danh sách.
 
 Giới hạn: TEMPORARY không chia sẻ giữa tiến trình; chưa kiểm thử hai NVQL thao tác
@@ -57,7 +57,7 @@ Bộ kiểm thử dùng bảng TEMPORARY theo schema thật, không sửa dữ l
 & 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/registration.php
 ```
 
-Test UC02 tạo bảng TEMPORARY theo schema thực tế trong kết nối riêng, không sửa dữ liệu nghiệp vụ. Kiểm tra validation, lọc giới tính, tính chỗ còn lại, giữ chỗ, trùng MSSV, rollback, CSRF, tệp giả, ba bước, quay lại và gửi lặp. Mô phỏng phòng bị đơn khác giữ trước khi gửi; chưa chạy hai tiến trình đồng thời hoặc tự động kiểm tra giao diện trình duyệt và upload ảnh hợp lệ qua HTTP.
+Test UC02 tạo bảng TEMPORARY theo schema thực tế trong kết nối riêng, không sửa dữ liệu nghiệp vụ. Kiểm tra validation, lọc giới tính, tính chỗ còn lại, giữ chỗ, trùng MSSV, rollback, tệp giả, ba bước, quay lại và gửi lặp. Mô phỏng phòng bị đơn khác giữ trước khi gửi; chưa chạy hai tiến trình đồng thời hoặc tự động kiểm tra giao diện trình duyệt và upload ảnh hợp lệ qua HTTP.
 
 ## Đăng nhập và phân quyền
 
@@ -84,15 +84,15 @@ Giới hạn: chưa tự động kiểm thử đăng nhập thành công bằng 
 - Cần MySQL local và tài khoản hoạt động cho các vai trò của bộ kiểm thử chung.
 # Xác nhận thanh toán tiền phòng đầu tiên
 
-- `php -d xdebug.mode=off tests/payment.php`: 29 ca bằng bảng TEMPORARY, từ duyệt UC03 đến hợp đồng UC11, kiểm tra rollback/gửi lặp/giữ tài khoản/token form.
-- `php -d xdebug.mode=off tests/run.php`: có 9 ca route/phân quyền/CSRF cho thanh toán.
+- `php -d xdebug.mode=off tests/payment.php`: 29 ca bằng bảng TEMPORARY, từ duyệt UC03 đến hợp đồng UC11, kiểm tra rollback/gửi lặp/giữ tài khoản/form.
+- `php -d xdebug.mode=off tests/run.php`: có 8 ca route/phân quyền cho thanh toán.
 - Phạm vi demo và quy tắc học kỳ: `docs/UC07_PAYMENT_IMPLEMENTATION_NOTES.md`.
 
 # UC17 - Sinh viên thanh toán QR trên điện thoại
 
 - `php -d xdebug.mode=off tests/student-payments.php`: dùng bảng TEMPORARY để kiểm tra quyền sở hữu, nút tạo QR bằng POST, một mã hiệu lực 5 phút, tải lại không cấp mã mới, thanh toán từ phiên điện thoại chưa đăng nhập, thu lặp và rollback.
-- `php -d xdebug.mode=off tests/run.php`: kiểm tra phân quyền các route sinh viên và bốn trường hợp route QR công khai.
-- `node tests/frontend.js`: kiểm tra tạo ảnh QR, chỉ chấp nhận origin được cấu hình, chuyển token fragment thành POST và nút xác nhận không gửi lặp.
+- `php -d xdebug.mode=off tests/run.php`: kiểm tra phân quyền các route sinh viên và ba trường hợp route QR công khai.
+- `node tests/frontend.js`: kiểm tra tạo ảnh QR, chỉ chấp nhận origin được cấu hình, chuyển token fragment thành POST và đếm ngược hạn QR.
 - Preview giao diện: `php tests/student-payments.php --preview-dir <thu-muc-tam-da-ton-tai>`; dùng HTML từ bảng TEMPORARY, không phải thanh toán thật qua HTTP.
 - Môi trường mới cần chạy `php scripts/migrate-payment-links.php` để thêm bảng `phienthanhtoan`. Cấu hình địa chỉ điện thoại theo `docs/02-use-cases/UC17-student-payment.md`.
 

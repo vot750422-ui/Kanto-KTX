@@ -63,7 +63,6 @@ try {
     $listing = $model->listing();
     $student = ''; $status = 'unpaid'; $error = ''; $success = '';
     $_SESSION['user'] = ['MaTK'=>-1,'TenDangNhap'=>'TESTKT','VaiTro'=>'Nhân viên kế toán'];
-    $_SESSION['payment_token'] = bin2hex(random_bytes(32));
     $_GET = ['action'=>'payments'];
     ob_start();
     require __DIR__ . '/../views/payments/list.php';
@@ -73,7 +72,7 @@ try {
     @$dom->loadHTML('<?xml encoding="utf-8" ?>' . $html);
     $xpath = new DOMXPath($dom);
     $form = $xpath->query('//dialog/form')->item(0);
-    checkPayment($form !== null && str_contains($form->getAttribute('action'),'action=payment-confirm') && $xpath->query('.//input[@name="csrf_token"]',$form)->item(0)->getAttribute('value') === $_SESSION['payment_token'] && $xpath->query('.//input[@name="invoice"]',$form)->item(0)->getAttribute('value') === $first['invoice'], 'Form xác nhận dùng đúng hóa đơn và token riêng, không lẫn token đăng xuất');
+    checkPayment($form !== null && str_contains($form->getAttribute('action'),'action=payment-confirm') && $xpath->query('.//input[@name="invoice"]',$form)->item(0)->getAttribute('value') === $first['invoice'], 'Form xác nhận dùng đúng hóa đơn');
     $result = $model->confirm($first['invoice']);
     $bill = $pdo->query('SELECT * FROM hoadon')->fetch();
     checkPayment($bill['TrangThai'] === 'Đã thu' && $bill['ThoiGianThanhToan'] !== null, 'Xác nhận thu và ghi thời gian thanh toán');

@@ -16,8 +16,6 @@ class ApprovalController
             header('Allow: ' . ($write ? 'POST' : 'GET'));
             return;
         }
-        header('Cache-Control: no-store');
-        $_SESSION['approval_token'] ??= bin2hex(random_bytes(32));
         $model = new Approval($this->db);
         $idInput = $write ? ($_POST['id'] ?? null) : ($_GET['id'] ?? null);
         $id = is_string($idInput) ? trim($idInput) : '';
@@ -25,12 +23,6 @@ class ApprovalController
         $error = '';
         $reason = is_string($_POST['reason'] ?? null) ? $_POST['reason'] : '';
         if ($write) {
-            $token = $_POST['csrf_token'] ?? null;
-            if (!is_string($token) || !hash_equals($_SESSION['approval_token'], $token)) {
-                http_response_code(403);
-                echo 'Phiên xác nhận không hợp lệ. Vui lòng tải lại trang.';
-                return;
-            }
             if (!$validId) {
                 http_response_code(400);
                 echo 'Mã đơn đăng ký không hợp lệ.';
@@ -46,7 +38,6 @@ class ApprovalController
                         . '. Mã hóa đơn tiền phòng: ' . $result['invoice'];
                 }
                 $_SESSION['approval_success'] = $message;
-                $_SESSION['approval_token'] = bin2hex(random_bytes(32));
                 header('Location: ' . appUrl('index.php?action=approval'), true, 303);
                 return;
             } catch (DomainException $exception) {
@@ -80,7 +71,6 @@ class ApprovalController
                     return;
                 }
                 header('Content-Type: ' . $proof['mime']);
-                header('X-Content-Type-Options: nosniff');
                 header('Content-Disposition: inline; filename="minh-chung.' . ($proof['mime'] === 'image/png' ? 'png' : 'jpg') . '"');
                 $file = @fopen($proof['path'], 'rb');
                 if ($file === false) {

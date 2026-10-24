@@ -32,7 +32,7 @@ Tài liệu bàn giao UC03 trên branch `feature/uc03-approval`. Các bản th�
 | Thành phần | File | Vai trò |
 | --- | --- | --- |
 | Model UC03 | `models/Approval.php` | Danh sách, thứ tự ưu tiên, chi tiết, xét duyệt, từ chối, hóa đơn và kiểm tra ảnh |
-| Controller mới | `controllers/ApprovalController.php` | GET/POST, CSRF, mã lỗi, thông báo và endpoint ảnh |
+| Controller mới | `controllers/ApprovalController.php` | GET/POST, mã lỗi, thông báo và endpoint ảnh |
 | View mới | `views/approval/layout.php`, `list.php`, `detail.php`, `invoice-fields.php` | Danh sách phân trang, chi tiết, xác nhận duyệt/từ chối và xem ảnh |
 | Tài nguyên mới | `assets/css/approval.css`, `assets/js/approval.js` | Giao diện và hộp thoại xác nhận |
 | Route/menu | `index.php`, `includes/navbar.php` | Mở UC03 từ menu NVQL |
@@ -84,7 +84,7 @@ UC03 dùng cùng named lock `kanto_uc02_` theo tên CSDL như UC02, transaction
 READ COMMITTED, khóa phong rồi dondangky bằng FOR UPDATE, đọc lại trạng thái và
 giới tính/sức chứa. Phòng có ConCho bằng 0 vẫn được duyệt vì đơn đã giữ chỗ.
 Tài khoản, sinh viên, hóa đơn cha/con và trạng thái/liên kết đơn commit cùng nhau;
-lỗi phải rollback toàn bộ, luôn RELEASE_LOCK. Chỉ POST có CSRF được ghi dữ liệu.
+lỗi phải rollback toàn bộ, luôn RELEASE_LOCK. Chỉ POST được ghi dữ liệu.
 
 ## Những chức năng cần bổ sung sau UC03
 

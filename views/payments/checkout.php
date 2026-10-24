@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../config/app.php';
-if (!isset($csrf, $error)) { http_response_code(404); exit; }
+if (!isset($error)) { http_response_code(404); exit; }
 $escape = static fn($value) => htmlspecialchars((string)($value ?? ''), ENT_QUOTES, 'UTF-8');
 $money = static fn($value) => number_format((float)$value, 0, ',', '.') . ' đ';
 ?>
@@ -9,7 +9,6 @@ $money = static fn($value) => number_format((float)$value, 0, ',', '.') . ' đ';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="no-referrer">
     <title>Xác nhận thanh toán — Kanto KTX</title>
     <link rel="stylesheet" href="<?= $escape(appUrl('assets/css/student-payments.css')) ?>">
     <script defer src="<?= $escape(appUrl('assets/js/payment-checkout.js')) ?>"></script>
@@ -35,7 +34,6 @@ $money = static fn($value) => number_format((float)$value, 0, ',', '.') . ' đ';
                 <p class="payment-total"><?= $escape($money($bill['TongTien'])) ?></p>
                 <?php if ($bill['LoaiHoaDon'] === 'Điện nước'): ?><p class="payment-help">Số tiền trên là tổng hóa đơn điện nước của phòng.</p><?php endif; ?>
                 <form method="post" action="<?= $escape(appUrl('index.php?action=payment-checkout-confirm')) ?>" data-checkout-confirm>
-                    <input type="hidden" name="csrf_token" value="<?= $escape($csrf) ?>">
                     <input type="hidden" name="link_token" value="<?= $escape($token) ?>">
                     <button class="payment-button" type="submit">Xác nhận thanh toán mô phỏng</button>
                 </form>
@@ -43,7 +41,6 @@ $money = static fn($value) => number_format((float)$value, 0, ',', '.') . ' đ';
             <?php else: ?>
                 <p id="checkout-opening" role="status">Đang mở liên kết thanh toán…</p>
                 <form hidden method="post" action="<?= $escape(appUrl('index.php?action=payment-checkout')) ?>" data-checkout-open>
-                    <input type="hidden" name="csrf_token" value="<?= $escape($csrf) ?>">
                     <input type="hidden" name="link_token" value="">
                 </form>
                 <noscript><p>Hãy bật JavaScript rồi mở lại QR để xem hóa đơn. Không cần đăng nhập sinh viên.</p></noscript>

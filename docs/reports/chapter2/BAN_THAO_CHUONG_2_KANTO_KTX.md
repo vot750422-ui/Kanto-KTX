@@ -241,7 +241,7 @@ Các lớp ở sơ đồ thể hiện tổ chức xử lý đang được dùng 
 
 Những trang công khai như đăng ký, thông tin phòng và hướng dẫn được truy cập khi chưa đăng nhập. Các chức năng sinh viên, nhân viên và quản lý kiểm tra phiên và vai trò ở máy chủ trước khi đọc hoặc ghi dữ liệu. Việc ẩn nút trên giao diện không được xem là cơ chế phân quyền đủ.
 
-Đối với dữ liệu cá nhân, mã sinh viên được lấy từ phiên hoặc quan hệ tài khoản đã xác thực. Các thao tác làm thay đổi dữ liệu phải kiểm tra phương thức yêu cầu, dữ liệu đầu vào và trạng thái nghiệp vụ; các biểu mẫu ghi cần kiểm tra CSRF theo cơ chế chung. Thông báo lỗi gửi người dùng cần ngắn gọn và có hướng xử lý, còn thông tin kỹ thuật được quản lý ở môi trường vận hành phù hợp.
+Đối với dữ liệu cá nhân, mã sinh viên được lấy từ phiên hoặc quan hệ tài khoản đã xác thực. Các thao tác làm thay đổi dữ liệu phải kiểm tra phương thức yêu cầu, dữ liệu đầu vào và trạng thái nghiệp vụ. Thông báo lỗi gửi người dùng cần ngắn gọn và có hướng xử lý, còn thông tin kỹ thuật được quản lý ở môi trường vận hành phù hợp.
 
 ## 2.6. Thiết kế cơ sở dữ liệu
 

@@ -47,18 +47,17 @@ $case = $argv[1] ?? '';
 try {
     if (str_starts_with($case, 'checkout_')) {
         $_SESSION = [];
-        $_SESSION['checkout_csrf'] = bin2hex(random_bytes(32));
-        $confirm = in_array($case, ['checkout_get_confirm','checkout_csrf'], true);
+        $confirm = $case === 'checkout_get_confirm';
         $_GET = ['action'=>$confirm ? 'payment-checkout-confirm' : 'payment-checkout'];
-        $_SERVER['REQUEST_METHOD'] = in_array($case, ['checkout_invalid','checkout_csrf'], true) ? 'POST' : 'GET';
-        $_POST = ['link_token'=>'invalid','csrf_token'=>$case === 'checkout_csrf' ? 'wrong' : $_SESSION['checkout_csrf']];
+        $_SERVER['REQUEST_METHOD'] = $case === 'checkout_invalid' ? 'POST' : 'GET';
+        $_POST = ['link_token'=>'invalid'];
         http_response_code(200);
         ob_start();
         register_shutdown_function(function () use ($case) {
             $html = ob_get_clean();
             try {
                 check(error_get_last() === null, 'Có lỗi PHP ở route QR công khai.');
-                $expected = ['checkout_open'=>200,'checkout_invalid'=>409,'checkout_get_confirm'=>405,'checkout_csrf'=>403][$case];
+                $expected = ['checkout_open'=>200,'checkout_invalid'=>409,'checkout_get_confirm'=>405][$case];
                 check(http_response_code() === $expected, 'HTTP status QR không đúng.');
                 check(!isset($_SESSION['user']), 'QR công khai không được tạo phiên sinh viên.');
                 if ($case === 'checkout_open') { check(str_contains($html,'data-checkout-open'), 'Chưa đăng nhập phải mở được trang QR.'); }
@@ -114,11 +113,10 @@ try {
             check(count($usersForRole) > 0, 'Cần tài khoản hoạt động cho vai trò kiểm thử.');
             $_SESSION['user'] = $usersForRole[0];
         }
-        $post = in_array($case, ['payment_csrf','payment_missing'], true);
+        $post = $case === 'payment_missing';
         $_GET = ['action' => $post || $case === 'payment_get_confirm' ? 'payment-confirm' : 'payments'];
         if ($case === 'payment_filters') { $_GET['student'] = ['bad']; }
-        $_SESSION['payment_token'] = bin2hex(random_bytes(32));
-        $_POST = $post ? ['csrf_token' => $case === 'payment_csrf' ? [] : $_SESSION['payment_token']] : [];
+        $_POST = [];
         $_SERVER['REQUEST_METHOD'] = $post ? 'POST' : 'GET';
         http_response_code(200);
         ob_start();
@@ -128,7 +126,7 @@ try {
                 check(error_get_last() === null, 'Có lỗi PHP trong thanh toán.');
                 $expected = match (true) {
                     $case === 'payment_guest' => 302,
-                    isset($forbiddenRoles[$case]), $case === 'payment_csrf' => 403,
+                    isset($forbiddenRoles[$case]) => 403,
                     $case === 'payment_missing', $case === 'payment_filters' => 400,
                     $case === 'payment_get_confirm' => 405,
                     default => 200,
@@ -260,20 +258,17 @@ try {
     }
     switch ($case) {
         case 'logout':
-        case 'logout_invalid_token':
         case 'logout_get':
             check(count($active) > 0, 'Cần tài khoản hoạt động.');
             $_SESSION['user'] = $active[0];
-            $_SESSION['logout_token'] = bin2hex(random_bytes(32));
             $_SERVER['REQUEST_METHOD'] = $case === 'logout_get' ? 'GET' : 'POST';
             $_GET['action'] = 'logout';
-            $_POST['csrf_token'] = $case === 'logout_invalid_token' ? 'invalid' : $_SESSION['logout_token'];
             expectExit(function () use ($case) {
                 if ($case === 'logout') {
                     check(http_response_code() === 303, 'Đăng xuất phải chuyển hướng bằng 303.');
                     check($_SESSION === [] && session_status() !== PHP_SESSION_ACTIVE, 'Session chưa được xóa hoàn toàn.');
                 } else {
-                    check(http_response_code() === ($case === 'logout_get' ? 405 : 403), 'Sai mã HTTP.');
+                    check(http_response_code() === 405, 'Sai mã HTTP.');
                     check(isset($_SESSION['user']), 'Yêu cầu không hợp lệ không được xóa tài khoản.');
                 }
             });

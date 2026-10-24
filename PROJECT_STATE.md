@@ -342,7 +342,7 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
   chưa có MaHopDong. UC03 cùng named lock UC02, READ COMMITTED, khóa phòng rồi đơn,
   commit tài khoản/sinh viên/hóa đơn/trạng thái đơn cùng nhau; lỗi rollback toàn bộ.
 - Các route `index.php?action=approval`, approval-detail, approval-proof,
-  approval-approve và approval-reject chỉ dành NVQL. POST ghi dữ liệu có CSRF.
+  approval-approve và approval-reject chỉ dành NVQL. POST ghi dữ liệu kiểm tra mã đơn và trạng thái.
 - Ảnh tùy chọn; chỉ endpoint có quyền đọc, đường dẫn giới hạn storage/registration;
   UI phân biệt không nộp ảnh và tệp không còn. Không đổi storage/deployment.
 - Dump `sql/qlktx_v2.sql` mới có sáu học kỳ của 2026-2027 và 2027-2028;
@@ -513,7 +513,7 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
 - Khi dịch vụ không dùng được, chỉ các chủ đề khớp chính xác đăng ký/xem phòng/
   đăng nhập có câu trả lời biên soạn, ghi rõ Hướng dẫn có sẵn. Không suy đoán dữ liệu
   phòng. Hướng dẫn chung không gửi snapshot phòng để giảm input token; câu hỏi
-  phòng vẫn dùng snapshot mới, giữ nghiệp vụ/CSRF/phân quyền/CSDL hiện hành.
+  phòng vẫn dùng snapshot mới, giữ nghiệp vụ/phân quyền/CSDL hiện hành.
 - Log attempt/result JSONL theo ngày UTC tại C:\ProgramData\KantoKTX\chatbot-metrics
   trên Windows, ngoài webroot/Git. Ghi request_id/model/lỗi/thời gian/usageMetadata;
   không ghi nội dung chat, dữ liệu phòng, tài khoản hoặc secret. Mock không vào log thật.
@@ -536,3 +536,8 @@ Nếu phát hiện vấn đề liên quan các phần trên, chỉ báo lại tr
 - Nhánh feature/uc13-chatbot-resilience tạo từ origin/main; chỉ gồm UC13 và tích hợp route/widget/tài liệu.
 - Trên worktree sạch: chatbot 60/60, gateway 19/19, nguồn phòng 9/9, đăng nhập/phân quyền/route 46/46; lint 10 file PHP đạt.
 - Chưa kiểm tra Render; PNG Use Case chưa dựng lại, nguồn PlantUML đã thêm actor khách cho UC13.
+## Giản lược luồng demo các UC (25/10/2026)
+
+- Bỏ token CSRF của biểu mẫu đăng ký, xét duyệt, kế toán, sinh viên, trang xác nhận QR, chatbot và đăng xuất; bỏ giới hạn 5 câu/phút của chatbot và các đoạn JavaScript chặn bấm lặp.
+- Giữ đăng nhập, phân quyền, mật khẩu băm, PDO prepared statement, kiểm tra dữ liệu nghiệp vụ và giao dịch CSDL. UC17 vẫn chỉ cho một QR hiệu lực trong 5 phút, xác nhận theo token, chặn thu lặp và giữ quyền sở hữu hóa đơn.
+- Các test route và nghiệp vụ đã đổi theo luồng này. Workspace WAMP có thay đổi riêng ngoài nhánh `main`; khi đồng bộ không ghi đè những thay đổi đó.
