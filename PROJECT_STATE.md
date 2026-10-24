@@ -1,5 +1,9 @@
 # PROJECT_STATE
 
+## UC17 - Khởi tạo bảng QR khi Render chạy container (25/10/2026)
+
+- Sau khi merge PR #6, trang chi tiết hóa đơn chưa thu có thể trả HTTP 500 nếu CSDL Render chưa có `phienthanhtoan`: `PaymentLink::current` đọc bảng này nhưng Dockerfile cũ không chạy migration. Dockerfile mới chạy `scripts/migrate-payment-links.php` trước Apache; câu lệnh `CREATE TABLE IF NOT EXISTS` không thay hóa đơn/hợp đồng hiện có và có thể chạy lại khi container khởi động. Nếu migration thất bại do kết nối hoặc quyền CSDL, container sẽ không nhận request, cần xem log Render thay vì trả trang hóa đơn lỗi 500. Chưa có quyền đọc CSDL/log Render để xác nhận trực tiếp nguyên nhân trên môi trường đó.
+
 ## UC17 - Thanh toán hóa đơn bằng QR trên điện thoại (25/10/2026)
 
 - Sinh viên mở danh sách, bấm **Xem hóa đơn**, rồi bấm **Tạo mã QR** trong chi tiết. GET không phát hành mã. Mỗi hóa đơn chỉ có một token hiệu lực 5 phút; tải lại trong cùng phiên giữ mã cũ. Điện thoại quét QR mở trang xác nhận riêng không cần đăng nhập; chỉ POST xác nhận hợp lệ mới đánh dấu hóa đơn Đã thu. Hóa đơn tiền phòng đầu tiên tạo hợp đồng cùng transaction; hóa đơn định kỳ/điện nước chỉ ghi thu.
