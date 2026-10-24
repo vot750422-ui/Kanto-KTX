@@ -12,7 +12,7 @@ document.querySelectorAll('[data-payment-qr]').forEach((element) => {
         image.alt = 'Quét mã để mở trang thanh toán mô phỏng';
         element.replaceChildren(image);
     } catch (error) {
-        element.textContent = 'Chưa thể hiển thị QR. Hãy dùng nút mở trang thanh toán bên dưới.';
+        element.textContent = 'Chưa thể hiển thị QR. Vui lòng tải lại trang.';
     }
 });
 document.querySelectorAll('[data-payment-confirm], [data-qr-create]').forEach((form) => {
