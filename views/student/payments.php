@@ -79,7 +79,7 @@ $date = static fn($value) => $value ? date('d/m/Y H:i', strtotime($value)) : '�
                 <?php endif; ?>
             <?php elseif ($bill): ?>
                 <a class="payment-back" href="<?= $escape(appUrl('index.php?action=student-payments&status=all')) ?>">← Danh sách hóa đơn</a>
-                <div class="payment-detail-grid">
+                <div class="payment-detail-grid<?= $bill['TrangThai'] === 'Đã thu' ? ' is-paid' : '' ?>">
                     <section class="payment-card">
                         <h2>Hóa đơn <?= $escape($bill['MaHoaDon']) ?></h2>
                         <span class="payment-badge<?= $bill['TrangThai'] === 'Đã thu' ? ' is-paid' : '' ?>"><?= $escape($bill['TrangThai']) ?></span>
@@ -97,12 +97,9 @@ $date = static fn($value) => $value ? date('d/m/Y H:i', strtotime($value)) : '�
                         </dl>
                         <?php if ($bill['LoaiHoaDon'] === 'Điện nước'): ?><p class="payment-help">Đây là tổng hóa đơn điện nước của phòng. Khi một sinh viên liên quan xác nhận thanh toán, toàn bộ hóa đơn được ghi nhận Đã thu.</p><?php endif; ?>
                     </section>
+                    <?php if ($bill['TrangThai'] !== 'Đã thu'): ?>
                     <section class="payment-card payment-checkout">
-                        <?php if ($bill['TrangThai'] === 'Đã thu'): ?>
-                            <h2>Đã ghi nhận thanh toán</h2>
-                            <p>Hóa đơn này đã được thanh toán. Bạn không cần xác nhận lại.</p>
-                            <a class="payment-button" href="<?= $escape(appUrl('index.php?action=accommodation')) ?>">Xem thông tin lưu trú</a>
-                        <?php elseif ($screen === 'student-payment'): ?>
+                        <?php if ($screen === 'student-payment'): ?>
                             <h2>Xác nhận thanh toán mô phỏng</h2>
                             <p>Nội dung: Thanh toán hóa đơn <?= $escape($bill['MaHoaDon']) ?>.</p>
                             <p>Nhấn nút dưới đây để mô phỏng thanh toán thành công số tiền <strong><?= $escape($money($bill['TongTien'])) ?></strong>.</p>
@@ -136,6 +133,7 @@ $date = static fn($value) => $value ? date('d/m/Y H:i', strtotime($value)) : '�
                             <p class="payment-help">Nếu mở website bằng localhost trên máy tính, điện thoại sẽ không truy cập được liên kết trong QR.</p>
                         <?php endif; ?>
                     </section>
+                    <?php endif; ?>
                 </div>
             <?php endif; ?>
         </main>

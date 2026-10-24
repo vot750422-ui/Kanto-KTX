@@ -127,7 +127,7 @@ try {
     uc17check(uc17request('student-payment-confirm',[],$post,'POST')[0]===409 && uc17deny(fn()=>$model->confirm($first['invoice'])), 'Sinh viên gửi lại hoặc kế toán xác nhận sau đều bị chặn');
     [$code,$html] = uc17request('student-payment',['invoice'=>$first['invoice']]);
     uc17preview('paid', $html);
-    uc17check($code===200 && !str_contains($html,'data-payment-confirm') && !str_contains($html,'data-payment-qr='), 'Hóa đơn đã thu không hiện QR/form thanh toán');
+    uc17check($code===200 && substr_count($html,'class="payment-card"')===1 && str_contains($html,'payment-detail-grid is-paid') && str_contains($html,'Hóa đơn ' . $first['invoice']) && !str_contains($html,'Đã ghi nhận thanh toán') && !str_contains($html,'data-payment-confirm') && !str_contains($html,'data-payment-qr='), 'Hóa đơn đã thu chỉ hiện một thẻ chi tiết, không hiện thẻ QR/xác nhận');
     $model->confirm($other['invoice']);
     uc17check(uc17deny(fn()=>$model->confirmForStudent($other['invoice'],$other['account'],$amount)), 'Kế toán thu trước thì sinh viên không được thu lại');
     $pdo->exec("INSERT INTO hoadon (MaHoaDon,LoaiHoaDon,TongTien) VALUES ('UTIL17','Điện nước',100000),('PERIOD17','Tiền phòng',200000)");
