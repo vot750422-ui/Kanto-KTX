@@ -1,5 +1,9 @@
 # PROJECT_STATE
 
+## UC17 - Tối giản thẻ QR (25/10/2026)
+
+- Khi QR đã tạo, thẻ chỉ hiển thị tiêu đề, mã QR và thời gian còn hiệu lực. Đã bỏ các đoạn hướng dẫn/ghi chú và nút mở trang thanh toán trên cùng thiết bị theo yêu cầu giao diện. Luồng quét trên điện thoại và xác nhận thanh toán không đổi.
+
 ## UC17 - Giao diện chi tiết hóa đơn đã thu (25/10/2026)
 
 - Khi hóa đơn chuyển `Đã thu`, trang chi tiết chỉ hiển thị thẻ **Hóa đơn [mã]** với trạng thái, số tiền và thời gian thanh toán. Không hiển thị thẻ xác nhận/QR hay nút xem lưu trú bên cạnh. Hóa đơn `Chưa thu` vẫn giữ luồng tạo QR. Kiểm thử UC17 kiểm tra chỉ có một thẻ trên HTML đã thu.

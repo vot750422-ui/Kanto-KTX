@@ -115,10 +115,7 @@ $date = static fn($value) => $value ? date('d/m/Y H:i', strtotime($value)) : '�
                             <h2>Mã QR thanh toán</h2>
                             <?php if ($checkoutUrl !== ''): ?>
                                 <div class="payment-qr" data-payment-qr="<?= $escape($checkoutUrl) ?>" data-qr-origin="<?= $escape($checkoutOrigin) ?>" aria-label="Mã QR mở trang thanh toán"></div>
-                                <p>Quét mã để mở trang xác nhận trên điện thoại, không cần đăng nhập lại.</p>
                                 <p class="payment-qr-timer" data-qr-expires="<?= $escape(strtotime($qrState['expires'])) ?>" data-server-now="<?= time() ?>">Mã QR còn hiệu lực trong <strong>5:00</strong>.</p>
-                                <a class="payment-button" href="<?= $escape($checkoutUrl) ?>">Mở trang thanh toán trên thiết bị này</a>
-                                <p class="payment-help">Người có mã QR có thể xác nhận hóa đơn này. Chỉ chia sẻ với người thực hiện thanh toán.</p>
                             <?php elseif ($qrState['active']): ?>
                                 <p role="status">Hóa đơn đang có mã QR còn hiệu lực trên trình duyệt đã tạo. Bạn có thể mở lại ở đó.</p>
                                 <p class="payment-qr-timer" data-qr-expires="<?= $escape(strtotime($qrState['expires'])) ?>" data-server-now="<?= time() ?>">Có thể tạo mã mới sau <strong>5:00</strong>.</p>
@@ -130,7 +127,6 @@ $date = static fn($value) => $value ? date('d/m/Y H:i', strtotime($value)) : '�
                                     <button class="payment-button" type="submit">Tạo mã QR</button>
                                 </form>
                             <?php endif; ?>
-                            <p class="payment-help">Nếu mở website bằng localhost trên máy tính, điện thoại sẽ không truy cập được liên kết trong QR.</p>
                         <?php endif; ?>
                     </section>
                     <?php endif; ?>

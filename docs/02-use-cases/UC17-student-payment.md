@@ -21,7 +21,7 @@ Tài liệu chi tiết cũ gọi quản lý hóa đơn là UC07, xem lưu trú l
 
 1. Sinh viên mở **Thanh toán** trên menu, xem hóa đơn của mình; lọc Chưa thu/Đã thu/Tất cả và phân trang.
 2. Chọn **Xem hóa đơn** để xem mã, loại, phòng, kỳ, số tiền, trạng thái và thời gian. Chỉ mở hoặc tải lại chi tiết không tạo QR.
-3. Sinh viên bấm **Tạo mã QR**. POST có CSRF tạo token ngẫu nhiên 256 bit, lưu SHA-256 của token cùng hóa đơn, tài khoản, số tiền và hạn 5 phút trong `phienthanhtoan`. Chi tiết mới hiển thị QR và liên kết mở cùng thiết bị. Mỗi hóa đơn chỉ có một QR còn hiệu lực tại một thời điểm; tải lại trang giữ nguyên QR trong phiên trình duyệt đã tạo.
+3. Sinh viên bấm **Tạo mã QR**. POST có CSRF tạo token ngẫu nhiên 256 bit, lưu SHA-256 của token cùng hóa đơn, tài khoản, số tiền và hạn 5 phút trong `phienthanhtoan`. Chi tiết mới hiển thị QR và thời gian còn hiệu lực để quét bằng điện thoại. Mỗi hóa đơn chỉ có một QR còn hiệu lực tại một thời điểm; tải lại trang giữ nguyên QR trong phiên trình duyệt đã tạo.
 4. Quét QR bằng camera. Trang riêng mở được khi chưa đăng nhập. JavaScript chuyển token từ fragment `#...` sang POST để lấy hóa đơn, xóa fragment khỏi lịch sử hiện tại. Bước này không ghi nhận thanh toán.
 5. Trang mô phỏng hiển thị mã hóa đơn, số tiền, nội dung và nút **Xác nhận thanh toán mô phỏng**.
 6. Sinh viên xác nhận bằng POST. Máy chủ kiểm tra CSRF, phiên giao dịch, quyền sở hữu, trạng thái và số tiền hiện tại.
