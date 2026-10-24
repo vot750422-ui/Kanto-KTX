@@ -28,6 +28,7 @@
 .payment-pagination { display: flex; gap: 20px; align-items: center; justify-content: center; padding: 20px; flex-wrap: wrap; }
 .payment-back { display: inline-block; margin: 10px 0 20px; }
 .payment-detail-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 24px; }
+.payment-detail-grid.is-paid { grid-template-columns: minmax(0,1fr); max-width: 760px; }
 .payment-card { background: white; border: 1px solid #e0e6f0; border-radius: 16px; padding: 26px; min-width: 0; }
 .payment-card h2 { font-size: 20px; margin: 0 0 18px; overflow-wrap: anywhere; }
 .payment-card p { line-height: 1.65; }

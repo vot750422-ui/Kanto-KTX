@@ -1,5 +1,9 @@
 # PROJECT_STATE
 
+## UC17 - Giao diện chi tiết hóa đơn đã thu (25/10/2026)
+
+- Khi hóa đơn chuyển `Đã thu`, trang chi tiết chỉ hiển thị thẻ **Hóa đơn [mã]** với trạng thái, số tiền và thời gian thanh toán. Không hiển thị thẻ xác nhận/QR hay nút xem lưu trú bên cạnh. Hóa đơn `Chưa thu` vẫn giữ luồng tạo QR. Kiểm thử UC17 kiểm tra chỉ có một thẻ trên HTML đã thu.
+
 ## UC17 - Khởi tạo bảng QR khi Render chạy container (25/10/2026)
 
 - Sau khi merge PR #6, trang chi tiết hóa đơn chưa thu có thể trả HTTP 500 nếu CSDL Render chưa có `phienthanhtoan`: `PaymentLink::current` đọc bảng này nhưng Dockerfile cũ không chạy migration. Dockerfile mới chạy `scripts/migrate-payment-links.php` trước Apache; câu lệnh `CREATE TABLE IF NOT EXISTS` không thay hóa đơn/hợp đồng hiện có và có thể chạy lại khi container khởi động. Nếu migration thất bại do kết nối hoặc quyền CSDL, container sẽ không nhận request, cần xem log Render thay vì trả trang hóa đơn lỗi 500. Chưa có quyền đọc CSDL/log Render để xác nhận trực tiếp nguyên nhân trên môi trường đó.
