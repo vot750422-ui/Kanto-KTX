@@ -4,7 +4,7 @@ if (!isset($priorities, $step, $data)) {
     exit;
 }
 $escape = fn($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
-$labels = ['HoTen' => 'Họ tên', 'NgaySinh' => 'Ngày sinh', 'CCCD' => 'CCCD', 'GioiTinh' => 'Giới tính', 'QueQuan' => 'Quê quán', 'SDT' => 'Số điện thoại', 'MSSV' => 'MSSV', 'Lop' => 'Lớp', 'NienKhoa' => 'Niên khóa'];
+$labels = ['HoTen' => 'Họ tên', 'NgaySinh' => 'Ngày sinh', 'CCCD' => 'CCCD', 'GioiTinh' => 'Giới tính', 'QueQuan' => 'Quê quán', 'SDT' => 'Số điện thoại', 'Email' => 'Email', 'MSSV' => 'MSSV', 'Lop' => 'Lớp', 'NienKhoa' => 'Niên khóa'];
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -49,7 +49,7 @@ $labels = ['HoTen' => 'Họ tên', 'NgaySinh' => 'Ngày sinh', 'CCCD' => 'CCCD',
                                     <?php foreach (['Nam', 'Nữ'] as $gender): ?><option value="<?= $gender ?>"<?= ($data[$field] ?? '') === $gender ? ' selected' : '' ?>><?= $gender ?></option><?php endforeach; ?>
                                 </select>
                             <?php else: ?>
-                                <input id="<?= $field ?>" name="<?= $field ?>" type="<?= $field === 'NgaySinh' ? 'date' : ($field === 'SDT' ? 'tel' : 'text') ?>" value="<?= $escape($data[$field] ?? '') ?>" maxlength="<?= ['HoTen' => 100, 'QueQuan' => 150, 'Lop' => 30, 'MSSV' => 15, 'NienKhoa' => 20, 'CCCD' => 12, 'SDT' => 10, 'NgaySinh' => 10][$field] ?>"<?= in_array($field, ['CCCD', 'SDT']) ? ' inputmode="numeric"' : '' ?><?= $field === 'NienKhoa' ? ' placeholder="2024-2028"' : '' ?> required<?= isset($errors[$field]) ? ' aria-invalid="true" aria-describedby="error-' . $field . '"' : '' ?>>
+                                <input id="<?= $field ?>" name="<?= $field ?>" type="<?= $field === 'NgaySinh' ? 'date' : ($field === 'SDT' ? 'tel' : ($field === 'Email' ? 'email' : 'text')) ?>" value="<?= $escape($data[$field] ?? '') ?>" maxlength="<?= ['HoTen' => 100, 'QueQuan' => 150, 'Lop' => 30, 'MSSV' => 15, 'NienKhoa' => 20, 'CCCD' => 12, 'SDT' => 10, 'Email' => 100, 'NgaySinh' => 10][$field] ?>"<?= in_array($field, ['CCCD', 'SDT']) ? ' inputmode="numeric"' : '' ?><?= $field === 'NienKhoa' ? ' placeholder="2024-2028"' : '' ?> required<?= isset($errors[$field]) ? ' aria-invalid="true" aria-describedby="error-' . $field . '"' : '' ?>>
                             <?php endif; ?>
                             <?php if (isset($errors[$field])): ?><small class="field-error" id="error-<?= $field ?>"><?= $escape($errors[$field]) ?></small><?php endif; ?>
                         </div>
