@@ -106,4 +106,5 @@ Giới hạn: chưa tự động kiểm thử đăng nhập thành công bằng 
 
 - `php -d xdebug.mode=off tests/approval.php`: kiểm tra hàng đợi email, nội dung không chứa mật khẩu, gửi sau commit, lỗi SMTP, gửi lại và rollback.
 - `php -d xdebug.mode=off tests/smtp-mailer.php`: kiểm tra PHPMailer với SMTP giả trong RAM, không gửi thư thật.
+- `php -d xdebug.mode=off tests/brevo-mailer.php`: kiểm tra payload Brevo HTTPS API và phản hồi lỗi bằng HTTP giả, không gửi thư thật.
 - `php -d xdebug.mode=off tests/run.php`: kiểm tra phân quyền route `approval-email-retry`.

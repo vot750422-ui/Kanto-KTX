@@ -1,5 +1,11 @@
 # PROJECT_STATE
 
+## UC03 - Brevo HTTPS API cho Render Free (26/10/2026)
+
+- Render Free chặn cổng SMTP 25/465/587. `services/BrevoMailer.php` gửi nội dung text UC03 qua HTTPS; `services/ApprovalMailer.php` chọn phương thức theo `MAIL_TRANSPORT` (`smtp` mặc định cho WAMP, `brevo` cho Render). Cấu hình Render cần `MAIL_TRANSPORT=brevo`, `BREVO_API_KEY`, `MAIL_FROM_ADDRESS` đã đăng ký ở Brevo và `MAIL_FROM_NAME`. Không đưa khóa vào Git.
+- Không đổi nghiệp vụ xét duyệt, hàng đợi `emailthongbao`, trạng thái hay route gửi lại. Test API dùng HTTP giả 4/4, SMTP 7/7, UC03 70/70, auth/route 69/69. Chưa gửi email thật hoặc xác minh trên Render vì chưa có API key và người gửi Brevo trong môi trường kiểm thử.
+- Sau khi deploy và cấu hình Brevo, mở chi tiết các đơn email `Lỗi` để gửi lại. Địa chỉ `@gmail.com` có thể bị Brevo thay From hiển thị; muốn giữ From cần miền riêng được xác thực.
+
 ## UC03 - Email kết quả xét duyệt qua SMTP (26/10/2026)
 
 - Khi duyệt hoặc từ chối, ghi yêu cầu email trong cùng transaction; gửi qua PHPMailer sau commit. SMTP lỗi không đảo kết quả xét duyệt. NVQL xem trạng thái và gửi lại qua POST `approval-email-retry`.
