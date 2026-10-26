@@ -124,7 +124,8 @@ try {
     expectApproval($mailer->deliver('ONLY') === 'Đã gửi' && count($deliveries) === 1
         && str_contains($deliveries[0]['NoiDung'], $result['invoice'])
         && str_contains($deliveries[0]['NoiDung'], 'đã được duyệt.')
-        && !str_contains($deliveries[0]['NoiDung'], 'Mật khẩu'), 'Thông báo duyệt có đúng hóa đơn, kết quả và không gửi mật khẩu');
+        && str_contains($deliveries[0]['NoiDung'], "Tên đăng nhập: ONLY\nMật khẩu mặc định: 1\nMã hóa đơn tiền phòng: "),
+        'Thông báo duyệt có mật khẩu mặc định ngay dưới tên đăng nhập');
     expectApproval($mailer->deliver('ONLY') === 'Đã gửi' && count($deliveries) === 1, 'Gửi lại đơn đã gửi không tạo email trùng');
     $pdo->beginTransaction();
     $blocked = false;
@@ -204,7 +205,9 @@ try {
     expectApproval(http_response_code() === 303 && $model->find('MAILFAIL')['TrangThai'] === 'Từ chối'
         && $mailer->find('MAILFAIL')['TrangThai'] === 'Lỗi', 'SMTP lỗi không rollback kết quả từ chối');
     expectApproval(str_contains($_SESSION['approval_email_notice'], 'chưa gửi được'), 'SMTP lỗi không thông báo gửi thành công');
-    expectApproval(str_contains($mailer->find('MAILFAIL')['NoiDung'], 'Thiếu giấy xác nhận'), 'Email từ chối chứa đúng lý do');
+    expectApproval(str_contains($mailer->find('MAILFAIL')['NoiDung'], 'Thiếu giấy xác nhận')
+        && !str_contains($mailer->find('MAILFAIL')['NoiDung'], 'Mật khẩu mặc định'),
+        'Email từ chối chứa đúng lý do và không có mật khẩu');
     approvalPage($controller, 'approval-email-retry', ['id'=>'MAILFAIL']);
     expectApproval(http_response_code() === 405, 'GET không được gửi lại email');
     approvalPage($controller, 'approval-email-retry', [], ['id'=>'MAILFAIL']);

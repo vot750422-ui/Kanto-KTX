@@ -18,7 +18,7 @@ Brevo API tiếp nhận email không đồng nghĩa thư đã vào Inbox. Với 
 ## Hành vi
 
 - UC02 bắt buộc email hợp lệ, tối đa 100 ký tự; hiển thị ở bước xác nhận và lưu vào `dondangky.Email`.
-- UC03 duyệt: sao chép email vào `sinhvien.Email`; thông báo gồm họ tên, mã đơn, MSSV/tên đăng nhập, mã hóa đơn và hướng dẫn liên hệ quản lý KTX để đăng nhập/thanh toán. Không gửi mật khẩu; chưa thêm luồng kích hoạt tài khoản.
+- UC03 duyệt: sao chép email vào `sinhvien.Email`; thông báo gồm họ tên, mã đơn, MSSV/tên đăng nhập, mật khẩu mặc định theo quy ước demo, mã hóa đơn và hướng dẫn đăng nhập/thanh toán. Mật khẩu trong tài khoản vẫn được băm; chưa thêm luồng kích hoạt tài khoản.
 - UC03 từ chối: gửi kết quả và lý do từ chối đến email trong đơn.
 - Bản ghi `emailthongbao` được tạo trong cùng transaction xét duyệt. Sau commit và giải phóng khóa xét duyệt, controller mới gửi email qua SMTP/PHPMailer trên WAMP hoặc Brevo HTTPS API trên Render Free.
 - Gửi email lỗi/thiếu cấu hình: kết quả xét duyệt vẫn được giữ; hiển thị cảnh báo và trạng thái `Lỗi`. Nhân viên quản lý KTX mở mục **Thông báo email cần kiểm tra**, vào chi tiết đơn rồi chọn **Gửi lại email**. POST cần đúng vai trò qua middleware của route.

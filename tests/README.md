@@ -104,7 +104,7 @@ Giới hạn: chưa tự động kiểm thử đăng nhập thành công bằng 
 - `node tests/frontend.js` chạy 8 ca dialog/lọc phòng bằng Node VM và DOM mô phỏng; không cần npm package. Đây không thay cho kiểm tra bố cục trong trình duyệt.
 ## UC03 - Email thông báo xét duyệt
 
-- `php -d xdebug.mode=off tests/approval.php`: kiểm tra hàng đợi email, nội dung không chứa mật khẩu, gửi sau commit, lỗi SMTP, gửi lại và rollback.
+- `php -d xdebug.mode=off tests/approval.php`: kiểm tra hàng đợi email, mật khẩu mặc định chỉ trong email duyệt, gửi sau commit, lỗi SMTP, gửi lại và rollback.
 - `php -d xdebug.mode=off tests/smtp-mailer.php`: kiểm tra PHPMailer với SMTP giả trong RAM, không gửi thư thật.
 - `php -d xdebug.mode=off tests/brevo-mailer.php`: kiểm tra payload Brevo HTTPS API và phản hồi lỗi bằng HTTP giả, không gửi thư thật.
 - `php -d xdebug.mode=off tests/run.php`: kiểm tra phân quyền route `approval-email-retry`.

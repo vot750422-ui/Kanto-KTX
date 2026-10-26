@@ -1,5 +1,9 @@
 # PROJECT_STATE
 
+## UC03 - Mật khẩu mặc định trong email duyệt (26/10/2026)
+
+- Email duyệt đơn thêm dòng mật khẩu mặc định theo quy ước demo ngay dưới tên đăng nhập; email từ chối không có dòng này. Mật khẩu tài khoản vẫn được băm bằng `password_hash()`. Đây là thay đổi mẫu nội dung cho thông báo tạo sau khi triển khai; bản ghi `emailthongbao` đã có giữ nội dung cũ.
+
 ## UC03 - Brevo HTTPS API cho Render Free (26/10/2026)
 
 - Render Free chặn cổng SMTP 25/465/587. `services/BrevoMailer.php` gửi nội dung text UC03 qua HTTPS; `services/ApprovalMailer.php` chọn phương thức theo `MAIL_TRANSPORT` (`smtp` mặc định cho WAMP, `brevo` cho Render). Cấu hình Render cần `MAIL_TRANSPORT=brevo`, `BREVO_API_KEY`, `MAIL_FROM_ADDRESS` đã đăng ký ở Brevo và `MAIL_FROM_NAME`. Không đưa khóa vào Git.
@@ -9,7 +13,7 @@
 ## UC03 - Email kết quả xét duyệt qua SMTP (26/10/2026)
 
 - Khi duyệt hoặc từ chối, ghi yêu cầu email trong cùng transaction; gửi qua PHPMailer sau commit. SMTP lỗi không đảo kết quả xét duyệt. NVQL xem trạng thái và gửi lại qua POST `approval-email-retry`.
-- Email duyệt gồm mã đơn, tên đăng nhập và mã hóa đơn; không gửi mật khẩu. Hồ sơ cũ thiếu email được đánh dấu `Không có email`. SMTP dùng biến môi trường `MAIL_*` hoặc `config/mail.local.php` bị Git bỏ qua.
+- Email duyệt gồm mã đơn, tên đăng nhập, mật khẩu mặc định theo quy ước demo và mã hóa đơn. Hồ sơ cũ thiếu email được đánh dấu `Không có email`. SMTP dùng biến môi trường `MAIL_*` hoặc `config/mail.local.php` bị Git bỏ qua.
 - `emailthongbao` được tạo bằng migration trước khi Apache nhận request; Docker giữ migration QR hiện có. Kiểm thử: UC03 70/70, route/phân quyền 69/69, adapter SMTP giả 7/7. Chưa thử gửi email thật hoặc build Docker trên máy này.
 
 ## UC02 - Bắt buộc email khi đăng ký lưu trú (26/10/2026)
