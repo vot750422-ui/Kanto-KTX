@@ -23,7 +23,7 @@ class ApprovalEmail
             . 'Đơn đăng ký lưu trú ' . $id . ' (MSSV: ' . $application['MSSV'] . ') '
             . ($approved ? 'đã được duyệt.' : 'đã bị từ chối.') . "\n\n";
         $body .= $approved
-            ? 'Tên đăng nhập: ' . $application['MSSV'] . "\nMã hóa đơn tiền phòng: " . $invoice
+            ? 'Tên đăng nhập: ' . $application['MSSV'] . "\nMật khẩu mặc định: 1\nMã hóa đơn tiền phòng: " . $invoice
                 . "\nChỗ ở được giữ trong thời gian chờ thanh toán. Vui lòng đăng nhập để thực hiện thanh toán hoặc liên hệ bộ phận quản lý KTX để nhận hướng dẫn đăng nhập và thanh toán. Hợp đồng được lập sau khi xác nhận thanh toán.\n"
             : 'Lý do từ chối: ' . $reason . "\nVui lòng kiểm tra, bổ sung thông tin trước khi đăng ký lại hoặc liên hệ bộ phận quản lý KTX để được hỗ trợ.\n";
         $body .= "\nBan quản lý Ký túc xá Đại học Kanto";
