@@ -144,3 +144,6 @@ hai tiến trình duyệt đồng thời trên cùng dữ liệu vật lý hoặ
 gửi đơn qua UC02, đăng nhập NVQL và mở menu Xét duyệt đơn đăng ký. Chi tiết hiển thị
 kỳ/số tiền trước khi xác nhận. Thiếu dữ liệu hóa đơn thì vẫn có thể từ chối hồ sơ,
 nhưng không thể xác nhận duyệt. Lệnh chạy test xem `tests/README.md`.
+## Email kết quả xét duyệt (26/10/2026)
+
+UC02 lưu email bắt buộc vào `dondangky.Email`. UC03 sao chép email sang `sinhvien.Email` và ghi `emailthongbao` trong transaction duyệt hoặc từ chối. SMTP chạy sau commit; lỗi gửi không đảo kết quả. Route POST `approval-email-retry` chỉ dành cho NVQL. Chi tiết cấu hình và migration: `UC03_EMAIL_SETUP.md`.

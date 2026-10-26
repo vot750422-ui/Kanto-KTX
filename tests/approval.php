@@ -25,7 +25,7 @@ function fixtureApplication(PDO $db, string $id, string $priority = 'UT00', stri
     static $serial = 0;
     $data = ['MaDonDangKy' => $id, 'MSSV' => $student ?? $id, 'HoTen' => 'Sinh viên <script>test</script>',
         'NgaySinh' => '2006-01-01', 'CCCD' => $cccd ?? sprintf('%012d', ++$serial), 'GioiTinh' => 'Nam',
-        'QueQuan' => 'Cần Thơ', 'SDT' => '0900000000', 'Lop' => 'TEST', 'NienKhoa' => '2024-2028',
+        'QueQuan' => 'Cần Thơ', 'SDT' => '0900000000', 'Email' => 'student@example.test', 'Lop' => 'TEST', 'NienKhoa' => '2024-2028',
         'MaUuTien' => $priority, 'MaPhong' => $room, 'ThoiGianGui' => '2026-01-01 10:00:00'];
     $stmt = $db->prepare('INSERT INTO dondangky (' . implode(', ', array_keys($data)) . ') VALUES (' . implode(', ', array_fill(0, count($data), '?')) . ')');
     $stmt->execute(array_values($data));
@@ -43,6 +43,7 @@ function approvalPage(ApprovalController $controller, string $action, array $get
 }
 try {
     // Chỉ ghi bảng TEMPORARY trong kết nối này; không sửa dữ liệu người dùng.
+    $pdo->exec(str_replace('CREATE TABLE IF NOT EXISTS', 'CREATE TEMPORARY TABLE', file_get_contents(__DIR__ . '/../sql/uc03-email.sql')));
     foreach (['toanha','phong','dienuutien','dondangky','sinhvien','taikhoan','hopdong','hoadon','hoadontienphong','hocky','dongia','nhanvien','hoadondiennuocsinhvien','phananhsuco'] as $table) {
         $ddl = $pdo->query("SHOW CREATE TABLE `$table`")->fetch(PDO::FETCH_NUM)[1];
         $ddl = preg_replace('/^.*CONSTRAINT `[^`]+` FOREIGN KEY .*\r?\n/m', '', $ddl);
@@ -98,6 +99,7 @@ try {
     $account = $pdo->query("SELECT * FROM taikhoan WHERE TenDangNhap='ONLY'")->fetch();
     expectApproval($account['VaiTro'] === 'Sinh viên' && password_verify('1', $account['MatKhau']) && $account['MatKhau'] !== '1', 'Tài khoản MSSV, vai trò đúng, mật khẩu được băm');
     $student = $pdo->query("SELECT * FROM sinhvien WHERE MSSV='ONLY'")->fetch();
+    expectApproval($student['Email'] === 'student@example.test', 'Duyệt đơn sao chép email sang hồ sơ sinh viên');
     expectApproval($student['TrangThaiLuuTru'] === 'Chờ thanh toán' && (int) $student['MaTK'] === (int) $account['MaTK'], 'Hồ sơ liên kết tài khoản và Chờ thanh toán');
     $invoice = $pdo->query('SELECT h.*, p.MaHocKy, p.MaPhong, p.MaDonGia FROM hoadon h JOIN hoadontienphong p ON p.MaHoaDon=h.MaHoaDon')->fetch();
     expectApproval($invoice['MaHocKy'] === 'NEXT' && $invoice['TongTien'] === '9000002.00' && $invoice['MaDonGia'] === 'RATE' && $invoice['TrangThai'] === 'Chưa thu', 'Thu sáu tháng kỳ kế tiếp, giá hiệu lực và làm tròn tổng đến đồng');
@@ -113,6 +115,22 @@ try {
     $pdo->exec("DELETE FROM hocky WHERE MaHocKy='OVERLAP'");
     expectApproval($model->find('ONLY')['MaHoaDon'] === $result['invoice'] && $model->find('ONLY')['MaHopDong'] === null && (int) $pdo->query('SELECT COUNT(*) FROM hopdong')->fetchColumn() === 0, 'Đơn liên kết hóa đơn, chưa tạo hợp đồng');
     expectApproval(deniedApproval(fn() => $model->approve('ONLY')) && deniedApproval(fn() => $model->reject('ONLY', 'test')), 'Xử lý lặp không tạo thêm tài khoản/hóa đơn hoặc đảo kết quả');
+    $deliveries = [];
+    $mailer = new ApprovalEmail($pdo, function (array $message) use ($pdo, &$deliveries): void {
+        expectApproval(!$pdo->inTransaction(), 'Gửi email sau khi transaction đã kết thúc');
+        $deliveries[] = $message;
+    });
+    expectApproval($mailer->find('ONLY')['TrangThai'] === 'Chờ gửi', 'Duyệt đơn ghi yêu cầu gửi email bền vững');
+    expectApproval($mailer->deliver('ONLY') === 'Đã gửi' && count($deliveries) === 1
+        && str_contains($deliveries[0]['NoiDung'], $result['invoice'])
+        && str_contains($deliveries[0]['NoiDung'], 'đã được duyệt.')
+        && !str_contains($deliveries[0]['NoiDung'], 'Mật khẩu'), 'Thông báo duyệt có đúng hóa đơn, kết quả và không gửi mật khẩu');
+    expectApproval($mailer->deliver('ONLY') === 'Đã gửi' && count($deliveries) === 1, 'Gửi lại đơn đã gửi không tạo email trùng');
+    $pdo->beginTransaction();
+    $blocked = false;
+    try { $mailer->deliver('ONLY'); } catch (LogicException $error) { $blocked = true; }
+    $pdo->rollBack();
+    expectApproval($blocked && count($deliveries) === 1, 'Không gọi SMTP khi transaction còn mở');
     $dashboard = (new StudentDashboard($pdo))->forAccount((int) $account['MaTK']);
     expectApproval($dashboard['invoices'] === 1 && $dashboard['contract'] === 'Chưa có hợp đồng', 'Dashboard sinh viên nhận hóa đơn đầu tiên và chưa có hợp đồng');
     fixtureApplication($pdo,'DUPSV','UT00','P1','ONLY');
@@ -136,11 +154,20 @@ try {
         && (int) $pdo->query("SELECT COUNT(*) FROM sinhvien WHERE MSSV='FAIL'")->fetchColumn() === 0
         && (int) $pdo->query('SELECT COUNT(*) FROM hoadon')->fetchColumn() === 1
         && $model->find('FAIL')['TrangThai'] === 'Chờ duyệt' && !$pdo->inTransaction(), 'Lỗi hóa đơn con rollback tài khoản, sinh viên, hóa đơn cha, đơn');
+    expectApproval($mailer->find('FAIL') === null, 'Duyệt rollback không sinh email');
     $lockName = 'kanto_uc02_' . substr(hash('sha256', (string) $pdo->query('SELECT DATABASE()')->fetchColumn()),0,32);
     $second = createDatabaseConnection();
     $stmt = $second->prepare('SELECT GET_LOCK(?,0)');$stmt->execute([$lockName]);
     expectApproval((int) $stmt->fetchColumn() === 1, 'Transaction thành công/thất bại đều giải phóng named lock cho kết nối khác');
     $stmt = $second->prepare('SELECT RELEASE_LOCK(?)');$stmt->execute([$lockName]);
+    $emailLock = 'kanto_email_' . substr(hash('sha256', $pdo->query('SELECT DATABASE()')->fetchColumn() . ':ONLY'), 0, 40);
+    $stmt = $second->prepare('SELECT GET_LOCK(?, 0)'); $stmt->execute([$emailLock]);
+    try {
+        expectApproval((int) $stmt->fetchColumn() === 1 && $mailer->deliver('ONLY') === 'Đang gửi'
+            && count($deliveries) === 1, 'Kết nối khác giữ khóa thì không gửi email đồng thời');
+    } finally {
+        $stmt = $second->prepare('SELECT RELEASE_LOCK(?)'); $stmt->execute([$emailLock]);
+    }
     expectApproval(Approval::proof(null)['status'] === 'none' && Approval::proof('storage/registration/' . str_repeat('a',48) . '.png')['status'] === 'missing', 'Phân biệt không nộp ảnh và tệp không còn');
     expectApproval(Approval::proof('storage/registration/../../config/db.php')['status'] === 'missing' && Approval::proof('config/db.php')['status'] === 'missing', 'Không đọc file ngoài storage qua đường dẫn minh chứng');
     $proofDir = __DIR__ . '/../storage/registration';
@@ -152,7 +179,7 @@ try {
         expectApproval(Approval::proof('storage/registration/' . $proofName)['status'] === 'available', 'Ảnh UC02 hợp lệ được đọc qua helper bảo vệ');
     } finally { unlink($proofPath); }
     $_SESSION['user'] = ['MaTK' => 99999, 'TenDangNhap' => 'NVQL'];
-    $controller = new ApprovalController($pdo);
+    $controller = new ApprovalController($pdo, new ApprovalEmail($pdo, static function (array $message): void {}));
     $html = approvalPage($controller,'approval');
     expectApproval(str_contains($html,'Xem chi tiết') && str_contains($html,'&lt;script&gt;test&lt;/script&gt;') && !str_contains($html,'<script>test</script>'), 'Danh sách hiển thị và escape dữ liệu hồ sơ');
     $html = approvalPage($controller,'approval-detail',['id'=>'WAR']);
@@ -170,6 +197,28 @@ try {
     expectApproval(http_response_code() === 303 && $model->find('UIAPPROVE')['TrangThai'] === 'Đã duyệt', 'POST duyệt thành công, không dùng số tiền do client gửi');
     approvalPage($controller,'approval-approve',[],['id'=>'UIAPPROVE']);
     expectApproval(http_response_code() === 409 && (int) $pdo->query("SELECT COUNT(*) FROM taikhoan WHERE TenDangNhap='UIAPPROVE'")->fetchColumn() === 1, 'POST lặp không tạo thêm tài khoản');
+    fixtureApplication($pdo, 'MAILFAIL');
+    $failedMailer = new ApprovalEmail($pdo, static function (array $message): void { throw new RuntimeException('SMTP test failure'); });
+    $failedController = new ApprovalController($pdo, $failedMailer);
+    approvalPage($failedController, 'approval-reject', [], ['id'=>'MAILFAIL', 'reason'=>'Thiếu giấy xác nhận']);
+    expectApproval(http_response_code() === 303 && $model->find('MAILFAIL')['TrangThai'] === 'Từ chối'
+        && $mailer->find('MAILFAIL')['TrangThai'] === 'Lỗi', 'SMTP lỗi không rollback kết quả từ chối');
+    expectApproval(str_contains($_SESSION['approval_email_notice'], 'chưa gửi được'), 'SMTP lỗi không thông báo gửi thành công');
+    expectApproval(str_contains($mailer->find('MAILFAIL')['NoiDung'], 'Thiếu giấy xác nhận'), 'Email từ chối chứa đúng lý do');
+    approvalPage($controller, 'approval-email-retry', ['id'=>'MAILFAIL']);
+    expectApproval(http_response_code() === 405, 'GET không được gửi lại email');
+    approvalPage($controller, 'approval-email-retry', [], ['id'=>'MAILFAIL']);
+    expectApproval(http_response_code() === 303 && $mailer->find('MAILFAIL')['TrangThai'] === 'Đã gửi'
+        && (int) $mailer->find('MAILFAIL')['SoLanThu'] === 2, 'Gửi lại thành công sau lỗi SMTP');
+    fixtureApplication($pdo, 'LEGACY');
+    $pdo->exec("UPDATE dondangky SET Email = NULL WHERE MaDonDangKy = 'LEGACY'");
+    $model->reject('LEGACY', 'Thiếu giấy tờ');
+    expectApproval($mailer->deliver('LEGACY') === 'Không có email' && (int) $mailer->find('LEGACY')['SoLanThu'] === 0, 'Đơn cũ thiếu email vẫn xử lý, không gọi SMTP');
+    fixtureApplication($pdo, 'QUEUEFAIL');
+    $pdo->exec("ALTER TABLE emailthongbao ADD CONSTRAINT test_email_failure CHECK (MaDonDangKy <> 'QUEUEFAIL')");
+    try { $model->approve('QUEUEFAIL'); throw new RuntimeException('Cần lỗi ghi hàng đợi email'); } catch (PDOException $e) {}
+    expectApproval($model->find('QUEUEFAIL')['TrangThai'] === 'Chờ duyệt'
+        && !$pdo->query("SELECT 1 FROM taikhoan WHERE TenDangNhap = 'QUEUEFAIL'")->fetchColumn(), 'Lỗi lưu thông báo rollback toàn bộ xét duyệt');
     $pdo->exec("UPDATE dondangky SET TrangThai='Từ chối' WHERE MaDonDangKy='OVERFLOW'");
     $pdo->beginTransaction();
     $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HONLY','ONLY','FULL','2026-01-01','2026-12-31','Còn hạn')");

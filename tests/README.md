@@ -102,3 +102,8 @@ Giới hạn: chưa tự động kiểm thử đăng nhập thành công bằng 
 - `tests/registration.php` có đầu vào NUL/UTF-8 sai và phương thức ngoài GET/POST.
 - `tests/rooms.php` đối chiếu truy vấn phòng đơn với danh sách và chặn sai giới tính.
 - `node tests/frontend.js` chạy 8 ca dialog/lọc phòng bằng Node VM và DOM mô phỏng; không cần npm package. Đây không thay cho kiểm tra bố cục trong trình duyệt.
+## UC03 - Email thông báo xét duyệt
+
+- `php -d xdebug.mode=off tests/approval.php`: kiểm tra hàng đợi email, nội dung không chứa mật khẩu, gửi sau commit, lỗi SMTP, gửi lại và rollback.
+- `php -d xdebug.mode=off tests/smtp-mailer.php`: kiểm tra PHPMailer với SMTP giả trong RAM, không gửi thư thật.
+- `php -d xdebug.mode=off tests/run.php`: kiểm tra phân quyền route `approval-email-retry`.

@@ -4,7 +4,7 @@
     <section class="approval-panel">
         <h2>Thông tin cá nhân</h2>
         <dl class="approval-info">
-            <?php foreach (['HoTen' => 'Họ tên', 'NgaySinh' => 'Ngày sinh', 'CCCD' => 'CCCD', 'GioiTinh' => 'Giới tính', 'QueQuan' => 'Quê quán', 'SDT' => 'Số điện thoại', 'MSSV' => 'MSSV', 'Lop' => 'Lớp', 'NienKhoa' => 'Niên khóa'] as $field => $label): ?>
+            <?php foreach (['HoTen' => 'Họ tên', 'NgaySinh' => 'Ngày sinh', 'CCCD' => 'CCCD', 'GioiTinh' => 'Giới tính', 'QueQuan' => 'Quê quán', 'SDT' => 'Số điện thoại', 'Email' => 'Email nhận kết quả', 'MSSV' => 'MSSV', 'Lop' => 'Lớp', 'NienKhoa' => 'Niên khóa'] as $field => $label): ?>
                 <div><dt><?= $label ?></dt><dd><?= $escape($application[$field]) ?></dd></div>
             <?php endforeach; ?>
         </dl>
@@ -15,7 +15,7 @@
             <?php foreach (['TenToa' => 'Dãy', 'Tang' => 'Tầng', 'SoPhong' => 'Phòng đăng ký'] as $field => $label): ?><div><dt><?= $label ?></dt><dd><?= $escape($application[$field]) ?></dd></div><?php endforeach; ?>
         </dl></section>
         <section class="approval-panel"><h2>Thông tin đơn</h2><dl class="approval-info">
-            <?php foreach (['MaDonDangKy' => 'Mã đơn', 'ThoiGianGui' => 'Ngày gửi', 'TrangThai' => 'Trạng thái'] as $field => $label): ?><div><dt><?= $label ?></dt><dd><?= $escape($application[$field]) ?></dd></div><?php endforeach; ?>
+            <?php foreach (['MaDonDangKy' => 'Mã đơn', 'ThoiGianGui' => 'Ngày gửi (giờ Việt Nam)', 'TrangThai' => 'Trạng thái'] as $field => $label): ?><div><dt><?= $label ?></dt><dd><?= $escape($application[$field]) ?></dd></div><?php endforeach; ?>
             <?php if ($application['LyDoTuChoi']): ?><div><dt>Lý do từ chối</dt><dd><?= $escape($application['LyDoTuChoi']) ?></dd></div><?php endif; ?>
         </dl></section>
     </div>
@@ -36,6 +36,20 @@
         <button class="approval-button primary" type="button" data-open="approve-dialog">Duyệt</button>
     <?php else: ?><p>Đơn đã được xử lý. Không thể xét duyệt lại.</p><?php endif; ?>
 </div>
+<?php if ($emailNotification): ?>
+<section class="approval-panel">
+    <h2>Email thông báo kết quả</h2>
+    <p>Trạng thái: <?= $escape($emailNotification['TrangThai']) ?> · Số lần thử: <?= (int) $emailNotification['SoLanThu'] ?></p>
+    <?php if ($emailNotification['ThoiGianGui']): ?><p>Máy chủ email tiếp nhận lúc: <?= $escape($emailNotification['ThoiGianGui']) ?> (giờ Việt Nam).</p><?php endif; ?>
+    <?php if ($emailNotification['TrangThai'] === 'Không có email'): ?><p>Hồ sơ chưa có email hợp lệ. Vui lòng liên hệ sinh viên qua thông tin trong hồ sơ.</p><?php endif; ?>
+    <?php if (in_array($emailNotification['TrangThai'], ['Chờ gửi', 'Lỗi'], true)): ?>
+    <form method="post" action="<?= $url('index.php?action=approval-email-retry') ?>">
+        <input type="hidden" name="id" value="<?= $escape($application['MaDonDangKy']) ?>">
+        <button class="approval-button primary" type="submit">Gửi lại email</button>
+    </form>
+    <?php endif; ?>
+</section>
+<?php endif; ?>
 <?php if ($application['TrangThai'] === 'Chờ duyệt'): ?>
 <dialog id="reject-dialog" class="approval-dialog">
     <form method="post" action="<?= $url('index.php?action=approval-reject') ?>">

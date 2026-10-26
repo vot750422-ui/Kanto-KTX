@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/ApprovalEmail.php';
 
 class Approval
 {
@@ -49,6 +50,7 @@ class Approval
             if ($stmt->rowCount() !== 1) {
                 throw new DomainException('Đơn đăng ký đã được xử lý.');
             }
+            (new ApprovalEmail($this->db))->enqueue($application, 'Từ chối', $reason);
         });
     }
 
@@ -142,7 +144,7 @@ class Approval
             $stmt = $this->db->prepare("INSERT INTO taikhoan (TenDangNhap, MatKhau, VaiTro, TrangThai) VALUES (?, ?, 'Sinh viên', 'Hoạt động')");
             $stmt->execute([$application['MSSV'], password_hash('1', PASSWORD_DEFAULT)]);
             $accountId = (int) $this->db->lastInsertId();
-            $fields = ['MSSV', 'MaUuTien', 'HoTen', 'NgaySinh', 'CCCD', 'GioiTinh', 'QueQuan', 'SDT', 'Lop', 'NienKhoa'];
+            $fields = ['MSSV', 'MaUuTien', 'HoTen', 'NgaySinh', 'CCCD', 'GioiTinh', 'QueQuan', 'SDT', 'Email', 'Lop', 'NienKhoa'];
             $values = [$accountId];
             foreach ($fields as $field) {
                 $values[] = $application[$field];
@@ -160,6 +162,7 @@ class Approval
             if ($stmt->rowCount() !== 1) {
                 throw new DomainException('Đơn đăng ký đã được xử lý.');
             }
+            (new ApprovalEmail($this->db))->enqueue($application, 'Đã duyệt', invoice: $invoiceId);
             return ['username' => $application['MSSV'], 'invoice' => $invoiceId];
         });
     }
