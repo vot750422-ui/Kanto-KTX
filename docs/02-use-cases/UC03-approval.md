@@ -170,14 +170,14 @@ Tên đăng nhập lấy MSSV. Mật khẩu khởi tạo theo quy ước demo đ
 băm bằng `password_hash()`. Không ghi giá trị mật khẩu vào tài liệu.
 
 Sau khi duyệt thành công, hệ thống hiển thị tên đăng nhập và mã hóa đơn cho
-Nhân viên quản lý KTX. Đây là kết quả cấp tài khoản, chưa phải thông báo đã
-bàn giao tài khoản cho sinh viên. Hệ thống hiện chưa gửi Gmail hoặc cung cấp
-luồng kích hoạt/thiết lập mật khẩu qua liên kết.
+Nhân viên quản lý KTX, đồng thời tạo thông báo và thử gửi đến email đã đăng ký. Email không
+chứa mật khẩu. Luồng kích hoạt/thiết lập mật khẩu qua liên kết chưa được triển khai;
+thông tin đăng nhập demo vẫn được chuẩn bị theo quy ước hiện hành.
 
-Khi demo UC01 bằng tài khoản vừa cấp, người trình diễn sử dụng thông tin đăng
-nhập đã chuẩn bị theo quy ước demo; không mô tả bước này là sinh viên đã nhận
-email tự động. Kênh bàn giao tài khoản thực tế vẫn cần được chốt trước khi
-triển khai sử dụng thực tế, không tự mặc định một kênh giao nhận mới.
+Khi từ chối, email gồm mã đơn và lý do từ chối. Yêu cầu gửi được lưu cùng transaction,
+SMTP chạy sau commit; lỗi email không hủy kết quả xét duyệt. Nhân viên quản lý KTX
+có thể xem trạng thái và gửi lại tại chi tiết đơn. Hồ sơ cũ thiếu email vẫn được xử lý
+và phải liên hệ qua thông tin trong hồ sơ. Chi tiết: `../UC03_EMAIL_SETUP.md`.
 
 Sinh viên có tài khoản ngay sau UC03 và có thể đăng nhập trước khi thanh toán.
 Khi đó UC11 hiển thị hồ sơ nhưng chưa có hợp đồng. UC07.2 giữ nguyên tài khoản
@@ -241,7 +241,7 @@ Các thuộc tính chính:
 - `LyDoTuChoi`
 - `MaHoaDon` (nullable, UNIQUE, FK đến hoadontienphong)
 - `MaHopDong` (nullable, UNIQUE, FK đến hopdong)
-- không nhập/hiển thị email; cột Email nullable hiện có được giữ nguyên
+- `Email`: bắt buộc cho đơn mới ở UC02, dùng gửi kết quả; CSDL giữ nullable cho hồ sơ cũ
 ### Bảng `DienUuTien`
 
 Dùng để xác định diện và mức độ ưu tiên của đơn đăng ký.

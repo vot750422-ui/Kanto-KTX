@@ -1,4 +1,6 @@
 /storage/registration/
 .env
 .env.*
+/vendor/
+/config/mail.local.php
 /config/payment.local.php

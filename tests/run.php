@@ -49,7 +49,7 @@ foreach (['student-payments', 'student-invoice', 'student-qr-create', 'student-p
         $cases['uc17_' . $actor . '_' . $route] = 'UC17: chặn ' . $actor . ' tại ' . $route;
     }
 }
-foreach (['approval', 'approval-detail', 'approval-proof', 'approval-approve', 'approval-reject'] as $route) {
+foreach (['approval', 'approval-detail', 'approval-proof', 'approval-approve', 'approval-reject', 'approval-email-retry'] as $route) {
     $cases['approval_guest_' . $route] = 'UC03: khách bị chặn tại ' . $route;
     $cases['approval_forbidden_' . $route] = 'UC03: vai trò khác bị chặn tại ' . $route;
 }

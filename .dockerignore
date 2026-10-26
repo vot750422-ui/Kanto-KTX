@@ -9,6 +9,8 @@ docs
 *.log
 .env
 .env.*
+vendor
+config/mail.local.php
 storage/registration
 AGENTS.md
 PROJECT_STATE.md

@@ -1,5 +1,15 @@
 <?php if (!isset($listing, $escape, $url)) { http_response_code(404); exit; } ?>
 <?php if ($success): ?><p class="approval-message success" role="status"><?= $escape($success) ?></p><?php endif; ?>
+<?php if ($emailNotice): ?><p class="approval-message" role="status"><?= $escape($emailNotice) ?></p><?php endif; ?>
+<?php if ($outstandingEmails): ?>
+<section class="approval-panel">
+    <h2>Thông báo email cần kiểm tra</h2>
+    <p>Tối đa 50 thông báo gần nhất chưa gửi được hoặc thiếu email.</p>
+    <ul><?php foreach ($outstandingEmails as $notification): ?>
+        <li><a href="<?= $url('index.php?action=approval-detail&id=' . rawurlencode($notification['MaDonDangKy'])) ?>">Đơn <?= $escape($notification['MaDonDangKy']) ?></a>: <?= $escape($notification['TrangThai']) ?></li>
+    <?php endforeach; ?></ul>
+</section>
+<?php endif; ?>
 <section class="approval-panel">
     <h2>Danh sách đơn chờ duyệt</h2>
     <p class="approval-note">Ưu tiên cao trước (4 → 3 → 2 → 0), cùng mức ưu tiên thì hồ sơ gửi trước đứng trước.</p>
@@ -8,7 +18,7 @@
     <?php else: ?>
     <div class="approval-table-wrap">
         <table class="approval-table">
-            <thead><tr><th>STT</th><th>Mã đơn</th><th>MSSV</th><th>Họ tên</th><th>Giới tính</th><th>Diện ưu tiên</th><th>Phòng đã chọn</th><th>Ngày gửi</th><th>Thao tác</th></tr></thead>
+            <thead><tr><th>STT</th><th>Mã đơn</th><th>MSSV</th><th>Họ tên</th><th>Giới tính</th><th>Diện ưu tiên</th><th>Phòng đã chọn</th><th>Ngày gửi (giờ Việt Nam)</th><th>Thao tác</th></tr></thead>
             <tbody>
                 <?php foreach ($listing['items'] as $offset => $item): ?>
                 <tr>

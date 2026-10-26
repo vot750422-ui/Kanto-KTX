@@ -18,6 +18,7 @@ function denyPayment(callable $call): bool {
     try { $call(); return false; } catch (DomainException $error) { return true; }
 }
 try {
+    $pdo->exec(str_replace('CREATE TABLE IF NOT EXISTS', 'CREATE TEMPORARY TABLE', file_get_contents(__DIR__ . '/../sql/uc03-email.sql')));
     foreach (['toanha','phong','dienuutien','dondangky','sinhvien','taikhoan','hopdong','hoadon','hoadontienphong','hocky','dongia','hoadondiennuocsinhvien','phananhsuco','hoadondiennuoc'] as $table) {
         $ddl = $pdo->query("SHOW CREATE TABLE `$table`")->fetch(PDO::FETCH_NUM)[1];
         $ddl = preg_replace('/^.*CONSTRAINT `[^`]+` FOREIGN KEY .*\r?\n/m', '', $ddl);

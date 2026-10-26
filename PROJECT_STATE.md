@@ -1,5 +1,11 @@
 # PROJECT_STATE
 
+## UC03 - Email kết quả xét duyệt qua SMTP (26/10/2026)
+
+- Khi duyệt hoặc từ chối, ghi yêu cầu email trong cùng transaction; gửi qua PHPMailer sau commit. SMTP lỗi không đảo kết quả xét duyệt. NVQL xem trạng thái và gửi lại qua POST `approval-email-retry`.
+- Email duyệt gồm mã đơn, tên đăng nhập và mã hóa đơn; không gửi mật khẩu. Hồ sơ cũ thiếu email được đánh dấu `Không có email`. SMTP dùng biến môi trường `MAIL_*` hoặc `config/mail.local.php` bị Git bỏ qua.
+- `emailthongbao` được tạo bằng migration trước khi Apache nhận request; Docker giữ migration QR hiện có. Kiểm thử: UC03 70/70, route/phân quyền 69/69, adapter SMTP giả 7/7. Chưa thử gửi email thật hoặc build Docker trên máy này.
+
 ## UC02 - Bắt buộc email khi đăng ký lưu trú (26/10/2026)
 
 - Form yêu cầu email; controller kiểm tra email ở bước nhập và trước khi gửi; model từ chối thao tác gửi trực tiếp nếu email thiếu hoặc sai. Email hợp lệ được lưu vào `dondangky.Email`.

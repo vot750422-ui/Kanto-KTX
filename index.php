@@ -37,7 +37,7 @@ if (($_GET['action'] ?? '') === 'rooms') {
     (new RoomController($pdo))->show();
     exit;
 }
-if (in_array($_GET['action'] ?? '', ['approval', 'approval-detail', 'approval-proof', 'approval-approve', 'approval-reject'], true)) {
+if (in_array($_GET['action'] ?? '', ['approval', 'approval-detail', 'approval-proof', 'approval-approve', 'approval-reject', 'approval-email-retry'], true)) {
     requireRole('Nhân viên quản lý KTX');
     require __DIR__ . '/config/db.php';
     require_once __DIR__ . '/controllers/ApprovalController.php';

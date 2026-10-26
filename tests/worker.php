@@ -236,7 +236,7 @@ try {
             $_SESSION['user'] = $otherRoles[0];
         }
         $_GET = ['action' => $route, 'id' => 'test'];
-        $_SERVER['REQUEST_METHOD'] = in_array($route, ['approval-approve','approval-reject'], true) ? 'POST' : 'GET';
+        $_SERVER['REQUEST_METHOD'] = in_array($route, ['approval-approve','approval-reject','approval-email-retry'], true) ? 'POST' : 'GET';
         $_POST = ['id' => 'test', 'reason' => 'test'];
         expectExit(fn() => check(http_response_code() === ($guest ? 302 : 403), 'Quyền route UC03 không đúng.'));
         require __DIR__ . '/../index.php';

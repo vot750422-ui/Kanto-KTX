@@ -5,12 +5,15 @@ require_once __DIR__ . '/../config/app.php';
 
 class ApprovalController
 {
-    public function __construct(private PDO $db) {}
+    public function __construct(private PDO $db, private ?ApprovalEmail $email = null)
+    {
+        $this->email ??= new ApprovalEmail($db);
+    }
 
     public function handle(string $action): void
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-        $write = in_array($action, ['approval-approve', 'approval-reject'], true);
+        $write = in_array($action, ['approval-approve', 'approval-reject', 'approval-email-retry'], true);
         if ($method !== ($write ? 'POST' : 'GET')) {
             http_response_code(405);
             header('Allow: ' . ($write ? 'POST' : 'GET'));
@@ -29,7 +32,12 @@ class ApprovalController
                 return;
             }
             try {
-                if ($action === 'approval-reject') {
+                if ($action === 'approval-email-retry') {
+                    if (!$this->email->find($id)) {
+                        throw new DomainException('Đơn chưa có thông báo email.');
+                    }
+                    $message = 'Đã kiểm tra thông báo email của đơn ' . $id . '.';
+                } elseif ($action === 'approval-reject') {
                     $model->reject($id, $reason);
                     $message = 'Từ chối đơn đăng ký thành công.';
                 } else {
@@ -37,7 +45,20 @@ class ApprovalController
                     $message = 'Duyệt đơn đăng ký thành công. Tên đăng nhập: ' . $result['username']
                         . '. Mã hóa đơn tiền phòng: ' . $result['invoice'];
                 }
+                // Kết quả nghiệp vụ đã commit; lỗi gửi thư không được báo là lỗi xét duyệt.
+                try {
+                    $mailStatus = $this->email->deliver($id);
+                } catch (Throwable $exception) {
+                    error_log('UC03 xử lý thông báo thất bại (' . get_class($exception) . ').');
+                    $mailStatus = 'Lỗi';
+                }
                 $_SESSION['approval_success'] = $message;
+                $_SESSION['approval_email_notice'] = match ($mailStatus) {
+                    'Đã gửi' => 'Máy chủ email đã tiếp nhận thông báo gửi đến sinh viên.',
+                    'Không có email' => 'Hồ sơ cũ chưa có email hợp lệ. Vui lòng liên hệ sinh viên qua thông tin trong hồ sơ.',
+                    'Đang gửi' => 'Thông báo đang được gửi trong một yêu cầu khác. Vui lòng tải lại trang để kiểm tra.',
+                    default => 'Kết quả xét duyệt đã được lưu, nhưng email chưa gửi được. Kiểm tra cấu hình SMTP và chọn Gửi lại email trong chi tiết đơn.',
+                };
                 header('Location: ' . appUrl('index.php?action=approval'), true, 303);
                 return;
             } catch (DomainException $exception) {
@@ -53,7 +74,9 @@ class ApprovalController
             $page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 1;
             $listing = $model->pending($page);
             $success = $_SESSION['approval_success'] ?? '';
-            unset($_SESSION['approval_success']);
+            $emailNotice = $_SESSION['approval_email_notice'] ?? '';
+            $outstandingEmails = $this->email->outstanding();
+            unset($_SESSION['approval_success'], $_SESSION['approval_email_notice']);
             $application = null;
             $content = __DIR__ . '/../views/approval/list.php';
         } else {
@@ -64,6 +87,7 @@ class ApprovalController
                 return;
             }
             $proof = Approval::proof($application['FileMinhChung']);
+            $emailNotification = $this->email->find($id);
             if ($action === 'approval-proof') {
                 if ($proof['status'] !== 'available') {
                     http_response_code(404);
