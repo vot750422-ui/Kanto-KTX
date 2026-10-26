@@ -8,7 +8,7 @@ class RegistrationController
 
     public static function validate(array $input): array
     {
-        $limits = ['HoTen' => 100, 'NgaySinh' => 10, 'CCCD' => 20, 'GioiTinh' => 3, 'QueQuan' => 150, 'SDT' => 15, 'MSSV' => 15, 'Lop' => 30, 'NienKhoa' => 20, 'MaUuTien' => 10];
+        $limits = ['HoTen' => 100, 'NgaySinh' => 10, 'CCCD' => 20, 'GioiTinh' => 3, 'QueQuan' => 150, 'SDT' => 15, 'Email' => 100, 'MSSV' => 15, 'Lop' => 30, 'NienKhoa' => 20, 'MaUuTien' => 10];
         $data = $errors = [];
         foreach ($limits as $field => $limit) {
             $data[$field] = is_string($input[$field] ?? null) ? trim($input[$field]) : '';
@@ -25,6 +25,9 @@ class RegistrationController
                     default => 'MSSV chỉ gồm chữ, số, dấu gạch ngang hoặc gạch dưới.',
                 };
             }
+        }
+        if (!filter_var($data['Email'], FILTER_VALIDATE_EMAIL)) {
+            $errors['Email'] = 'Vui lòng nhập email hợp lệ.';
         }
         if (!in_array($data['GioiTinh'], ['Nam', 'Nữ'], true)) {
             $errors['GioiTinh'] = 'Vui lòng chọn giới tính hợp lệ.';

@@ -45,6 +45,7 @@ Cho phép tác nhân gửi thông tin đăng ký ký túc xá để chờ Nhân 
 - Giới tính
 - Quê quán
 - Số điện thoại
+- Email (bắt buộc, tối đa 100 ký tự)
 
 #### Thông tin học tập và ưu tiên
 

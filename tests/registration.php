@@ -49,17 +49,24 @@ try {
     verify(array_column((new Registration($pdo))->priorities(), 'MaUuTien') === ['UT00', 'UT01', 'UT02', 'UT03'], 'Dropdown giữ thứ tự mã UT00, UT01, UT02, UT03');
     $pdo->exec("INSERT INTO phong (MaPhong, MaToa, SoPhong, Tang, GioiTinhPhong, SucChua) VALUES ('P1','TA','101',1,'Nam',2),('P2','TA','102',1,'Nam',2),('P3','TA','103',1,'Nữ',2)");
     $pdo->exec("INSERT INTO hopdong (MaHopDong, MSSV, MaPhong, NgayBatDau, NgayKetThuc, TrangThai) VALUES ('H1','OLD1','P1','2026-01-01','2026-12-31','Còn hạn'),('H2','OLD2','P1','2025-01-01','2025-12-31','Hết hạn')");
-    $data = ['HoTen' => 'Nguyễn Văn A', 'NgaySinh' => '2006-09-12', 'CCCD' => '079204000001', 'GioiTinh' => 'Nam', 'QueQuan' => 'Đồng Tháp', 'SDT' => '0912345678', 'MSSV' => 'KTPM2411001', 'Lop' => 'DHKTPM24A', 'NienKhoa' => '2024-2028', 'MaUuTien' => 'UT00', 'FileMinhChung' => null];
+    $data = ['HoTen' => 'Nguyễn Văn A', 'NgaySinh' => '2006-09-12', 'CCCD' => '079204000001', 'GioiTinh' => 'Nam', 'QueQuan' => 'Đồng Tháp', 'SDT' => '0912345678', 'Email' => 'student@example.test', 'MSSV' => 'KTPM2411001', 'Lop' => 'DHKTPM24A', 'NienKhoa' => '2024-2028', 'MaUuTien' => 'UT00', 'FileMinhChung' => null];
     [, $errors] = RegistrationController::validate($data);
     verify(!$errors, 'Thông tin hợp lệ được chấp nhận');
+    foreach ([[], ['Email' => ''], ['Email' => 'sai-email'], ['Email' => str_repeat('a', 90) . '@example.test']] as $change) {
+        $input = $change === [] ? array_diff_key($data, ['Email' => true]) : array_replace($data, $change);
+        [, $emailErrors] = RegistrationController::validate($input);
+        verify(isset($emailErrors['Email']), 'Email thiếu hoặc sai bị chặn tại bước nhập');
+    }
     [, $errors] = RegistrationController::validate(array_replace($data, ['MSSV' => [], 'NgaySinh' => '2006-02-30', 'SDT' => 'abc', 'CCCD' => '12', 'GioiTinh' => 'khác']));
     verify(count($errors) === 5, 'Từ chối dữ liệu dạng mảng, ngày sai và định dạng sai');
     $model = new Registration($pdo);
+    verify(rejected(fn() => $model->submit(array_diff_key($data, ['Email' => true]), 'P1'), 1), 'Không thể gửi đơn trực tiếp khi thiếu email');
     $rooms = $model->rooms('Nam');
     verify(count($rooms) === 2 && (int) $rooms[0]['ConCho'] === 1, 'Lọc giới tính và chỉ trừ hợp đồng Còn hạn');
     verify(rejected(fn() => $model->submit($data, 'P3'), 2), 'Không gửi đơn vào phòng khác giới tính');
     $id = $model->submit($data, 'P1');
     verify(strlen($id) === 10 && $model->hasPending($data['MSSV']), 'Gửi đơn tạo mã và trạng thái Chờ duyệt');
+    verify($pdo->query('SELECT Email FROM dondangky LIMIT 1')->fetchColumn() === $data['Email'], 'Email được lưu vào đơn đăng ký');
     verify(count($model->rooms('Nam')) === 1, 'Đơn Chờ duyệt giữ đúng một chỗ, phòng đầy bị loại');
     verify(rejected(fn() => $model->submit($data, 'P2'), 1), 'Không tạo đơn trùng MSSV tại phòng khác');
     $next = array_replace($data, ['MSSV' => 'NEXT']);
@@ -68,7 +75,9 @@ try {
     $pdo->exec("UPDATE dondangky SET TrangThai = 'Từ chối' WHERE MaPhong = 'P1'");
     verify(count($model->rooms('Nam')) === 2, 'Đơn bị từ chối giải phóng chỗ khả dụng');
     $controller = new RegistrationController($pdo);
-    verify(str_contains(page($controller), 'Thông tin đăng ký'), 'Khách mở được bước nhập thông tin');
+    $form = page($controller);
+    verify(str_contains($form, 'Thông tin đăng ký'), 'Khách mở được bước nhập thông tin');
+    verify(preg_match('/<input[^>]*name="Email"[^>]*type="email"[^>]*required/', $form) === 1, 'Form yêu cầu nhập email');
     $_FILES = ['proof' => ['error' => UPLOAD_ERR_OK, 'tmp_name' => __FILE__, 'size' => 100, 'name' => 'fake.jpg']];
     $html = page($controller, ['operation' => 'information'] + $next);
     verify(str_contains($html, 'Chọn ảnh JPG/PNG') && $_SESSION['registration_draft']['step'] === 1, 'Từ chối ảnh giả, giữ tại bước nhập thông tin');

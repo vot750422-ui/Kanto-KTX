@@ -1,5 +1,10 @@
 # PROJECT_STATE
 
+## UC02 - Bắt buộc email khi đăng ký lưu trú (26/10/2026)
+
+- Form yêu cầu email; controller kiểm tra email ở bước nhập và trước khi gửi; model từ chối thao tác gửi trực tiếp nếu email thiếu hoặc sai. Email hợp lệ được lưu vào `dondangky.Email`.
+- Cột `Email` đã có trong schema repository và giữ nullable để không ảnh hưởng hồ sơ cũ. Thay đổi này không thêm chức năng gửi email trên `main`.
+
 ## UC17 - Tối giản thẻ QR (25/10/2026)
 
 - Khi QR đã tạo, thẻ chỉ hiển thị tiêu đề, mã QR và thời gian còn hiệu lực. Đã bỏ các đoạn hướng dẫn/ghi chú và nút mở trang thanh toán trên cùng thiết bị theo yêu cầu giao diện. Luồng quét trên điện thoại và xác nhận thanh toán không đổi.

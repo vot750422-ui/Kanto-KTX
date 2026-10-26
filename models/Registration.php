@@ -43,6 +43,10 @@ class Registration
 
     public function submit(array $data, string $roomId): string
     {
+        if (!is_string($data['Email'] ?? null) || strlen($data['Email']) > 100
+            || !filter_var($data['Email'], FILTER_VALIDATE_EMAIL)) {
+            throw new DomainException('Vui lòng nhập email hợp lệ.', 1);
+        }
         // Khóa chung UC02: bảo vệ cả MSSV trùng ở hai phòng khác nhau.
         $lock = $this->db->prepare('SELECT GET_LOCK(?, 10)');
         $lockName = 'kanto_uc02_' . substr(hash('sha256', (string) $this->db->query('SELECT DATABASE()')->fetchColumn()), 0, 32);
@@ -73,7 +77,7 @@ class Registration
                 throw new DomainException('Diện ưu tiên không còn hợp lệ. Vui lòng kiểm tra lại.', 1);
             }
             $id = strtoupper(bin2hex(random_bytes(5)));
-            $fields = ['MSSV', 'HoTen', 'NgaySinh', 'CCCD', 'GioiTinh', 'QueQuan', 'SDT', 'Lop', 'NienKhoa', 'MaUuTien', 'FileMinhChung'];
+            $fields = ['MSSV', 'HoTen', 'NgaySinh', 'CCCD', 'GioiTinh', 'QueQuan', 'SDT', 'Email', 'Lop', 'NienKhoa', 'MaUuTien', 'FileMinhChung'];
             $values = [$id];
             foreach ($fields as $field) {
                 $values[] = $data[$field] ?? null;

@@ -57,7 +57,7 @@ Bộ kiểm thử dùng bảng TEMPORARY theo schema thật, không sửa dữ l
 & 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/registration.php
 ```
 
-Test UC02 tạo bảng TEMPORARY theo schema thực tế trong kết nối riêng, không sửa dữ liệu nghiệp vụ. Kiểm tra validation, lọc giới tính, tính chỗ còn lại, giữ chỗ, trùng MSSV, rollback, tệp giả, ba bước, quay lại và gửi lặp. Mô phỏng phòng bị đơn khác giữ trước khi gửi; chưa chạy hai tiến trình đồng thời hoặc tự động kiểm tra giao diện trình duyệt và upload ảnh hợp lệ qua HTTP.
+Test UC02 tạo bảng TEMPORARY theo schema thực tế trong kết nối riêng, không sửa dữ liệu nghiệp vụ. Kiểm tra email bắt buộc và lưu vào đơn, validation, lọc giới tính, tính chỗ còn lại, giữ chỗ, trùng MSSV, rollback, tệp giả, ba bước, quay lại và gửi lặp. Mô phỏng phòng bị đơn khác giữ trước khi gửi; chưa chạy hai tiến trình đồng thời hoặc tự động kiểm tra giao diện trình duyệt và upload ảnh hợp lệ qua HTTP.
 
 ## Đăng nhập và phân quyền
 
