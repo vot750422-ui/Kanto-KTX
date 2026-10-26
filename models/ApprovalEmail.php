@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../services/SmtpMailer.php';
+require_once __DIR__ . '/../services/ApprovalMailer.php';
 
 class ApprovalEmail
 {
@@ -7,10 +7,10 @@ class ApprovalEmail
 
     public function __construct(private PDO $db, ?callable $sender = null)
     {
-        $this->sender = $sender === null ? (new SmtpMailer())->send(...) : Closure::fromCallable($sender);
+        $this->sender = $sender === null ? (new ApprovalMailer())->send(...) : Closure::fromCallable($sender);
     }
 
-    // Ghi cùng transaction xét duyệt. SMTP chỉ được gọi sau commit.
+    // Ghi cùng transaction xét duyệt. Chỉ gửi email sau commit.
     public function enqueue(array $application, string $status, ?string $reason = null, ?string $invoice = null): void
     {
         if (!$this->db->inTransaction() || !in_array($status, ['Đã duyệt', 'Từ chối'], true)) {
@@ -47,7 +47,7 @@ class ApprovalEmail
 
     public function deliver(string $id): string
     {
-        if ($this->db->inTransaction()) { throw new LogicException('Không gửi SMTP trong transaction.'); }
+        if ($this->db->inTransaction()) { throw new LogicException('Không gửi email trong transaction.'); }
         $lockName = 'kanto_email_' . substr(hash('sha256', $this->db->query('SELECT DATABASE()')->fetchColumn() . ':' . $id), 0, 40);
         $stmt = $this->db->prepare('SELECT GET_LOCK(?, 0)');
         $stmt->execute([$lockName]);
@@ -61,7 +61,7 @@ class ApprovalEmail
             try {
                 ($this->sender)($message);
             } catch (Throwable $error) {
-                // Không ghi nội dung SMTP, email hay credential vào log/UI.
+                // Không ghi nội dung phản hồi từ nhà cung cấp, email hay credential vào log/UI.
                 error_log('UC03 email chưa gửi được (' . get_class($error) . ').');
                 $stmt = $this->db->prepare("UPDATE emailthongbao SET TrangThai = 'Lỗi' WHERE MaDonDangKy = ?");
                 $stmt->execute([$id]);

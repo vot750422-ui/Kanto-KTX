@@ -1,13 +1,28 @@
 # Email kết quả xét duyệt và giờ Việt Nam
 
+## Render Free: gửi qua Brevo HTTPS API
+
+Render Free chặn kết nối SMTP ra cổng 25, 465 và 587. Để gửi email UC03 trên Render Free, tạo tài khoản Brevo, kích hoạt email giao dịch, đăng ký/xác minh địa chỉ gửi và tạo API key với quyền **Transactional email: All** (các nhóm khác có thể để None). Trong Render → Web Service → Environment, đặt:
+
+| Biến | Giá trị |
+| --- | --- |
+| `MAIL_TRANSPORT` | `brevo` |
+| `BREVO_API_KEY` | API key của Brevo; chỉ nhập trên Render |
+| `MAIL_FROM_ADDRESS` | Địa chỉ người gửi đã đăng ký ở Brevo |
+| `MAIL_FROM_NAME` | Tên hiển thị, ví dụ `Ký túc xá Đại học Kanto` |
+
+Chọn **Save and deploy**, sau đó mở chi tiết những đơn có email `Lỗi` và bấm **Gửi lại email**. Mặc định khi không đặt `MAIL_TRANSPORT`, WAMP tiếp tục dùng SMTP qua `config/mail.local.php`. Các biến `MAIL_HOST`, `MAIL_PORT`, `MAIL_ENCRYPTION`, `MAIL_USERNAME`, `MAIL_PASSWORD` chỉ dùng cho SMTP và không giải quyết giới hạn cổng SMTP của Render Free.
+
+Brevo API tiếp nhận email không đồng nghĩa thư đã vào Inbox. Với địa chỉ gửi thuộc miền miễn phí như `@gmail.com`, Brevo có thể thay địa chỉ From hiển thị bằng miền của họ; muốn giữ địa chỉ gửi riêng cần xác thực một miền mình quản lý. Không đưa API key vào Git, tài liệu hoặc chat. Xem [Brevo API](https://developers.brevo.com/docs/send-a-transactional-email), [thiết lập người gửi](https://help.brevo.com/hc/en-us/articles/115000188150-Troubleshooting-Issues-with-Brevo-SMTP) và [giới hạn Render Free](https://render.com/docs/free).
+
 ## Hành vi
 
 - UC02 bắt buộc email hợp lệ, tối đa 100 ký tự; hiển thị ở bước xác nhận và lưu vào `dondangky.Email`.
 - UC03 duyệt: sao chép email vào `sinhvien.Email`; thông báo gồm họ tên, mã đơn, MSSV/tên đăng nhập, mã hóa đơn và hướng dẫn liên hệ quản lý KTX để đăng nhập/thanh toán. Không gửi mật khẩu; chưa thêm luồng kích hoạt tài khoản.
 - UC03 từ chối: gửi kết quả và lý do từ chối đến email trong đơn.
-- Bản ghi `emailthongbao` được tạo trong cùng transaction xét duyệt. Sau commit và giải phóng khóa xét duyệt, controller mới gửi SMTP qua [PHPMailer](https://github.com/PHPMailer/PHPMailer).
-- SMTP lỗi/thiếu cấu hình: kết quả xét duyệt vẫn được giữ; hiển thị cảnh báo và trạng thái `Lỗi`. Nhân viên quản lý KTX mở mục **Thông báo email cần kiểm tra**, vào chi tiết đơn rồi chọn **Gửi lại email**. POST cần đúng vai trò qua middleware của route.
-- Mỗi đơn có một thông báo; đơn đã gửi không gửi lại. Named lock theo CSDL/mã đơn ngăn hai yêu cầu cùng gửi. `Đã gửi` nghĩa là máy chủ SMTP đã tiếp nhận, chưa khẳng định thư nằm trong Inbox; SMTP có thể chuyển thư vào Spam hoặc trả thư sau đó.
+- Bản ghi `emailthongbao` được tạo trong cùng transaction xét duyệt. Sau commit và giải phóng khóa xét duyệt, controller mới gửi email qua SMTP/PHPMailer trên WAMP hoặc Brevo HTTPS API trên Render Free.
+- Gửi email lỗi/thiếu cấu hình: kết quả xét duyệt vẫn được giữ; hiển thị cảnh báo và trạng thái `Lỗi`. Nhân viên quản lý KTX mở mục **Thông báo email cần kiểm tra**, vào chi tiết đơn rồi chọn **Gửi lại email**. POST cần đúng vai trò qua middleware của route.
+- Mỗi đơn có một thông báo; đơn đã gửi không gửi lại. Named lock theo CSDL/mã đơn ngăn hai yêu cầu cùng gửi. `Đã gửi` nghĩa là SMTP hoặc Brevo API đã tiếp nhận, chưa khẳng định thư nằm trong Inbox.
 - Hồ sơ cũ thiếu email vẫn duyệt/từ chối được, ghi `Không có email`; không đoán email sinh viên. Đơn đã xử lý trước khi cài chức năng không được gửi hồi tố.
 - Nếu tiến trình dừng sau commit nhưng trước SMTP, yêu cầu `Chờ gửi` vẫn còn trong CSDL. Nếu SMTP đã nhận nhưng kết nối bị ngắt hoặc ghi trạng thái DB thất bại, lần thử sau có thể tạo thư trùng; Message-ID ổn định hỗ trợ đối chiếu nhưng không bảo đảm exactly-once.
 
