@@ -4,6 +4,18 @@ if (($_GET['action'] ?? '') === 'logout') {
     require __DIR__ . '/controllers/logout.php';
     exit;
 }
+
+if (($_GET['action'] ?? '') === 'phan-anh') {
+    requireRole('Sinh viên');
+
+    require_once __DIR__ . '/config/db.php';
+    require_once __DIR__ . '/controllers/PhanAnhSuCoContr.php';
+
+    $controller = new PhanAnhSuCoContr($pdo);
+    $controller->show();
+    exit;
+}
+
 if (($_GET['action'] ?? '') === 'login') {
     // Xử lý form trước khi chuyển hướng theo phiên đăng nhập có sẵn.
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -24,6 +36,42 @@ if (($_GET['action'] ?? '') === 'login') {
     require __DIR__ . '/views/Auth/login.php';
     exit;
 }
+
+/* UC05.1 và UC05.2: Quản lý hợp đồng */
+if (($_GET['action'] ?? '') === 'nvql-hopdong') {
+    requireRole('NVQL');
+
+    require_once __DIR__ . '/config/db.php';
+    require_once __DIR__ . '/controllers/nvql/HopDongController.php';
+
+    $controller = new HopDongController($pdo);
+    $controller->traCuu();
+    exit;
+}
+
+if (($_GET['action'] ?? '') === 'nvql-hopdong-chitiet') {
+    requireRole('NVQL');
+
+    require_once __DIR__ . '/config/db.php';
+    require_once __DIR__ . '/controllers/nvql/HopDongController.php';
+
+    $controller = new HopDongController($pdo);
+    $controller->chiTiet();
+    exit;
+}
+
+if (($_GET['action'] ?? '') === 'nvql-hopdong-thanhly') {
+    requireRole('NVQL');
+
+    require_once __DIR__ . '/config/db.php';
+    require_once __DIR__ . '/controllers/hopdongContr.php';
+
+    $controller = new HopDongController($pdo);
+    $controller->thanhLy();
+    exit;
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="vi">

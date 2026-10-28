@@ -116,4 +116,20 @@ class HopDong
 
         return $hopDong ?: null;
     }
+    //UC05.3: thanh lý hợp đồng còn hạn
+    public function thanhLy(string $maHopDong): bool
+    {
+        $sql = "UPDATE hopdong
+                SET TrangThai = 'Đã thanh lý'
+                WHERE MaHopDong = :ma_hd
+                  AND TrangThai <> 'Đã thanh lý'
+                  AND NgayKetThuc >= CURDATE()";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':ma_hd' => $maHopDong
+        ]);
+
+        return $stmt->rowCount() > 0;
+    }
 }

@@ -64,4 +64,31 @@ class HopDongController
 
         require __DIR__ . '/../../views/nvql/hopdong/chitiet.php';
     }
+    
+    // UC05.3: Xử lý thanh lý hợp đồng
+    public function thanhLy(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            exit('Phương thức không được hỗ trợ.');
+        }
+
+        $maHopDong = trim($_POST['ma_hd'] ?? '');
+
+        if ($maHopDong === '') {
+            header('Location: index.php?action=nvql-hopdong');
+            exit;
+        }
+
+        $thanhCong = $this->hopDongModel->thanhLy($maHopDong);
+
+        if ($thanhCong) {
+            header('Location: index.php?action=nvql-hopdong&btn_search=1&thanhly=success');
+        } else {
+            header('Location: index.php?action=nvql-hopdong&btn_search=1&thanhly=failed');
+        }
+
+        exit;
+    }
+
 }

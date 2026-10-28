@@ -43,6 +43,19 @@
     <main class="content">
 
         <h1>Quản lý hợp đồng</h1>
+//trường hợp dẫ thanh lý 
+
+
+<?php if (($_GET['thanhly'] ?? '') === 'success'): ?>
+    <p class="success-message">
+        Thanh lý hợp đồng thành công.
+    </p>
+<?php elseif (($_GET['thanhly'] ?? '') === 'failed'): ?>
+    <p class="error-message">
+        Không thể thanh lý hợp đồng. Hợp đồng có thể đã hết hạn,
+        đã thanh lý hoặc không tồn tại.
+    </p>
+<?php endif; ?>
 
         <!-- Form tìm kiếm -->
         <div class="panel">
@@ -216,11 +229,31 @@
                                         <?= htmlspecialchars($hd['TrangThaiThucTe'] ?? '') ?>
                                     </td>
 
-                                    <td>
-                                        <a href="index.php?action=nvql-hopdong-chitiet&amp;ma_hd=<?= urlencode($hd['MaHopDong'] ?? '') ?>">
-                                            Xem chi tiết
-                                        </a>
-                                    </td>
+                                   //
+                                
+<td>
+    <a href="index.php?action=nvql-hopdong-chitiet&amp;ma_hd=<?= urlencode($hd['MaHopDong'] ?? '') ?>">
+        Xem chi tiết
+    </a>
+
+    <?php if (($hd['TrangThaiThucTe'] ?? '') === 'Còn hạn'): ?>
+        <form action="index.php?action=nvql-hopdong-thanhly"
+              method="POST"
+              onsubmit="return confirm('Bạn có chắc chắn muốn thanh lý hợp đồng này không?');">
+
+            <input type="hidden"
+                   name="ma_hd"
+                   value="<?= htmlspecialchars($hd['MaHopDong'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+
+            <button type="submit" class="btn_reset">
+                Thanh lý
+            </button>
+        </form>
+    <?php endif; ?>
+</td>
+ 
+
+
                                 </tr>
 
                             <?php endforeach; ?>
