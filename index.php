@@ -1,60 +1,62 @@
 <?php
 require_once __DIR__ . '/middleware/Role.php';
-if (in_array($_GET['action'] ?? '', ['payment-checkout', 'payment-checkout-confirm'], true)) {
+$action = is_string($_GET['action'] ?? null) ? $_GET['action'] : '';
+
+// Định tuyến request đến đúng controller theo nghiệp vụ người dùng yêu cầu.
+if (in_array($action, ['payment-checkout', 'payment-checkout-confirm'], true)) {
     require_once __DIR__ . '/controllers/PaymentCheckoutController.php';
-    (new PaymentCheckoutController())->handle($_GET['action']);
+    (new PaymentCheckoutController())->handle($action);
     exit;
 }
-if (in_array($_GET['action'] ?? '', ['student-payments', 'student-invoice', 'student-qr-create', 'student-payment', 'student-payment-confirm'], true)) {
+if (in_array($action, ['student-payments', 'student-invoice', 'student-qr-create', 'student-payment', 'student-payment-confirm'], true)) {
     require_once __DIR__ . '/controllers/StudentPaymentController.php';
-    (new StudentPaymentController())->handle($_GET['action']);
+    (new StudentPaymentController())->handle($action);
     exit;
 }
-if (($_GET['action'] ?? '') === 'chatbot-send') {
+if ($action === 'chatbot-send') {
     require_once __DIR__ . '/controllers/ChatbotController.php';
     (new ChatbotController())->send();
     exit;
 }
-if (in_array($_GET['action'] ?? '', ['payments', 'payment-confirm'], true)) {
+if (in_array($action, ['payments', 'payment-confirm'], true)) {
     require_once __DIR__ . '/controllers/PaymentController.php';
-    (new PaymentController())->handle($_GET['action']);
+    (new PaymentController())->handle($action);
     exit;
 }
-if (($_GET['action'] ?? '') === 'accommodation') {
+if ($action === 'accommodation') {
     require_once __DIR__ . '/controllers/AccommodationController.php';
     (new AccommodationController())->show();
     exit;
 }
-
-if (($_GET['action'] ?? '') === 'guide') {
+if ($action === 'guide') {
     require_once __DIR__ . '/controllers/GuideController.php';
     (new GuideController())->show();
     exit;
 }
-if (($_GET['action'] ?? '') === 'rooms') {
+if ($action === 'rooms') {
     require_once __DIR__ . '/config/db.php';
     require_once __DIR__ . '/controllers/RoomController.php';
     (new RoomController($pdo))->show();
     exit;
 }
-if (in_array($_GET['action'] ?? '', ['approval', 'approval-detail', 'approval-proof', 'approval-approve', 'approval-reject', 'approval-email-retry'], true)) {
+if (in_array($action, ['approval', 'approval-detail', 'approval-proof', 'approval-approve', 'approval-reject', 'approval-email-retry'], true)) {
     requireRole('Nhân viên quản lý KTX');
     require __DIR__ . '/config/db.php';
     require_once __DIR__ . '/controllers/ApprovalController.php';
-    (new ApprovalController($pdo))->handle($_GET['action']);
+    (new ApprovalController($pdo))->handle($action);
     exit;
 }
-if (($_GET['action'] ?? '') === 'register') {
+if ($action === 'register') {
     require_once __DIR__ . '/config/db.php';
     require_once __DIR__ . '/controllers/RegistrationController.php';
     (new RegistrationController($pdo))->show();
     exit;
 }
-if (($_GET['action'] ?? '') === 'logout') {
+if ($action === 'logout') {
     require __DIR__ . '/controllers/logout.php';
     exit;
 }
-if (($_GET['action'] ?? '') === 'login') {
+if ($action === 'login') {
     // Xử lý form trước khi chuyển hướng theo phiên đăng nhập có sẵn.
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         require_once __DIR__ . '/config/db.php';
