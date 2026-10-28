@@ -45,6 +45,65 @@ $users = $pdo->query('SELECT MaTK, TenDangNhap, MatKhau, VaiTro, TrangThai FROM 
 $active = array_values(array_filter($users, fn($user) => $user['TrangThai'] === 'Hoạt động'));
 $case = $argv[1] ?? '';
 try {
+    if (preg_match('/^newroute_authorized_(.+)$/D', $case, $parts)) {
+        $route = $parts[1];
+        $role = in_array($route, ['incident-report','notifications'], true) ? 'Sinh viên'
+            : ($route === 'statistics' ? 'Quản lý KTX' : 'Nhân viên quản lý KTX');
+        $matches = array_values(array_filter($active, fn($user) => $user['VaiTro'] === $role));
+        check(count($matches) > 0, 'Cần tài khoản đúng vai trò để kiểm thử route mới.');
+        $_SESSION['user'] = $matches[0];
+        $_GET = ['action'=>$route];
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        http_response_code(200);
+        ob_start();
+        register_shutdown_function(function () use ($route) {
+            $html = ob_get_clean();
+            try {
+                check(error_get_last() === null, 'Có lỗi PHP khi render route mới.');
+                check(http_response_code() === 200, 'Route đúng vai trò trả HTTP ' . http_response_code() . ', không phải 200.');
+                $headings = [
+                    'students'=>'Quản lý sinh viên', 'utility-meters'=>'Ghi chỉ số điện nước',
+                    'incidents'=>'Xử lý phản ánh sự cố', 'incident-report'=>'Gửi phản ánh sự cố',
+                    'notifications'=>'Thông báo', 'statistics'=>'Thống kê và báo cáo',
+                ];
+                check(str_contains($html, '<h1>' . $headings[$route] . '</h1>'), 'Trang không render đúng tiêu đề chức năng.');
+                check(str_contains($html, 'aria-current="page"'), 'Navbar chưa đánh dấu chức năng hiện tại.');
+                check(!str_contains($html, 'assets/css/dashboard.css'), 'Trang đang tham chiếu tệp dashboard.css không tồn tại.');
+                if (in_array($route, ['students','utility-meters','incidents','statistics'], true)) {
+                    check(str_contains($html, 'class="staff-header"'), 'Trang nhân viên chưa dùng header chung.');
+                    check(str_contains($html, 'assets/css/staff-dashboard.css'), 'Trang nhân viên thiếu stylesheet dashboard chung.');
+                }
+                if ($route === 'students') {
+                    check(str_contains($html, 'class="payment-table"'), 'Danh sách sinh viên chưa tự hiển thị khi mở chức năng.');
+                    check(!str_contains($html, 'để xem toàn bộ sinh viên'), 'Trang sinh viên vẫn yêu cầu bấm tìm kiếm lần đầu.');
+                }
+                if ($route === 'utility-meters') {
+                    check(str_contains($html, 'data-utility-room'), 'Ô chọn phòng chưa được nối với thao tác tải chỉ số tự động.');
+                    check(str_contains($html, 'assets/js/utility-meters.js'), 'Trang ghi chỉ số thiếu JavaScript tự tải phòng.');
+                }
+                echo 'PASS';
+            } catch (Throwable $error) { echo 'FAIL: ' . $error->getMessage(); exit(1); }
+        });
+        require __DIR__ . '/../index.php';
+    }
+    if (preg_match('/^newroute_(guest|forbidden)_(.+)$/D', $case, $parts)) {
+        [, $actor, $route] = $parts;
+        unset($_SESSION['user']);
+        if ($actor === 'forbidden') {
+            $required = in_array($route, ['incident-report','notifications','notification-detail'], true) ? 'Sinh viên'
+                : ($route === 'statistics' ? 'Quản lý KTX' : 'Nhân viên quản lý KTX');
+            $matches = array_values(array_filter($active, fn($user) => $user['VaiTro'] !== $required));
+            check(count($matches) > 0, 'Cần tài khoản sai vai trò để kiểm thử route mới.');
+            $_SESSION['user'] = $matches[0];
+        }
+        $_GET = ['action'=>$route,'id'=>'KHONGCO'];
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        http_response_code(200);
+        expectExit(function () use ($actor) {
+            check(http_response_code() === ($actor === 'guest' ? 302 : 403), 'Sai phân quyền route mới.');
+        });
+        require __DIR__ . '/../index.php';
+    }
     if (str_starts_with($case, 'checkout_')) {
         $_SESSION = [];
         $confirm = $case === 'checkout_get_confirm';
@@ -78,7 +137,7 @@ try {
         $_GET = ['action'=>$route,'invoice'=>'TEST17'];
         $_POST = ['invoice'=>'TEST17'];
         $_SERVER['REQUEST_METHOD'] = in_array($route, ['student-payment-confirm','student-qr-create'], true) ? 'POST' : 'GET';
-        expectExit(function () use ($actor) {
+        expectExit(function () use ($actor, $route) {
             check(http_response_code() === ($actor === 'guest' ? 302 : 403), 'Sai phân quyền UC17.');
         });
         require __DIR__ . '/../index.php';
@@ -103,6 +162,41 @@ try {
         });
         requireAuth();
         throw new RuntimeException('Tài khoản bị khóa chưa bị chặn.');
+    }
+    if (in_array($case, ['contracts_guest', 'contracts_forbidden', 'contracts_staff', 'contracts_post', 'contract_detail_guest', 'contract_detail_forbidden'], true)) {
+        $guest = str_ends_with($case, '_guest');
+        $forbidden = str_ends_with($case, '_forbidden');
+        unset($_SESSION['user']);
+        if (!$guest) {
+            $role = $forbidden ? 'Sinh viên' : 'Nhân viên quản lý KTX';
+            $matches = array_values(array_filter($active, fn($user) => $user['VaiTro'] === $role));
+            check(count($matches) > 0, 'Cần tài khoản hoạt động để kiểm thử UC05.1.');
+            $_SESSION['user'] = $matches[0];
+        }
+        $detail = str_starts_with($case, 'contract_detail_');
+        $_GET = ['action' => $detail ? 'contract-detail' : 'contracts', 'id' => 'KHONGCO'];
+        $_SERVER['REQUEST_METHOD'] = $case === 'contracts_post' ? 'POST' : 'GET';
+        http_response_code(200);
+        ob_start();
+        register_shutdown_function(function () use ($case, $guest, $forbidden) {
+            $html = ob_get_clean();
+            try {
+                check(error_get_last() === null, 'Có lỗi PHP trong UC05.1.');
+                $expected = $guest ? 302 : ($forbidden ? 403 : ($case === 'contracts_post' ? 405 : 200));
+                check(http_response_code() === $expected, 'HTTP status UC05.1 không đúng.');
+                if ($case === 'contracts_staff') {
+                    check(str_contains($html, '<h1>Quản lý hợp đồng</h1>') && str_contains($html, 'Danh sách hợp đồng'), 'NVQL chưa mở được trang quản lý hợp đồng.');
+                    check(str_contains($html, 'aria-current="page"'), 'Navbar chưa đánh dấu chức năng hợp đồng hiện tại.');
+                    check(str_contains($html, 'approval-panel payment-filters') && str_contains($html, 'payment-table'), 'Giao diện hợp đồng chưa đồng bộ với tra cứu hóa đơn.');
+                    check(!str_contains($html, 'để xem toàn bộ hợp đồng'), 'Trang hợp đồng vẫn yêu cầu bấm tra cứu lần đầu.');
+                }
+                echo 'PASS';
+            } catch (Throwable $error) {
+                echo 'FAIL: ' . $error->getMessage();
+                exit(1);
+            }
+        });
+        require __DIR__ . '/../index.php';
     }
     if (str_starts_with($case, 'payment_')) {
         $forbiddenRoles = ['payment_student' => 'Sinh viên', 'payment_staff' => 'Nhân viên quản lý KTX', 'payment_manager' => 'Quản lý KTX'];

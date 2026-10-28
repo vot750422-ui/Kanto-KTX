@@ -1,5 +1,11 @@
 # PROJECT_STATE
 
+## Các nghiệp vụ ổn định đã đưa vào nhánh phát hành (29/10/2026)
+
+- Bổ sung các module đã kiểm thử: xác nhận mọi loại hóa đơn cho kế toán, lập hóa đơn phòng theo kỳ, lập hóa đơn điện nước theo tháng, quản lý sinh viên, tra cứu hợp đồng UC05.1, ghi chỉ số điện nước, phản ánh sự cố, thông báo, thống kê và thông tin lưu trú.
+- Giữ nguyên CSRF, mật khẩu kích hoạt và dữ liệu lịch sử; không đưa thanh lý hợp đồng hoặc gia hạn vào phạm vi vì còn quy tắc công nợ chưa chốt.
+- Kiểm tra trước khi phát hành: `tests/run.php` đạt 103/103; các test module liên quan và PHP lint đều đạt.
+
 ## UC03 - Mật khẩu mặc định trong email duyệt (26/10/2026)
 
 - Email duyệt đơn thêm dòng mật khẩu mặc định theo quy ước demo ngay dưới tên đăng nhập; email từ chối không có dòng này. Mật khẩu tài khoản vẫn được băm bằng `password_hash()`. Đây là thay đổi mẫu nội dung cho thông báo tạo sau khi triển khai; bản ghi `emailthongbao` đã có giữ nội dung cũ.

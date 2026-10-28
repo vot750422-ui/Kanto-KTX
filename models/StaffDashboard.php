@@ -1,5 +1,6 @@
 <?php
 
+// Cung cấp số liệu tổng quan và tên nhân viên cho các màn hình quản trị.
 class StaffDashboard
 {
     private PDO $pdo;

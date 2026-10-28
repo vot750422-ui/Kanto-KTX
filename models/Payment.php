@@ -31,7 +31,7 @@ class Payment
             GROUP_CONCAT(DISTINCT s.HoTen ORDER BY s.HoTen SEPARATOR ', ') AS HoTen,
             r.SoPhong, k.TenHocKy, k.NamHoc, k.NgayBatDau, k.NgayKetThuc, a.MaHopDong,
             COALESCE(CONCAT(LPAD(u.Thang,2,'0'),'/',u.Nam),DATE_FORMAT(h.ThoiGianLap,'%m/%Y')) AS KyHoaDon,
-            (h.LoaiHoaDon='Tiền phòng' AND a.TrangThai='Đã duyệt' AND a.MaHopDong IS NULL) AS CanConfirm"
+            (h.TrangThai='Chưa thu') AS CanConfirm"
             . $from . ' WHERE ' . $where . ' GROUP BY h.MaHoaDon, r.SoPhong, k.MaHocKy, a.MaDonDangKy, u.MaHoaDon'
             . ' ORDER BY h.ThoiGianLap DESC, h.MaHoaDon DESC LIMIT 20 OFFSET ' . (($page - 1) * 20));
         $stmt->execute($params);
@@ -107,26 +107,33 @@ class Payment
                 $stmt = $this->db->prepare('UPDATE phienthanhtoan SET DaDungLuc=NOW() WHERE MaPhien=?');
                 $stmt->execute([$hash]);
             }
+            // Khóa hóa đơn và đọc lại trạng thái trước khi ghi nhận khoản thu.
+            $stmt = $this->db->prepare('SELECT LoaiHoaDon, TrangThai FROM hoadon WHERE MaHoaDon=? FOR UPDATE');
+            $stmt->execute([$invoice]);
+            $bill = $stmt->fetch();
+            if (!$bill) { throw new DomainException('Hóa đơn không tồn tại.'); }
+            if ($bill['TrangThai'] !== 'Chưa thu') { throw new DomainException('Hóa đơn đã được thanh toán. Không thể xác nhận lại.'); }
+
             if ($accountId !== null) {
-                // UC17 and accounting share the same lock and first-payment transaction below.
+                // UC17 và kế toán dùng chung giao dịch nhưng mỗi luồng tự kiểm tra quyền sở hữu.
                 $stmt = $this->db->prepare('SELECT MaHoaDon FROM hoadon WHERE MaHoaDon=? FOR UPDATE');
                 $stmt->execute([$invoice]);
                 $stmt->fetchColumn();
                 $owned = $this->studentInvoice($invoice, $accountId, true);
                 if (!$owned) { throw new DomainException('Hóa đơn không tồn tại hoặc không thuộc về bạn.'); }
-                if ($owned['TrangThai'] !== 'Chưa thu') { throw new DomainException('Hóa đơn đã được thanh toán. Không thể xác nhận lại.'); }
+                if ($owned['TrangThai'] !== $bill['TrangThai']) { throw new DomainException('Trạng thái hóa đơn đã thay đổi.'); }
                 if ((string)$owned['TongTien'] !== $expectedAmount) {
                     throw new DomainException('Số tiền hóa đơn đã thay đổi. Vui lòng mở lại trang thanh toán.');
                 }
-                $stmt = $this->db->prepare('SELECT MaDonDangKy FROM dondangky WHERE MaHoaDon=? FOR UPDATE');
-                $stmt->execute([$invoice]);
-                $initialApplication = $stmt->fetchColumn();
-                if ($initialApplication === false) {
-                    // Periodic room and utility invoices only change payment status.
-                    $this->markPaid($invoice);
-                    $this->db->commit();
-                    return ['contract' => null];
-                }
+            }
+            // Điện nước và tiền phòng định kỳ chỉ chuyển hóa đơn sang Đã thu.
+            $stmt = $this->db->prepare('SELECT MaDonDangKy FROM dondangky WHERE MaHoaDon=? FOR UPDATE');
+            $stmt->execute([$invoice]);
+            $initialApplication = $stmt->fetchColumn();
+            if ($bill['LoaiHoaDon'] !== 'Tiền phòng' || $initialApplication === false) {
+                $this->markPaid($invoice);
+                $this->db->commit();
+                return ['contract' => null, 'invoiceType' => $bill['LoaiHoaDon']];
             }
             $stmt = $this->db->prepare('SELECT MaPhong FROM hoadontienphong WHERE MaHoaDon=?');
             $stmt->execute([$invoice]);
@@ -138,12 +145,7 @@ class Payment
             $stmt = $this->db->prepare('SELECT MaDonDangKy, MSSV, MaPhong, TrangThai, MaHopDong FROM dondangky WHERE MaHoaDon=? FOR UPDATE');
             $stmt->execute([$invoice]);
             $application = $stmt->fetch();
-            $stmt = $this->db->prepare('SELECT LoaiHoaDon, TrangThai FROM hoadon WHERE MaHoaDon=? FOR UPDATE');
-            $stmt->execute([$invoice]);
-            $bill = $stmt->fetch();
-            if (!$bill || $bill['LoaiHoaDon'] !== 'Tiền phòng') { throw new DomainException('Không tìm thấy hóa đơn tiền phòng.'); }
-            if ($bill['TrangThai'] === 'Đã thu') { throw new DomainException('Hóa đơn đã được thanh toán. Không thể xác nhận lại.'); }
-            if ($bill['TrangThai'] !== 'Chưa thu' || !$application || $application['TrangThai'] !== 'Đã duyệt' || $application['MaHopDong'] !== null) {
+            if (!$application || $application['TrangThai'] !== 'Đã duyệt' || $application['MaHopDong'] !== null) {
                 throw new DomainException('Hóa đơn không thuộc đơn đã duyệt đang chờ thanh toán đầu tiên.');
             }
             $stmt = $this->db->prepare('SELECT MSSV, MaPhong, MaHocKy FROM hoadontienphong WHERE MaHoaDon=? FOR UPDATE');

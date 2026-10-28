@@ -3,6 +3,55 @@ require_once __DIR__ . '/middleware/Role.php';
 $action = is_string($_GET['action'] ?? null) ? $_GET['action'] : '';
 
 // Định tuyến request đến đúng controller theo nghiệp vụ người dùng yêu cầu.
+if ($action === 'utility-meters') {
+    requireRole('Nhân viên quản lý KTX');
+    require __DIR__ . '/config/db.php';
+    require_once __DIR__ . '/controllers/UtilityMeterController.php';
+    (new UtilityMeterController($pdo))->handle();
+    exit;
+}
+if ($action === 'statistics') {
+    requireRole('Quản lý KTX');
+    require __DIR__ . '/config/db.php';
+    require_once __DIR__ . '/controllers/StatisticsController.php';
+    (new StatisticsController($pdo))->show();
+    exit;
+}
+if (in_array($action, ['notifications', 'notification-detail'], true)) {
+    requireRole('Sinh viên');
+    require __DIR__ . '/config/db.php';
+    require_once __DIR__ . '/controllers/NotificationController.php';
+    (new NotificationController($pdo))->handle($action);
+    exit;
+}
+if ($action === 'incident-report') {
+    requireRole('Sinh viên');
+    require __DIR__ . '/config/db.php';
+    require_once __DIR__ . '/controllers/IncidentController.php';
+    (new IncidentController($pdo))->student();
+    exit;
+}
+if (in_array($action, ['incidents', 'incident-detail', 'incident-resolve'], true)) {
+    requireRole('Nhân viên quản lý KTX');
+    require __DIR__ . '/config/db.php';
+    require_once __DIR__ . '/controllers/IncidentController.php';
+    (new IncidentController($pdo))->staff($action);
+    exit;
+}
+if (in_array($action, ['students', 'student-detail', 'student-update'], true)) {
+    requireRole('Nhân viên quản lý KTX');
+    require __DIR__ . '/config/db.php';
+    require_once __DIR__ . '/controllers/StudentManagementController.php';
+    (new StudentManagementController($pdo))->handle($action);
+    exit;
+}
+if (in_array($action, ['contracts', 'contract-detail'], true)) {
+    requireRole('Nhân viên quản lý KTX');
+    require __DIR__ . '/config/db.php';
+    require_once __DIR__ . '/controllers/ContractController.php';
+    (new ContractController($pdo))->handle($action);
+    exit;
+}
 if (in_array($action, ['payment-checkout', 'payment-checkout-confirm'], true)) {
     require_once __DIR__ . '/controllers/PaymentCheckoutController.php';
     (new PaymentCheckoutController())->handle($action);

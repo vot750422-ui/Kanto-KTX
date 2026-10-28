@@ -1,0 +1,41 @@
+<?php
+if (!isset($content, $displayName, $pageTitle)) {
+    http_response_code(404);
+    exit;
+}
+$escape = static fn($value): string => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+$url = static fn(string $value): string => htmlspecialchars(appUrl($value), ENT_QUOTES, 'UTF-8');
+?>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $escape($pageTitle) ?> — Kanto</title>
+    <?php require __DIR__ . '/../../includes/head.php'; ?>
+    <link rel="stylesheet" href="<?= $url('assets/css/style.css') ?>">
+    <link rel="stylesheet" href="<?= $url('assets/css/staff-dashboard.css') ?>">
+    <link rel="stylesheet" href="<?= $url('assets/css/navbar.css') ?>">
+    <link rel="stylesheet" href="<?= $url('assets/css/approval.css') ?>">
+    <link rel="stylesheet" href="<?= $url('assets/css/payments.css') ?>">
+    <link rel="stylesheet" href="<?= $url('assets/css/contracts.css') ?>">
+</head>
+<body class="staff-page">
+    <header class="staff-header">
+        <a class="site-brand" href="<?= $url('views/nvql/Dashboard.php') ?>">
+            <img class="site-logo" src="<?= $url('assets/images/logo.png') ?>" alt="">
+            <span class="site-brand-text"><strong>KANTO</strong><span>HỆ THỐNG QUẢN LÝ KÝ TÚC XÁ</span></span>
+        </a>
+        <?php require __DIR__ . '/../../includes/account-menu.php'; ?>
+    </header>
+    <div class="dashboard-layout">
+        <?php require __DIR__ . '/../../includes/navbar.php'; ?>
+        <main class="staff-main payment-main contract-main">
+            <h1><?= $escape($pageTitle) ?></h1>
+            <p class="staff-intro">Tra cứu và kiểm tra thông tin hợp đồng lưu trú của sinh viên.</p>
+            <?php require $content; ?>
+        </main>
+    </div>
+    <script src="<?= $url('assets/js/approval.js') ?>" defer></script>
+</body>
+</html>
