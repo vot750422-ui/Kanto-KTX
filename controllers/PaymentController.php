@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../middleware/Role.php';
 require_once __DIR__ . '/../models/Payment.php';
 
+// UC07 cho nhân viên kế toán tra cứu và xác nhận hóa đơn tiền phòng đầu tiên.
 class PaymentController
 {
     public function handle(string $action): void
@@ -21,7 +22,12 @@ class PaymentController
             }
             try {
                 $result = $model->confirm($invoice);
-                $_SESSION['payment_success'] = 'Xác nhận thành công. Hợp đồng: ' . $result['contract'] . '. Tài khoản sinh viên: ' . $result['username'] . ' (đã cấp khi duyệt đơn).';
+                // Hiển thị kết quả theo nghiệp vụ: chỉ hóa đơn phòng đầu tiên mới tạo hợp đồng.
+                if ($result['contract'] !== null) {
+                    $_SESSION['payment_success'] = 'Xác nhận thành công. Hợp đồng: ' . $result['contract'] . '. Tài khoản sinh viên: ' . $result['username'] . ' (đã cấp khi duyệt đơn).';
+                } else {
+                    $_SESSION['payment_success'] = 'Xác nhận thành công. Hóa đơn đã được ghi nhận Đã thu.';
+                }
                 header('Location: ' . appUrl('index.php?action=payments&status=paid'), true, 303); return;
             } catch (DomainException $exception) {
                 http_response_code(409); $error = $exception->getMessage();

@@ -7,6 +7,12 @@ if (PHP_SAPI !== 'cli') {
 
 $cases = [
     'connection_refresh' => 'Kết nối dùng chung nhưng quyền/trạng thái tài khoản vẫn đọc mới',
+    'contracts_guest' => 'UC05.1: khách phải đăng nhập',
+    'contracts_forbidden' => 'UC05.1: vai trò khác NVQL bị chặn',
+    'contracts_staff' => 'UC05.1: NVQL mở được trang tra cứu hợp đồng',
+    'contracts_post' => 'UC05.1: tra cứu hợp đồng chỉ chấp nhận GET',
+    'contract_detail_guest' => 'UC05.1: khách không mở được chi tiết hợp đồng',
+    'contract_detail_forbidden' => 'UC05.1: vai trò khác NVQL không mở được chi tiết hợp đồng',
     'payment_guest' => 'Thanh toán: khách phải đăng nhập',
     'payment_student' => 'Thanh toán: sinh viên bị chặn',
     'payment_staff' => 'Thanh toán: NVQL bị chặn',
@@ -54,6 +60,13 @@ foreach (['approval', 'approval-detail', 'approval-proof', 'approval-approve', '
     $cases['approval_forbidden_' . $route] = 'UC03: vai trò khác bị chặn tại ' . $route;
 }
 $cases['approval_staff_list'] = 'UC03: NVQL mở được danh sách qua route thực tế';
+foreach (['students','student-detail','student-update','utility-meters','incidents','incident-detail','incident-resolve','incident-report','notifications','notification-detail','statistics'] as $route) {
+    $cases['newroute_guest_' . $route] = 'Route mới: khách bị chặn tại ' . $route;
+    $cases['newroute_forbidden_' . $route] = 'Route mới: sai vai trò bị chặn tại ' . $route;
+}
+foreach (['students','utility-meters','incidents','incident-report','notifications','statistics'] as $route) {
+    $cases['newroute_authorized_' . $route] = 'Route mới: đúng vai trò mở được ' . $route;
+}
 foreach ($cases as $case => $description) {
     $process = proc_open(
         [PHP_BINARY, '-d', 'xdebug.mode=off', __DIR__ . '/worker.php', $case],

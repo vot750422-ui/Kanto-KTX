@@ -1,5 +1,6 @@
 <?php
 
+// Truy vấn hồ sơ và hợp đồng còn hạn theo tài khoản sinh viên đã xác thực.
 class Accommodation
 {
     public function __construct(private PDO $pdo) {}

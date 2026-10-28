@@ -1,5 +1,6 @@
 <?php
 
+// Chuẩn bị trạng thái phòng, hợp đồng, hóa đơn và phản ánh cho dashboard sinh viên.
 class StudentDashboard
 {
     private PDO $pdo;

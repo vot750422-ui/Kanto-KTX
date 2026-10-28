@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../middleware/Role.php';
 require_once __DIR__ . '/../models/Accommodation.php';
 
+// UC11 chỉ cho sinh viên đã đăng nhập xem hồ sơ và hợp đồng lưu trú của chính mình.
 class AccommodationController
 {
     public function show(): void
