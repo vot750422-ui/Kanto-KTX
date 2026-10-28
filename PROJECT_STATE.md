@@ -1,5 +1,10 @@
 # PROJECT_STATE
 
+## UC04.2 không cập nhật giới tính (29/10/2026)
+
+- Form và model cập nhật sinh viên chỉ cho phép sửa họ tên, ngày sinh, quê quán, số điện thoại và lớp.
+- Giữ nguyên `sinhvien.GioiTinh` vì trường này quyết định khu/tòa/phòng ký túc xá phù hợp; bổ sung test hồi quy xác nhận giới tính không bị thay đổi.
+
 ## Các nghiệp vụ ổn định đã đưa vào nhánh phát hành (29/10/2026)
 
 - Bổ sung các module đã kiểm thử: xác nhận mọi loại hóa đơn cho kế toán, lập hóa đơn phòng theo kỳ, lập hóa đơn điện nước theo tháng, quản lý sinh viên, tra cứu hợp đồng UC05.1, ghi chỉ số điện nước, phản ánh sự cố, thông báo, thống kê và thông tin lưu trú.

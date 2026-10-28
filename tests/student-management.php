@@ -11,10 +11,10 @@ $stmt->execute(['SV02',2,'UT00','Trần Thị Bình','2005-02-02','CCCD02','Nữ
 $pdo->exec("INSERT INTO hopdong VALUES('HD01','SV01','P1','2026-01-01','2027-01-01','Còn hạn')");$model=new StudentManagement($pdo);
 $all=$model->listing(['student'=>'','name'=>'','room'=>'','class'=>'','status'=>'']);checkStudentManagement($all['total']===2,'Tra cứu toàn bộ sinh viên');
 $one=$model->listing(['student'=>'SV01','name'=>'Văn An','room'=>'A101','class'=>'KTPM01','status'=>'Đang ở']);checkStudentManagement($one['total']===1&&$one['items'][0]['SoPhong']==='A101','Kết hợp bộ lọc và phòng qua hợp đồng');
-$before=$model->find('SV01');$changed=$model->update('SV01',['HoTen'=>'Nguyễn Văn An Mới','NgaySinh'=>'2005-01-01','GioiTinh'=>'Nam','QueQuan'=>'Cần Thơ','SDT'=>'0900000001','Lop'=>'KTPM01']);$after=$model->find('SV01');
+$before=$model->find('SV01');$changed=$model->update('SV01',['HoTen'=>'Nguyễn Văn An Mới','NgaySinh'=>'2005-01-01','QueQuan'=>'Cần Thơ','SDT'=>'0900000001','Lop'=>'KTPM01']);$after=$model->find('SV01');
 checkStudentManagement($changed&&$after['HoTen']==='Nguyễn Văn An Mới','Cập nhật trường được phép');
-checkStudentManagement($after['CCCD']===$before['CCCD']&&$after['NienKhoa']===$before['NienKhoa']&&$after['TrangThaiLuuTru']===$before['TrangThaiLuuTru'],'Giữ nguyên trường chỉ đọc');
-checkStudentManagement(!$model->update('SV01',['HoTen'=>'Nguyễn Văn An Mới','NgaySinh'=>'2005-01-01','GioiTinh'=>'Nam','QueQuan'=>'Cần Thơ','SDT'=>'0900000001','Lop'=>'KTPM01']),'Không UPDATE khi dữ liệu không đổi');
+checkStudentManagement($after['GioiTinh']===$before['GioiTinh']&&$after['CCCD']===$before['CCCD']&&$after['NienKhoa']===$before['NienKhoa']&&$after['TrangThaiLuuTru']===$before['TrangThaiLuuTru'],'Giữ nguyên giới tính và các trường chỉ đọc');
+checkStudentManagement(!$model->update('SV01',['HoTen'=>'Nguyễn Văn An Mới','NgaySinh'=>'2005-01-01','QueQuan'=>'Cần Thơ','SDT'=>'0900000001','Lop'=>'KTPM01']),'Không UPDATE khi dữ liệu không đổi');
 checkStudentManagement((int)$pdo->query('SELECT COUNT(*) FROM sinhvien')->fetchColumn()===2,'Không thêm hoặc xóa hồ sơ');
 }catch(Throwable $error){$failed++;echo'[FAIL] Không thể chạy kiểm thử UC04: '.$error->getMessage().PHP_EOL;}
 echo"$passed kiểm thử đạt, $failed thất bại.\n";exit($failed?1:0);
