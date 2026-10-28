@@ -88,7 +88,7 @@ class StudentManagement
                 throw new DomainException('Không tìm thấy sinh viên.');
             }
 
-            $fields = ['HoTen', 'NgaySinh', 'GioiTinh', 'QueQuan', 'SDT', 'Lop'];
+            $fields = ['HoTen', 'NgaySinh', 'QueQuan', 'SDT', 'Lop'];
             $changed = false;
             foreach ($fields as $field) {
                 if ((string) $current[$field] !== (string) $data[$field]) {
@@ -102,11 +102,10 @@ class StudentManagement
                 return false;
             }
 
-            $stmt = $this->db->prepare('UPDATE sinhvien SET HoTen = ?, NgaySinh = ?, GioiTinh = ?, QueQuan = ?, SDT = ?, Lop = ? WHERE MSSV = ?');
+            $stmt = $this->db->prepare('UPDATE sinhvien SET HoTen = ?, NgaySinh = ?, QueQuan = ?, SDT = ?, Lop = ? WHERE MSSV = ?');
             $stmt->execute([
                 $data['HoTen'],
                 $data['NgaySinh'],
-                $data['GioiTinh'],
                 $data['QueQuan'],
                 $data['SDT'],
                 $data['Lop'],
