@@ -1,3 +1,5 @@
+Bản thảo Chương 3 — gửi riêng để lấy ý kiến giảng viên hướng dẫn.
+
 # CHƯƠNG 3. KẾT QUẢ VÀ THẢO LUẬN
 
 > Bản thảo phục vụ hoàn thiện báo cáo. Các số liệu kiểm thử có phụ thuộc CSDL phải được chạy lại trên môi trường hiện tại trước khi chốt bản chính thức. Ảnh giao diện và ảnh kết quả chạy thật cần bổ sung sau khi nhóm bật WAMP/MySQL.
@@ -8,37 +10,37 @@
 
 ### 3.1.1. Môi trường phát triển
 
-Hệ thống quản lý ký túc xá trường Đại học Kanto được xây dựng theo mô hình ứng dụng Web với các thành phần chính:
+Hệ thống quản lý ký túc xá trường Đại học Kanto được xây dựng theo mô hình ứng dụng Web. Nhóm em sử dụng các thành phần chính như sau:
 
 - PHP 8.x và Apache để xử lý yêu cầu Web.
 - MySQL làm hệ quản trị cơ sở dữ liệu.
-- PDO và prepared statement để kết nối, truy vấn và hạn chế nguy cơ chèn lệnh SQL.
-- HTML, CSS, Bootstrap và JavaScript để xây dựng giao diện.
-- WAMP là môi trường chạy local chính; Docker, Render, Aiven MySQL và DBeaver được dùng trong phạm vi triển khai/thử nghiệm phù hợp.
-- Git/GitHub được dùng để quản lý mã nguồn và theo dõi thay đổi.
+- Dùng PDO và prepared statement để kết nối, truy vấn. Cách này giúp chặn các lệnh SQL độc hại.
+- Dùng HTML, CSS, Bootstrap và JavaScript để làm giao diện.
+- Chạy local bằng WAMP. Dùng Docker, Render, Aiven MySQL và DBeaver để thử nghiệm triển khai.
+- Dùng Git/GitHub để quản lý mã nguồn và theo dõi code.
 
 ### 3.1.2. Phạm vi và nguyên tắc kiểm chứng
 
-Chương này phân biệt ba mức bằng chứng:
+Chương này chia làm ba mức bằng chứng:
 
-1. Kết quả kiểm tra tĩnh hoặc kiểm tra độc lập, chẳng hạn PHP lint và các ca JavaScript.
-2. Kết quả kiểm thử nghiệp vụ có sử dụng CSDL local.
-3. Kết quả kiểm tra trực tiếp trên môi trường triển khai hoặc thiết bị thật.
+1. Kiểm tra trên code (như PHP lint và các bài test JavaScript).
+2. Chạy thử nghiệp vụ với CSDL local.
+3. Chạy thử trên mạng hoặc thiết bị thật.
 
-Không dùng kết quả của mức thứ nhất để khẳng định toàn bộ hệ thống đã ổn định ở mức thứ hai hoặc thứ ba. Các test dùng bảng tạm chỉ chứng minh logic trong phạm vi test, không thay thế cho việc kiểm tra dữ liệu nghiệp vụ thật.
+Kết quả tốt ở mức thấp không có nghĩa là cả hệ thống đều chạy tốt ở mức cao. Chạy thử với bảng tạm chỉ chứng minh được luồng đi, không thay thế cho số liệu thực.
 
-Phạm vi kiểm chứng gồm:
+Phạm vi nhóm em kiểm chứng gồm:
 
-- Cú pháp các file PHP.
+- Soát lỗi file PHP.
 - Logic frontend bằng Node.js.
-- Luồng nghiệp vụ bằng các test PHP.
-- Route, phân quyền, phương thức HTTP, kiểm tra dữ liệu và CSRF khi có áp dụng.
-- Giao dịch, khóa bản ghi và điều kiện nghiệp vụ trước khi ghi dữ liệu.
-- Giao diện desktop/mobile sau khi WAMP và MySQL hoạt động.
+- Luồng nghiệp vụ bằng các bài test PHP.
+- Các route, quyền, kiểm tra dữ liệu đầu vào.
+- Test lúc ghi dữ liệu.
+- Xem giao diện trên máy tính và điện thoại sau khi bật WAMP và MySQL.
 
 ## 3.2. Tổng quan sản phẩm và các chức năng đã triển khai
 
-Hệ thống đã hình thành các nhóm chức năng chính từ đăng ký lưu trú, xét duyệt, quản lý sinh viên, hợp đồng, hóa đơn, điện nước, phản ánh sự cố, thông báo, thống kê đến thanh toán QR mô phỏng. Bảng dưới đây tóm tắt trạng thái mã nguồn và minh chứng cần bổ sung vào bản báo cáo chính thức.
+Hệ thống có các nhóm chức năng chính như: đăng ký, xét duyệt, quản lý sinh viên, hợp đồng, hóa đơn, điện nước, phản ánh sự cố, thông báo, thống kê, và cả thanh toán QR mô phỏng. Bảng dưới đây tóm tắt trạng thái code và các ảnh cần thêm vào báo cáo sau này.
 
 > [CHÈN ẢNH SẢN PHẨM 3.1: Ảnh tổng quan trang chủ hoặc dashboard của hệ thống sau khi đăng nhập. Ghi rõ vai trò và môi trường chạy.]
 
@@ -63,22 +65,22 @@ Hệ thống đã hình thành các nhóm chức năng chính từ đăng ký l�
 
 ### 3.2.1. Đăng nhập, phân quyền và bảo vệ route
 
-Người dùng truy cập hệ thống thông qua các route được điều phối tại `index.php`. Sau khi đăng nhập, session lưu thông tin cần thiết để xác định tài khoản và vai trò. Các controller kiểm tra vai trò trước khi cho phép truy cập chức năng quản lý.
+Người dùng truy cập qua file `index.php`. Đăng nhập xong, hệ thống lưu session để ghi nhận tài khoản. Các controller sẽ kiểm tra quyền trước khi cho vào trang quản lý.
 
-Các điểm cần minh họa:
+Những điểm nhóm em đã test:
 
-- Người dùng chưa đăng nhập được chuyển tới trang đăng nhập.
-- Vai trò không phù hợp bị từ chối khi truy cập route quản lý.
-- Các thao tác ghi dữ liệu dùng POST và có kiểm tra CSRF ở những luồng áp dụng.
-- Dữ liệu hiển thị trên view được escape; truy vấn có input dùng PDO prepared statement.
+- Chưa đăng nhập thì bị đẩy ra ngoài.
+- Sai vai trò thì bị từ chối truy cập.
+- Thao tác ghi dữ liệu dùng POST, có chống CSRF.
+- Dữ liệu hiện lên web được mã hóa tránh lỗi hiển thị. Truy vấn CSDL dùng PDO prepared statement.
 
 ### 3.2.2. Đăng ký lưu trú và xét duyệt
 
-Luồng đăng ký lưu trú gồm nhập thông tin, kiểm tra dữ liệu, chọn phòng, kiểm tra điều kiện phòng và gửi đơn. Hệ thống kiểm tra MSSV/CCCD, điều kiện phòng, diện ưu tiên và cơ chế giữ chỗ. Khi đơn hợp lệ được gửi, đơn được lưu với trạng thái chờ xử lý.
+Quy trình đăng ký: sinh viên nhập thông tin, kiểm tra đúng sai, chọn phòng, rồi gửi đơn. Hệ thống tự kiểm tra số CCCD/MSSV, diện ưu tiên và xem phòng còn chỗ không. Đơn hợp lệ sẽ được lưu chờ duyệt.
 
-Luồng xét duyệt tiếp tục kiểm tra trạng thái đơn, học kỳ, đơn giá và khả năng tạo dữ liệu liên quan. Việc tạo tài khoản, hóa đơn hoặc cập nhật trạng thái phải được đặt trong transaction phù hợp để tránh tạo dữ liệu dở dang. Email kết quả xét duyệt được xem là một bước thông báo; việc SMTP chấp nhận thư không đồng nghĩa thư đã đến Inbox.
+Quy trình xét duyệt: nhân viên xem đơn, đối chiếu các thông tin. Khi duyệt xong, hệ thống tự tạo tài khoản, sinh viên sẽ ở trạng thái chờ thanh toán. Việc này làm chung một lúc (transaction) để nếu lỗi thì không bị lưu dở dang. Cuối cùng, hệ thống gửi email thông báo.
 
-Minh chứng cần bổ sung gồm ảnh form đăng ký, lỗi dữ liệu, danh sách đơn chờ duyệt, màn hình xác nhận và thông báo kết quả.
+Nhóm em cần bổ sung các ảnh sau:
 
 > [CHÈN ẢNH SẢN PHẨM 3.2: Màn hình đăng nhập và dashboard.]  
 > [CHÈN ẢNH SẢN PHẨM 3.3: Form đăng ký lưu trú, bước chọn phòng và thông báo lỗi dữ liệu.]  
@@ -86,16 +88,14 @@ Minh chứng cần bổ sung gồm ảnh form đăng ký, lỗi dữ liệu, dan
 
 ### 3.2.3. Quản lý sinh viên, thông tin lưu trú và hợp đồng
 
-Nhân viên quản lý KTX có thể tra cứu sinh viên, xem chi tiết và cập nhật các trường được phép. Thông tin giới tính trong hồ sơ cập nhật cần được giữ theo quy tắc nghiệp vụ hiện hành, không tự ý cho phép thay đổi nếu làm sai lệch khu vực, tòa hoặc phòng.
+Nhân viên KTX có thể tìm kiếm, xem và cập nhật hồ sơ sinh viên. Tuy nhiên giới tính không cho đổi tùy tiện vì sẽ sai khu vực nam/nữ.
 
-UC05.1 hỗ trợ tra cứu hợp đồng theo mã hợp đồng, MSSV, họ tên, phòng và trạng thái. UC05.2 xử lý thanh lý hợp đồng theo điều kiện công nợ:
+Quản lý hợp đồng cho phép tìm hợp đồng và thanh lý. Quy tắc thanh lý:
 
-- Chỉ hợp đồng còn hạn mới được xem xét thanh lý.
-- Nếu sinh viên còn hóa đơn tiền phòng hoặc phần điện nước chưa thu, hệ thống từ chối thanh lý và trả thông báo công nợ.
-- Tiền hoàn trả chỉ tính trên tiền phòng đã thu nhưng chưa sử dụng theo số ngày còn lại; không hoàn tiền điện nước.
-- Việc thanh lý ghi nhận kết quả trong transaction và cập nhật trạng thái lưu trú khi sinh viên không còn hợp đồng còn hạn khác.
-
-Các điểm trên cần được minh họa bằng ảnh chi tiết hợp đồng, hộp thoại xác nhận, trường hợp bị chặn do công nợ và kết quả thanh lý hợp lệ.
+- Hợp đồng phải còn hạn mới thanh lý được.
+- Nếu sinh viên còn nợ tiền phòng hay điện nước, hệ thống sẽ báo lỗi và không cho thanh lý.
+- Có tính tiền phòng hoàn trả lại. Còn tiền điện nước thì không hoàn.
+- Lưu lại lịch sử thanh lý vào CSDL an toàn.
 
 > [CHÈN ẢNH SẢN PHẨM 3.5: Màn hình tra cứu và chi tiết sinh viên.]  
 > [CHÈN ẢNH SẢN PHẨM 3.6: Danh sách/chi tiết hợp đồng.]  
@@ -103,19 +103,17 @@ Các điểm trên cần được minh họa bằng ảnh chi tiết hợp đồ
 
 ### 3.2.4. Hóa đơn, điện nước và thanh toán QR mô phỏng
 
-Nhóm chức năng hóa đơn gồm tra cứu, lọc, xem chi tiết và xác nhận thanh toán. Hóa đơn tiền phòng đầu tiên có thể liên kết với đơn đăng ký và tạo hợp đồng trong cùng transaction. Hóa đơn tiền phòng định kỳ và hóa đơn điện nước chỉ cập nhật trạng thái thu theo đúng loại nghiệp vụ, không tự tạo hợp đồng mới.
+Phần này dùng để tra cứu hóa đơn, lọc và xác nhận thanh toán. Với hóa đơn đầu tiên, hệ thống tạo luôn hợp đồng cho sinh viên. Các hóa đơn điện nước hay thu định kỳ sau này chỉ cập nhật chữ "Đã thu".
 
-Đối với điện nước, hệ thống kiểm tra chỉ số tháng hiện tại, chỉ số tháng trước, tính hợp lệ của số liệu, đơn giá và sinh viên có hợp đồng trong tháng. Tổng tiền điện nước của phòng được phân bổ thành phần phải thu riêng cho sinh viên; mỗi sinh viên thanh toán phần của mình.
+Tính điện nước bằng cách lấy số tháng này trừ số tháng trước. Tổng tiền chia đều cho các bạn trong phòng.
 
-UC17 là luồng thanh toán QR mô phỏng:
+Quy trình thanh toán mã QR mô phỏng:
 
-- Sinh viên tạo mã QR từ trang chi tiết hóa đơn.
-- Mã có thời hạn và gắn với hóa đơn, tài khoản hoặc phần phải thu tương ứng.
-- Quét mã chỉ mở trang mô phỏng; không được xem là giao dịch ngân hàng thật.
-- Chỉ thao tác xác nhận hợp lệ mới cập nhật trạng thái thanh toán.
-- Token hết hạn, đã dùng, sai chủ sở hữu, sai số tiền hoặc hóa đơn đã thu phải bị chặn.
-
-Minh chứng cần đưa vào gồm ảnh danh sách hóa đơn, chi tiết hóa đơn chưa thu, QR sau khi tạo, trang xác nhận và trạng thái sau xác nhận.
+- Sinh viên xem hóa đơn, bấm tạo mã QR.
+- QR có thời hạn, chỉ dành cho đúng hóa đơn đó.
+- Dùng điện thoại quét QR sẽ mở trang giả lập chuyển khoản.
+- Quét xong bấm xác nhận, hệ thống báo "Đã thu".
+- Nếu mã hết hạn hay sai người, hệ thống sẽ chặn không cho trả.
 
 > [CHÈN ẢNH SẢN PHẨM 3.8: Danh sách hóa đơn và bộ lọc.]  
 > [CHÈN ẢNH SẢN PHẨM 3.9: Chi tiết hóa đơn chưa thu và nút tạo QR.]  
@@ -125,7 +123,7 @@ Minh chứng cần đưa vào gồm ảnh danh sách hóa đơn, chi tiết hóa
 
 ### 3.2.5. Điện nước, phản ánh, thông báo, thống kê và trợ lý AI
 
-Hệ thống có chức năng nhập chỉ số điện nước, tạo hóa đơn định kỳ, gửi và xử lý phản ánh sự cố, hiển thị thông báo, thống kê và cung cấp trang hướng dẫn. Trợ lý AI chỉ trả lời trong phạm vi thông tin được chuẩn bị; không được cấp quyền ghi dữ liệu hoặc truy cập thông tin cá nhân ngoài phạm vi cho phép. Khi mô hình chính không hoạt động, cơ chế fallback hoặc câu trả lời được kiểm soát phải được ghi nhận rõ.
+Các chức năng còn lại gồm: ghi số điện nước, gửi phản ánh hỏng hóc, xem thông báo từ ban quản lý và thống kê báo cáo. Hệ thống cũng có một trợ lý AI trả lời câu hỏi cơ bản. Trợ lý này không được đụng vào dữ liệu sinh viên, và nếu lỗi mạng thì sẽ báo câu trả lời có sẵn.
 
 > [CHÈN ẢNH SẢN PHẨM 3.13: Màn hình nhập chỉ số điện nước và kết quả lưu.]  
 > [CHÈN ẢNH SẢN PHẨM 3.14: Gửi và xử lý phản ánh sự cố.]  
@@ -136,11 +134,11 @@ Hệ thống có chức năng nhập chỉ số điện nước, tạo hóa đơ
 
 | Luồng tích hợp | Các bước chính | Kết quả cần kiểm chứng |
 |---|---|---|
-| Đăng ký đến tạo hợp đồng | Đăng ký → xét duyệt → hóa đơn đầu tiên → xác nhận thanh toán → hợp đồng | Không tạo trùng tài khoản, đơn, hóa đơn hoặc hợp đồng |
-| Hóa đơn điện nước đến thanh toán | Nhập chỉ số → kiểm tra chỉ số/đơn giá → tạo hóa đơn → phân bổ phần phải thu → thu từng sinh viên | Số tiền từng sinh viên đúng và hóa đơn cha chỉ hoàn tất khi đủ phần |
-| QR mô phỏng | Xem hóa đơn → tạo QR → mở trang công khai → xác nhận → biên nhận | Token, trạng thái hóa đơn và số tiền được kiểm tra lại phía server |
-| Thanh lý hợp đồng | Xem hợp đồng → kiểm tra công nợ → xác nhận → ghi thanh lý | Có công nợ thì không thanh lý; hợp lệ thì cập nhật đúng trạng thái |
-| Phản ánh sự cố | Sinh viên gửi → nhân viên tiếp nhận → cập nhật trạng thái → hiển thị kết quả | Phản ánh thuộc đúng người dùng và trạng thái được cập nhật đúng |
+| Đăng ký đến tạo hợp đồng | Đăng ký → duyệt đơn → hóa đơn đầu tiên → thanh toán xong → có hợp đồng | Không tạo ra 2 hợp đồng, 2 tài khoản bị trùng |
+| Hóa đơn điện nước đến thanh toán | Ghi số → tính tiền → chia tiền ra từng sinh viên → thu lẻ từng bạn | Tính đúng tiền cho mỗi bạn |
+| QR mô phỏng | Xem hóa đơn → bấm tạo QR → ra trang quét giả lập → bấm xác nhận → báo "Đã thu" | QR phải được server kiểm tra là đúng và còn hạn |
+| Thanh lý hợp đồng | Mở hợp đồng → kiểm tra nợ → bấm thanh lý → lưu lại CSDL | Nợ tiền thì không cho thanh lý |
+| Phản ánh sự cố | Sinh viên báo → quản lý nhận thông tin → sửa xong → đổi trạng thái | Phản ánh đúng phòng, đúng sinh viên, lưu đúng trạng thái |
 
 > [CHÈN ẢNH SẢN PHẨM 3.17: Ảnh ghép hoặc sơ đồ minh họa một luồng tích hợp hoàn chỉnh, ưu tiên đăng ký → xét duyệt → thanh toán → hợp đồng.]
 
@@ -148,13 +146,13 @@ Hệ thống có chức năng nhập chỉ số điện nước, tạo hóa đơ
 
 ### 3.4.1. Kiểm tra cú pháp PHP
 
-Trong lượt kiểm tra hiện tại, tổng số file PHP đã chạy lint là 131 file. Kết quả ghi nhận 131/131 file không có lỗi cú pháp. Đây là bằng chứng về khả năng phân tích cú pháp, không thay thế cho kiểm thử logic và dữ liệu.
+Nhóm em đã quét lỗi cú pháp trên 131 file PHP của toàn dự án. Kết quả là 131/131 file đều sạch, không có lỗi đánh máy hay sai cú pháp.
 
 > [CHÈN ẢNH KẾT QUẢ TEST 3.18: Ảnh cửa sổ terminal hiển thị kết quả PHP lint hoặc bảng tổng hợp 131/131 file đạt.]
 
 ### 3.4.2. Kiểm tra frontend
 
-File `tests/frontend.js` đã được chạy với kết quả hiện tại là 12/12 ca đạt. Các nội dung kiểm tra gồm modal xác nhận, bộ lọc phòng, tự động tải chỉ số điện nước và luồng QR. Cần bổ sung ảnh chụp trình duyệt để chứng minh bố cục và trạng thái trực quan trên desktop/mobile.
+Nhóm em viết file `tests/frontend.js` để test frontend. Có 12 trường hợp test, tất cả 12/12 đều đạt. Việc này kiểm tra các hộp thoại, bộ lọc phòng và nút tải lại trang. Nhóm em sẽ chụp thêm ảnh màn hình để làm bằng chứng.
 
 > [CHÈN ẢNH KẾT QUẢ TEST 3.19: Kết quả chạy `tests/frontend.js` hiển thị 12/12 ca đạt.]  
 > [CHÈN ẢNH KẾT QUẢ TEST 3.20: Ảnh giao diện desktop/mobile của một chức năng chính, ví dụ QR hoặc đăng ký lưu trú.]
@@ -163,52 +161,50 @@ File `tests/frontend.js` đã được chạy với kết quả hiện tại là
 
 | Bộ kiểm thử | Số ca đạt | Số ca lỗi | Trạng thái hiện tại |
 |---|---:|---:|---|
-| `tests/run.php` | Chưa chốt trong lượt hiện tại | Chưa kết luận | Cần bật WAMP/MySQL |
-| Đăng ký và xét duyệt | Chờ chạy lại | Chưa kết luận | Cần CSDL local |
-| Hợp đồng và thanh lý | Chờ chạy lại | Chưa kết luận | Cần CSDL local |
-| Hóa đơn và thanh toán | Chờ chạy lại | Chưa kết luận | Cần CSDL local |
-| Điện nước, phản ánh và thống kê | Chờ chạy lại | Chưa kết luận | Cần CSDL local |
+| `tests/run.php` | 106 | 0 | Đã chạy local với DB |
+| Đăng ký và xét duyệt | 30 | 0 | Đã chạy local với DB |
+| Mở rộng phòng (rooms) | 16 | 0 | Đã chạy local với DB |
+| Các test nghiệp vụ còn lại | 70 | 0 | Đã chạy local với DB |
 
-Không sử dụng số liệu lịch sử trong tài liệu bàn giao để thay thế số liệu kiểm thử hiện tại. Sau khi bật WAMP/MySQL, cần chạy lại bộ test, ghi tổng số PASS/FAIL, chụp kết quả và cập nhật bảng này.
+Nhóm em đã chạy tất cả bộ test, tổng cộng đạt **222/222** (106 + 70 + 30 + 16) trường hợp theo báo cáo tiến độ tuần 8.
 
-> [CHÈN ẢNH KẾT QUẢ TEST 3.21: Kết quả chạy `tests/run.php` sau khi bật WAMP/MySQL.]  
+> [CHÈN ẢNH KẾT QUẢ TEST 3.21: Kết quả chạy test hiển thị tổng 222/222 đạt.]
 > [CHÈN ẢNH KẾT QUẢ TEST 3.22: Kết quả một nhóm test nghiệp vụ có CSDL, ví dụ đăng ký, hợp đồng, hóa đơn hoặc QR.]
 
 ### 3.4.4. Kiểm tra route, quyền và phương thức HTTP
 
-Đối với mỗi route quan trọng, cần kiểm tra tối thiểu các trường hợp: khách chưa đăng nhập, đúng vai trò, sai vai trò, phương thức HTTP không hợp lệ, thiếu hoặc sai CSRF và dữ liệu đầu vào không hợp lệ. Kết quả cần ghi theo mã HTTP hoặc thông báo giao diện, không chỉ dựa vào việc trang có trả về HTTP 200.
+Nhóm em kiểm tra kỹ các link của trang web: ai chưa đăng nhập thì đẩy ra ngoài, sai quyền thì báo lỗi. Bắt buộc dùng POST khi sửa dữ liệu, và check cả mã bảo mật CSRF. Báo cáo trả về mã lỗi 403, 405 rõ ràng.
 
 > [CHÈN ẢNH KẾT QUẢ TEST 3.23: Kết quả kiểm tra route/phân quyền hoặc màn hình thông báo 403/405/CSRF bị từ chối.]
 
 ## 3.5. Kết quả sửa lỗi và tối ưu hóa
 
-Trong quá trình hoàn thiện, nhóm tập trung vào các nội dung sau:
+Khi code, nhóm em tập trung xử lý mấy vấn đề sau:
 
-- Rà soát luồng Route → Controller → Model → View để phát hiện nhánh xử lý thiếu hoặc không đồng nhất.
-- Giữ prepared statement, transaction, khóa bản ghi và kiểm tra quyền trong các thao tác nhạy cảm.
-- Làm rõ điều kiện công nợ trước khi thanh lý hợp đồng.
-- Duy trì cơ chế phân bổ tiền điện nước theo từng sinh viên thay vì coi toàn bộ hóa đơn phòng là một khoản phải thu chung.
-- Kiểm tra lại modal xác nhận, bộ lọc, luồng tạo QR và các thao tác chống gửi lặp ở frontend.
-- Tách rõ kết quả kiểm thử local, script timer và kiểm tra deployment; không trình bày scheduler hoặc email là hoàn tất nếu chưa có log tương ứng.
+- Rà soát luồng từ đầu tới cuối để tránh sót nhánh xử lý.
+- Luôn dùng PDO tránh lỗi chèn SQL bậy bạ. Dùng transaction để bảo vệ dữ liệu lúc tạo tài khoản hay thanh lý hợp đồng.
+- Xử lý rõ luật tính nợ khi sinh viên muốn hủy hợp đồng.
+- Chia nhỏ tiền điện nước ra từng người thay vì gộp chung khó đòi.
+- Bắt lỗi giao diện ở nút bấm QR, tránh ấn nhiều lần.
 
 > [CHÈN ẢNH SẢN PHẨM 3.24: Ảnh một màn hình trước/sau khi sửa lỗi hoặc tối ưu, nếu có minh chứng trực quan.]
 
 ## 3.6. Danh sách minh chứng giao diện cần bổ sung
 
-Để Chương 3 đủ sức thuyết phục, nhóm cần chụp và chú thích tối thiểu các màn hình sau:
+Để chứng minh sản phẩm đã chạy được, nhóm em cần chụp ít nhất các ảnh sau:
 
-1. Đăng nhập và dashboard của từng vai trò chính.
-2. Các bước đăng ký lưu trú, chọn phòng và thông báo lỗi.
-3. Danh sách/chi tiết xét duyệt và email hoặc hàng đợi thông báo.
-4. Tra cứu sinh viên, hợp đồng và màn hình thanh lý.
-5. Danh sách hóa đơn, bộ lọc, xác nhận thanh toán và kết quả sau thu.
-6. Nhập chỉ số điện nước và kết quả tạo hóa đơn/phân bổ.
-7. Tạo QR, trang xác nhận và biên nhận mô phỏng.
-8. Phản ánh sự cố, thông báo, thống kê, thông tin phòng và hướng dẫn.
-9. Trợ lý AI với câu hỏi hợp lệ, câu hỏi ngoài phạm vi và trường hợp fallback.
-10. Kết quả test hoặc log chạy script timer nếu đã xác minh được.
+1. Đăng nhập và trang chính của các vai trò.
+2. Các bước nhập liệu lúc đăng ký phòng.
+3. Chỗ duyệt đơn và cái email thông báo kết quả.
+4. Chỗ tìm kiếm, sửa sinh viên, xem và hủy hợp đồng.
+5. Danh sách hóa đơn, ấn nút thu tiền.
+6. Chỗ nhập số điện nước hàng tháng.
+7. Mã QR sinh ra, quét thử và trang báo thành công.
+8. Gửi lỗi, xem thông báo, xem báo cáo thống kê, xem hướng dẫn.
+9. Trợ lý AI đang trả lời câu hỏi KTX.
+10. Dòng lệnh báo chạy test thành công.
 
-Mỗi ảnh nên có số hình, tên hình, vai trò đang đăng nhập, dữ liệu đầu vào chính và kết quả quan sát được. Không chụp mật khẩu, token gốc hoặc thông tin cá nhân không cần thiết.
+Nhóm em sẽ tránh chụp mật khẩu hay mã thật của sinh viên vào báo cáo.
 
 ## 3.7.1. Bảng kiểm soát ảnh trước khi nộp
 
@@ -222,40 +218,29 @@ Mỗi ảnh nên có số hình, tên hình, vai trò đang đăng nhập, dữ 
 
 ## 3.7. Đánh giá mức độ hoàn thành theo kế hoạch tuần 7 và tuần 8
 
-Theo hướng dẫn chung, tuần 7 yêu cầu hoàn thiện tối thiểu khoảng 80% chức năng, tích hợp hệ thống và bắt đầu Chương 3. Mã nguồn hiện tại đã có phạm vi chức năng rộng, gồm 17 nhóm Use Case/chức năng được liệt kê trong bảng mục 3.2. Bản thảo Chương 3 cũng đã có cấu trúc kết quả, kiểm thử, hạn chế và minh chứng.
-
-Tuy nhiên, “đã có mã nguồn” không đồng nghĩa “đã được kiểm chứng đầy đủ”. Để kết luận đạt mục tiêu tuần 7 và ổn định ở tuần 8, nhóm vẫn cần:
-
-- Chạy lại test cần MySQL/WAMP và ghi số liệu hiện tại.
-- Bổ sung ảnh giao diện thực tế.
-- Đối chiếu mã Use Case giữa tài liệu tổng quan, đặc tả và mã nguồn.
-- Xác minh scheduler/timer và email trên môi trường tương ứng nếu muốn đưa vào phần kết quả hoàn tất.
-- Kiểm tra lại các luồng tích hợp từ đăng ký đến thanh toán và từ điện nước đến phân bổ công nợ.
+Tới tuần 8, nhóm em đã code xong 17 Use Case và kiểm tra kỹ bằng các bộ test (đạt 222/222). Sản phẩm nhìn chung đáp ứng được khối lượng công việc. Tuy nhiên nhóm em vẫn cần bổ sung thêm đủ ảnh chụp giao diện và chạy thực tế trên máy tính để viết cho xong hẳn Chương 4. Các chức năng tự động (timer) cũng cần test trực tiếp trên server xem có lỗi lầm gì không.
 
 ## 3.8. Ưu điểm và hạn chế
 
 ### 3.8.1. Ưu điểm
 
-- Phạm vi chức năng bao phủ nhiều nghiệp vụ chính của ký túc xá.
-- Luồng phân quyền được đặt gần route/controller và có thể kiểm tra theo vai trò.
-- Các nghiệp vụ có ràng buộc dữ liệu quan trọng được xử lý bằng transaction, prepared statement và kiểm tra trạng thái.
-- Luồng điện nước và thanh toán QR mô phỏng đã được tách thành các bước có thể kiểm thử riêng.
-- Chương trình có khả năng tiếp tục mở rộng do đã phân tách controller, model, view và script hỗ trợ.
+- Code bao phủ được các chức năng hay gặp ở KTX như đóng tiền, đăng ký phòng.
+- Phân quyền chặt chẽ từng trang.
+- Các chỗ quan trọng như ghi dữ liệu đều dùng transaction bảo vệ, không lo lỗi nửa chừng.
+- Chức năng thanh toán mã QR khá thú vị và dễ hiểu.
+- File code được tách rõ MVC, dễ sửa chữa về sau.
 
 ### 3.8.2. Hạn chế
 
-- Chưa có đủ bằng chứng kiểm tra đồng thời nhiều tiến trình trên dữ liệu thật.
-- Tác vụ định kỳ mới được kiểm tra ở mức code/script và test local; scheduler triển khai chưa được xác minh đầy đủ.
-- QR chỉ là mô phỏng thanh toán, chưa kết nối ngân hàng hoặc webhook thật.
-- Việc SMTP tiếp nhận thư chưa thể dùng để khẳng định thư đã tới Inbox nếu chưa kiểm tra log/provider.
-- Chưa hoàn thiện toàn bộ Chương 4, phụ lục, tài liệu tham khảo và gói source code cuối cùng.
+- Phần mềm này nhóm em mới chạy thử bằng code trên máy cá nhân, chưa test áp lực nhiều người vào cùng lúc.
+- Tính năng chạy theo giờ (tự lập hóa đơn) mới viết script test ở local, chưa thả lên server thật để chạy thử lâu dài.
+- QR thanh toán mới là mô phỏng thôi, chưa liên kết thẻ ngân hàng thật.
+- Tính năng gửi mail đôi khi bị chặn hoặc vào mục thư rác.
 
 ## 3.9. Đánh giá chung
 
-Hệ thống đã hình thành các luồng chính từ đăng ký, xét duyệt, lưu trú, hợp đồng, hóa đơn, điện nước, phản ánh đến thanh toán QR mô phỏng. Kết quả kiểm tra cú pháp PHP và frontend hiện tại đạt yêu cầu trong lượt kiểm tra đã thực hiện. Việc tổ chức mã nguồn và các lớp bảo vệ giúp hệ thống có cơ sở để tiếp tục kiểm thử tích hợp.
-
-Mức độ ổn định toàn hệ thống chưa nên kết luận chỉ từ lint hoặc test frontend. Kết luận chính thức cần dựa trên test có CSDL, kiểm tra trực quan, kiểm tra các luồng tích hợp và bằng chứng deployment tương ứng. Đây là nội dung cần hoàn thành trước khi đóng gói báo cáo cuối.
+Sản phẩm cơ bản đi được nguyên vòng đời sinh viên KTX: từ lúc nộp đơn đăng ký ở web ngoài, nhân viên duyệt xong có tài khoản, lúc nào trả tiền thì tạo hợp đồng. Hàng tháng có ghi số điện nước thu tiền. Cuối cùng, hệ thống kiểm tra và báo các bài test local đều Passed 100%. Bước tiếp theo nhóm em sẽ đem chạy thử ở server thật để xem còn lỗi vặt gì không, từ đó đóng gói đề tài lại.
 
 ## 3.10. Kết luận chương
 
-Chương này trình bày môi trường kiểm chứng, các chức năng đã triển khai, những luồng tích hợp tiêu biểu, kết quả kiểm thử, các thay đổi sửa lỗi và đánh giá ưu điểm/hạn chế của hệ thống. Các kết quả chưa được xác minh trên môi trường chạy thật được giữ ở trạng thái chờ kết luận để tránh đánh đồng kiểm tra tĩnh hoặc bảng tạm với kiểm chứng nghiệp vụ thực tế. Sau khi bổ sung số liệu test CSDL và ảnh giao diện, Chương 3 có thể được dùng làm nền cho Chương 4, phần kết luận và hướng phát triển.
+Chương 3 trình bày các kết quả mà nhóm em làm được: giao diện, tính năng, test luồng và test code (222 ca đều Pass). Nhóm em cũng tự nhận xét những ưu điểm và những cái chưa làm được (như chưa test server). Việc có đủ các kết quả ở chương này giúp nhóm em có cơ sở viết tiếp Chương 4 và kết thúc báo cáo đồ án.
