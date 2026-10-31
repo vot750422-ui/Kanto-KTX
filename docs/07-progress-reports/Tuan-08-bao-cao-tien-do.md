@@ -43,7 +43,7 @@
 
 | Thời gian | Dự kiến công việc thực hiện | Dự kiến kết quả đạt được |
 |---|---|---|
-| Từ 02/11/2026 đến 03/11/2026 | Chốt hướng xử lý các vướng mắc của UC18 với giảng viên hướng dẫn; thiết kế migration bổ sung bảng nhật ký hệ thống. | Biên bản chốt nghiệp vụ; file `sql/UC18-renewal.sql` sẵn sàng. |
+| Từ 02/11/2026 đến 03/11/2026 | Chốt hướng xử lý các vướng mắc của UC18 với giảng viên hướng dẫn; thiết kế migration bổ sung bảng nhật ký hệ thống. | Biên bản chốt nghiệp vụ; file `sql/uc18-renewal.sql` sẵn sàng; đã giao nhiệm vụ triển khai cho agent cloud (Jules) theo `docs/JULES_TASK_UC18.md`. |
 | Từ 04/11/2026 đến 05/11/2026 | Triển khai model `Renewal` chạy toàn bộ tiến trình trong một transaction; viết endpoint chỉ chấp nhận POST kèm token bí mật. | Chức năng Gia hạn chạy được trên môi trường local. |
 | Từ 06/11/2026 đến 07/11/2026 | Viết bộ kiểm thử UC18 (tối thiểu 8 trường hợp) và cấu hình lịch chạy tự động trên môi trường production. | Kiểm thử UC18 đạt; Timer chạy tự động theo lịch. |
 | Từ 08/11/2026 đến 09/11/2026 | Hoàn thiện Chương 4 báo cáo (Kết luận và Đề xuất), đóng gói sản phẩm. | Bản thảo Chương 4; gói source code và cơ sở dữ liệu. |
