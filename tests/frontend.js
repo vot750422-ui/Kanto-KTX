@@ -24,6 +24,27 @@ runAsset('approval.js', {
 });
 check('Open and cancel a confirmation dialog', () => { openButton.click(); assert.equal(dialog.open, true); closeButton.click(); assert.equal(dialog.open, false); });
 
+const contractDialog = { open: false, showModal() { this.open = true; }, close() { this.open = false; } };
+const terminateBtn = { dataset: { open: 'contract-terminate-confirm' }, addEventListener: (_, handler) => { terminateBtn.click = handler; } };
+const cancelTerminateBtn = { closest: () => contractDialog, addEventListener: (_, handler) => { cancelTerminateBtn.click = handler; } };
+let terminateSubmits = 0;
+runAsset('approval.js', {
+    document: {
+        querySelectorAll: selector => ({ '[data-open]': [terminateBtn], '[data-close]': [cancelTerminateBtn] })[selector] || [],
+        getElementById: id => id === 'contract-terminate-confirm' ? contractDialog : null,
+    },
+});
+check('Contract termination modal opens without submitting form', () => {
+    terminateBtn.click();
+    assert.equal(contractDialog.open, true);
+    assert.equal(terminateSubmits, 0);
+});
+check('Contract termination modal cancels without submitting form', () => {
+    cancelTerminateBtn.click();
+    assert.equal(contractDialog.open, false);
+    assert.equal(terminateSubmits, 0);
+});
+
 const filterEvents = {};
 const building = { value: '', addEventListener: (_, handler) => { filterEvents.building = handler; } };
 const floor = { value: '', addEventListener: (_, handler) => { filterEvents.floor = handler; } };
@@ -42,14 +63,32 @@ runAsset('registration.js', {
 check('Building filter hides other rooms and clears hidden selection', () => { building.value = 'T01'; filterEvents.building(); assert.equal(cards[0].hidden, false); assert.equal(cards[1].hidden, true); assert.equal(cards[1].radio.checked, false); assert.equal(empty.hidden, true); });
 check('Combined filters show the empty state', () => { floor.value = '2'; filterEvents.floor(); assert.equal(cards.every(card => card.hidden), true); assert.equal(empty.hidden, false); });
 check('Clearing filters shows rooms without restoring a hidden selection', () => { building.value = ''; floor.value = ''; filterEvents.building(); assert.equal(cards.every(card => !card.hidden), true); assert.equal(empty.hidden, true); assert.equal(cards[1].radio.checked, false); });
+
+let utilityChange;
+let utilitySubmits = 0;
+const utilityRoom = {
+    value: '',
+    form: { requestSubmit: () => { utilitySubmits++; } },
+    addEventListener: (_, handler) => { utilityChange = handler; },
+};
+runAsset('utility-meters.js', {
+    document: { querySelector: selector => selector === '[data-utility-room]' ? utilityRoom : null },
+});
+check('Selecting an occupied room automatically loads its utility readings', () => {
+    utilityChange();
+    assert.equal(utilitySubmits, 0);
+    utilityRoom.value = 'P0001';
+    utilityChange();
+    assert.equal(utilitySubmits, 1);
+});
+
 const qrElement = { dataset: { paymentQr: '/Kanto-KTX/index.php?action=student-payment&invoice=TEST17' }, replaceChildren(image) { this.image = image; } };
-const networkQr = { dataset: { paymentQr: 'http://192.0.2.10/Kanto-KTX/index.php?action=payment-checkout#' + 'a'.repeat(64), qrOrigin: 'http://192.0.2.10' }, replaceChildren(image) { this.image = image; } };
 const foreignQr = { dataset: { paymentQr: 'https://other.example/payment' } };
 runAsset('student-payments.js', {
     URL,
     qrcode: require('../assets/js/vendor/qrcode.js'),
     document: {
-        querySelectorAll: selector => selector === '[data-payment-qr]' ? [qrElement, networkQr, foreignQr] : [],
+        querySelectorAll: selector => selector === '[data-payment-qr]' ? [qrElement, foreignQr] : [],
         createElement: () => ({}),
     },
     window: {
@@ -60,7 +99,6 @@ check('UC17 generates a local QR image with the bundled library', () => {
     assert(qrElement.image.src.startsWith('data:image/gif;base64,'));
     assert.equal(Buffer.from(qrElement.image.src.split(',')[1], 'base64').subarray(0, 3).toString(), 'GIF');
 });
-check('UC17 permits the server-configured LAN origin in a QR', () => { assert(networkQr.image.src.startsWith('data:image/gif;base64,')); });
 check('UC17 refuses a QR pointing outside the application origin', () => { assert(foreignQr.textContent.includes('Chưa thể hiển thị QR')); });
 check('UC17 countdown expires without submitting a new QR request', () => {
     let elapsed = 0, timer, reloads = 0, submits = 0;

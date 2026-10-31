@@ -14,6 +14,57 @@ class ContractController
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
+        // Xử lý thanh lý hợp đồng (chỉ chấp nhận POST)
+        if ($action === 'contract-terminate') {
+            if ($method !== 'POST') {
+                http_response_code(405);
+                header('Allow: POST');
+                echo 'Phương thức không được hỗ trợ.';
+                return;
+            }
+
+            $id = is_string($_POST['id'] ?? null) ? trim($_POST['id']) : '';
+            if (preg_match('/^[A-Za-z0-9_-]{1,10}$/D', $id) !== 1) {
+                http_response_code(400);
+                echo 'Mã hợp đồng không hợp lệ.';
+                return;
+            }
+
+            $model = new Contract($this->db);
+            try {
+                $model->terminate($id);
+                $_SESSION['contract_notice'] = [
+                    'type' => 'success',
+                    'message' => 'Thanh lý hợp đồng ' . $id . ' thành công. Số tiền hoàn trả dự kiến: '
+                        . number_format((float) $result['TienHoanTra'], 0, ',', '.') . ' đồng.',
+                ];
+                header('Location: ' . appUrl('index.php?action=contract-detail&id=' . urlencode($id)));
+                return;
+            } catch (DomainException $e) {
+                if ($e->getMessage() === 'Hợp đồng không tồn tại.') {
+                    http_response_code(404);
+                    echo htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
+                    return;
+                }
+                http_response_code(409);
+                $contract = $model->find($id);
+                $notice = [
+                    'type' => 'error',
+                    'message' => $e->getMessage(),
+                ];
+                $content = __DIR__ . '/../views/contracts/detail.php';
+                $pageTitle = 'Chi tiết hợp đồng';
+                $displayName = (new StaffDashboard($this->db))->nameForAccount((int) $_SESSION['user']['MaTK'])
+                    ?? $_SESSION['user']['TenDangNhap'];
+                require __DIR__ . '/../views/contracts/layout.php';
+                return;
+            } catch (Throwable $e) {
+                http_response_code(500);
+                echo 'Đã xảy ra lỗi khi thanh lý hợp đồng.';
+                return;
+            }
+        }
+
         // Các hành động tra cứu hợp đồng chỉ chấp nhận GET
         if ($method !== 'GET') {
             http_response_code(405);
@@ -37,6 +88,9 @@ class ContractController
                 echo 'Không tìm thấy hợp đồng.';
                 return;
             }
+
+            $notice = $_SESSION['contract_notice'] ?? null;
+            unset($_SESSION['contract_notice']);
 
             $content = __DIR__ . '/../views/contracts/detail.php';
             $pageTitle = 'Chi tiết hợp đồng';
