@@ -1,8 +1,8 @@
-# UC21 - Gia hạn lưu trú (Timer)
+﻿# UC18 - Gia hạn lưu trú (Timer)
 
 ## 1. Thông tin chung
 
-- **Mã Use Case:** UC21 (đánh số theo `docs/sources/BÁO CÁO BÀI TẬP LỚN`, mục 3.15 — mã gốc "UC-21")
+- **Mã Use Case:** UC18 (tiếp nối UC17 - Thanh toán hóa đơn trong danh sách triển khai của đồ án)
 - **Tên Use Case:** Gia hạn
 - **Tác nhân chính:** Timer (Hệ thống)
 - **Use Case liên quan:** UC10.1 (Lập hóa đơn tiền phòng), UC05 (Quản lý hợp đồng), UC12 (Xem thông báo)
@@ -63,21 +63,21 @@ Sau khi tiến trình thực hiện thành công:
 
 ## 7. Quy tắc nghiệp vụ
 
-### BR-UC21-01 - Thời điểm kích hoạt
+### BR-UC18-01 - Thời điểm kích hoạt
 
 ```text
 Ngày hiện tại = NgayBatDau của một học kỳ trong bảng hocky
 ```
 
-### BR-UC21-02 - Điều kiện gia hạn
+### BR-UC18-02 - Điều kiện gia hạn
 
 Chỉ gia hạn sinh viên có hóa đơn tiền phòng kỳ vừa kết thúc ở trạng thái `Đã thu`.
 
-### BR-UC21-03 - Khóa tài khoản
+### BR-UC18-03 - Khóa tài khoản
 
 Sau khi Gia hạn chạy xong, sinh viên có hóa đơn tiền phòng `Chưa thu` chuyển `taikhoan.TrangThai` thành `Khóa`.
 
-### BR-UC21-04 - Tính nguyên tử
+### BR-UC18-04 - Tính nguyên tử
 
 Toàn bộ tiến trình chạy trong **một transaction**. Lỗi ở bất kỳ bước nào → rollback toàn bộ, kể cả các hợp đồng đã chuyển `Hết hạn`.
 
@@ -101,7 +101,7 @@ Xem mục 7.2 của [`docs/PROJECT_CONTEXT.md`](../PROJECT_CONTEXT.md). Tóm t�
 ## 9. Kế hoạch triển khai
 
 1. Chốt V1, V2, V8 với GVHD.
-2. Migration `sql/uc21-renewal.sql`: bảng `nhatkyhethong`, (tùy chọn) `hopdong.MaHocKy`.
+2. Migration `sql/uc18-renewal.sql`: bảng `nhatkyhethong`, (tùy chọn) `hopdong.MaHocKy`.
 3. `models/Renewal.php` — method `run(): array` chạy trong transaction.
 4. `index.php?action=renewal-run` — chỉ POST + token bí mật.
 5. `tests/renewal.php` — tối thiểu 8 case.

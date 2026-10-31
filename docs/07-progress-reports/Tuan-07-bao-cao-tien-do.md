@@ -1,4 +1,4 @@
-# BÁO CÁO TIẾN ĐỘ THỰC HIỆN (BM 1.8.a)
+﻿# BÁO CÁO TIẾN ĐỘ THỰC HIỆN (BM 1.8.a)
 
 **TRƯỜNG ĐẠI HỌC KỸ THUẬT - CÔNG NGHỆ CẦN THƠ** — **KHOA CÔNG NGHỆ THÔNG TIN**
 
@@ -53,7 +53,7 @@
 
 1. **Đề nghị thống nhất cách đánh số Use Case.** Hiện tồn tại hai cách đánh số khác nhau giữa bộ đặc tả mới (`docs/02-use-cases/`) và báo cáo phân tích thiết kế trước đây (ví dụ: Lập hóa đơn tiền phòng là UC10.1 theo bộ mới nhưng là UC-20 theo báo cáo cũ). Đề nghị chốt một bảng mã duy nhất trước khi hoàn thiện Chương 2 và Chương 3.
 2. **Đề nghị bổ sung đặc tả cho hai Use Case còn thiếu nội dung:** UC05.2 Thanh lý hợp đồng và nhóm quy tắc nghiệp vụ chung hiện đang để trống trong repository.
-3. **Đề nghị góp ý hướng triển khai chức năng Gia hạn (UC-21).** Chức năng này do Timer đảm nhiệm, tự động chuyển hợp đồng cũ sang trạng thái `Hết hạn`, tạo hợp đồng mới cho sinh viên đã thanh toán và khóa tài khoản sinh viên còn nợ. Nhóm đã phân tích và nhận thấy một số vướng mắc về dữ liệu: bảng `hopdong` hiện chưa có cột liên kết học kỳ, chưa có bảng nhật ký hệ thống, và cần làm rõ thời điểm xác định "học kỳ hiện tại". Nhóm xin ý kiến hướng xử lý trước khi triển khai.
+3. **Đề nghị góp ý hướng triển khai chức năng Gia hạn (UC18).** Chức năng này do Timer đảm nhiệm, tự động chuyển hợp đồng cũ sang trạng thái `Hết hạn`, tạo hợp đồng mới cho sinh viên đã thanh toán và khóa tài khoản sinh viên còn nợ. Nhóm đã phân tích và nhận thấy một số vướng mắc về dữ liệu: bảng `hopdong` hiện chưa có cột liên kết học kỳ, chưa có bảng nhật ký hệ thống, và cần làm rõ thời điểm xác định "học kỳ hiện tại". Nhóm xin ý kiến hướng xử lý trước khi triển khai.
 
 ---
 

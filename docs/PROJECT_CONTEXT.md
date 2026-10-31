@@ -1,4 +1,4 @@
-# Kanto-KTX — Bối cảnh dự án (hợp nhất từ Codex)
+﻿# Kanto-KTX — Bối cảnh dự án (hợp nhất từ Codex)
 
 > File này được tổng hợp tự động từ lịch sử làm việc của Codex trên máy
 > (`~/.codex/memories/MEMORY.md`, 22 rollout summaries, ad-hoc notes)
@@ -98,7 +98,7 @@ storage/                   # ảnh minh chứng đăng ký (giới hạn quyền
 | UC14 | Thống kê báo cáo | ⬜ Chưa code | |
 | UC15 | Xem thông tin phòng | ⬜ Chưa code | |
 | UC16 | Xem hướng dẫn | ⬜ Chưa code | |
-| **UC-21** | **Gia hạn (Timer)** | ⬜ **Chưa code** | ⭐ Yêu cầu mới, xem mục 7 |
+| **UC-18** | **Gia hạn (Timer)** | ⬜ **Chưa code** | ⭐ Yêu cầu mới, xem mục 7 |
 
 > ⚠️ **Lệch mã UC giữa hai bộ tài liệu** — xem mục 8.
 
@@ -179,11 +179,11 @@ thongbao(MaThongBao PK, MSSV, MaHoaDon NULL, TieuDe, NoiDung, ThoiGianTao)
 
 ---
 
-## 7. ⭐ Yêu cầu mới: UC Gia hạn (UC-21) — Timer
+## 7. ⭐ Yêu cầu mới: UC Gia hạn (UC-18) — Timer
 
 ### 7.1. Đặc tả gốc (từ `docs/sources/BÁO CÁO BÀI TẬP LỚN...docx`, mục 3.15)
 
-- **Mã:** UC-21 · **Tên:** Gia hạn · **Tác nhân:** Timer (Hệ thống)
+- **Mã:** UC-18 · **Tên:** Gia hạn · **Tác nhân:** Timer (Hệ thống)
 - **Mục đích:** Tự động duy trì quyền lưu trú cho sinh viên đã hoàn thành nghĩa vụ tài chính và tạm khóa quyền truy cập của sinh viên nợ phí.
 - **Tiền điều kiện:**
   1. Ngày hiện tại là **ngày bắt đầu học kỳ mới**.
@@ -215,19 +215,19 @@ thongbao(MaThongBao PK, MSSV, MaHoaDon NULL, TieuDe, NoiDung, ThoiGianTao)
 | **V1** | **"Học kỳ hiện tại" bị mơ hồ** | Đặc tả nói "truy vấn HoaDonTienPhong của học kỳ hiện tại", nhưng tại ngày bắt đầu kỳ mới, `hocky` có `NgayBatDau = today` chính là kỳ mới. Hóa đơn `Đã thu` lại thuộc kỳ **vừa kết thúc**. | Dùng chính `billingContext()` đã có trong `Approval.php` để xác định kỳ; hóa đơn cần kiểm tra là kỳ **liền trước** kỳ bắt đầu hôm nay. Cần chốt lại với GVHD. |
 | **V2** | **Không có cột liên kết hợp đồng ↔ học kỳ** | `hopdong` chỉ có `NgayBatDau`, `NgayKetThuc`, không có `MaHocKy`. Đặc tả nói "cập nhật học kỳ là học kỳ hiện tại" → không có chỗ ghi. | Hoặc (a) suy ra kỳ từ ngày, hoặc (b) thêm cột `MaHocKy` vào `hopdong` (migration mới). |
 | **V3** | **`MaHopDong` varchar(10) — nguy cơ tràn** | Sinh mã kiểu `HD` + timestamp sẽ vượt 10 ký tự. | Dùng `HD` + 8 ký tự base36 tăng dần, hoặc nới cột lên varchar(20). |
-| **V4** | **Bảng `NhatKyHeThong` chưa tồn tại** | E1 yêu cầu ghi log lỗi vào bảng này. | Tạo migration `sql/uc21-renewal.sql` thêm bảng `nhatkyhethong`. |
+| **V4** | **Bảng `NhatKyHeThong` chưa tồn tại** | E1 yêu cầu ghi log lỗi vào bảng này. | Tạo migration `sql/uc18-renewal.sql` thêm bảng `nhatkyhethong`. |
 | **V5** | **Gửi email (E2) chưa có hạ tầng** | Đặc tả nói "gửi thông báo qua gmail". Repo chưa có mailer. | Dùng bảng `thongbao` trước (in-app); email để giai đoạn sau hoặc dùng Brevo API (đã có branch `feature/uc03-brevo-api`). |
 | **V6** | **Hợp đồng "Hết hạn" hàng loạt phá vỡ UC02/UC03** | Nếu chạy Gia hạn mà không có hóa đơn `Đã thu`, toàn bộ hợp đồng thành `Hết hạn` → số chỗ khả dụng nhảy vọt, đơn `Đã duyệt` cũ có thể bị đếm sai. | Phải chạy trong **1 transaction duy nhất**, khóa `hopdong` + `hoadontienphong` + `taikhoan`, và kiểm tra `dondangky.MaHopDong` trước khi đổi trạng thái. |
 | **V7** | **Chạy 2 lần trong cùng ngày** | Timer có thể trigger lặp → tạo hợp đồng trùng. | Idempotency: kiểm tra đã có `hopdong` với `NgayBatDau = today` cho MSSV đó chưa; hoặc dùng bảng `tiendo_timer` ghi lần chạy cuối. |
 | **V8** | **Sinh viên `Chờ thanh toán` (từ UC03) có bị khóa không?** | UC03 tạo `sinhvien.TrangThaiLuuTru = 'Chờ thanh toán'` + hóa đơn `Chưa thu`. Nếu Gia hạn chạy trước khi họ thanh toán → tài khoản bị khóa ngay, không đăng nhập được để xem hóa đơn. | Cần chốt: miễn trừ sinh viên mới (chưa từng có hợp đồng) khỏi bước khóa, hoặc cho phép đăng nhập read-only để thanh toán. |
 | **V9** | **Không có cơ chế Timer thật** | Repo chưa có cron/scheduler. Render free tier không chạy cron nội bộ. | Dùng **Render Cron Job** (gọi 1 endpoint có token bí mật) hoặc **GitHub Actions scheduled workflow**. |
-| **V10** | **Đồng bộ tài liệu** | Chưa có file `docs/02-use-cases/UC21-renewal.md`, chưa có sequence diagram, chưa có trong `USE_CASE_OVERVIEW.md`. | Viết đặc tả UC21 theo cùng format UC10.1, thêm vào overview, vẽ sequence diagram. |
+| **V10** | **Đồng bộ tài liệu** | Chưa có file `docs/02-use-cases/UC18-renewal.md`, chưa có sequence diagram, chưa có trong `USE_CASE_OVERVIEW.md`. | Viết đặc tả UC18 theo cùng format UC10.1, thêm vào overview, vẽ sequence diagram. |
 
-### 7.3. Đề xuất thứ tự triển khai UC21
+### 7.3. Đề xuất thứ tự triển khai UC18
 
 1. **Chốt nghiệp vụ** (V1, V2, V8) với GVHD trước khi code.
-2. Viết `docs/02-use-cases/UC21-renewal.md` (đặc tả chuẩn hóa).
-3. Migration `sql/uc21-renewal.sql`: bảng `nhatkyhethong`, (tùy chọn) cột `hopdong.MaHocKy`.
+2. Viết `docs/02-use-cases/UC18-renewal.md` (đặc tả chuẩn hóa).
+3. Migration `sql/uc18-renewal.sql`: bảng `nhatkyhethong`, (tùy chọn) cột `hopdong.MaHocKy`.
 4. Model `models/Renewal.php` — 1 method `run(): array` chạy toàn bộ trong transaction.
 5. Endpoint `index.php?action=renewal-run` — chỉ chấp nhận POST + token bí mật (không cho user thường).
 6. Test `tests/renewal.php` — tối thiểu 8 case: đã thu → gia hạn; chưa thu → khóa; chạy 2 lần; rollback khi lỗi; không có hóa đơn; học kỳ chồng lấn; không có đơn giá; hợp đồng đã thanh lý.
@@ -260,7 +260,7 @@ Hai bộ tài liệu dùng **cách đánh số khác nhau** — phải chốt tr
 | Xem hướng dẫn | UC16 | UC-16 |
 | Lập hóa đơn tiền phòng | UC10.1 | UC-20 |
 | Lập hóa đơn điện nước | UC10.2 | UC-08 |
-| **Gia hạn** | **chưa có** | **UC-21** |
+| **Gia hạn** | **UC18** | UC-21 (chỉ tham khảo) |
 
 **Lỗi cụ thể phát hiện được:**
 - `docs/06-diagrams/sequence/README.md` đánh số **lệch 1 đơn vị** so với `docs/02-use-cases/` — ví dụ file `UC06-utility-meter-sequence.png` nhưng `02-use-cases` gọi là UC06 = Xem thông tin lưu trú.
@@ -324,7 +324,7 @@ Cần Thơ, ngày ... tháng ... năm 2026
 
 1. **Báo cáo tiến độ Tuần 7 + Tuần 8** (deadline Chủ nhật 2026-11-01 20:00) — xem mục 9.
 2. **Đồng bộ số UC** giữa docs và báo cáo (mục 8).
-3. **Chốt nghiệp vụ UC21 Gia hạn** (mục 7.2 — V1, V2, V8).
+3. **Chốt nghiệp vụ UC18 Gia hạn** (mục 7.2 — V1, V2, V8).
 4. Push 64 commit local lên `origin/main` trước khi giao agent cloud.
 5. Merge `feature/uc03-approval` vào `main` sau review.
 

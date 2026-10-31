@@ -127,7 +127,7 @@ docs/                PROJECT_CONTEXT.md, CODEX_HISTORY.md, 01-project-scope → 
 ## Phạm vi đang làm
 
 - Branch hiện tại: `feature/uc03-approval` (UC03 đã code xong, 51 test đạt, **chưa merge `main`**).
-- Yêu cầu mới chưa triển khai: **UC Gia hạn (UC-21) do Timer đảm nhiệm** — xem mục 7 trong `docs/PROJECT_CONTEXT.md`, có 10 vướng mắc cần chốt trước khi code.
+- Yêu cầu mới chưa triển khai: **UC Gia hạn (UC18) do Timer đảm nhiệm** — xem mục 7 trong `docs/PROJECT_CONTEXT.md`, có 10 vướng mắc cần chốt trước khi code.
 - Không động vào UC khác nếu không được yêu cầu.
 
 ## Cảnh báo tài liệu lệch nhau
