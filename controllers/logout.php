@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../middleware/Auth.php';
 
+// Đăng xuất chỉ chấp nhận POST rồi xóa toàn bộ dữ liệu phiên hiện tại.
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     header('Allow: POST');

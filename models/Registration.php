@@ -45,7 +45,7 @@ class Registration
     {
         if (!is_string($data['Email'] ?? null) || strlen($data['Email']) > 100
             || !filter_var($data['Email'], FILTER_VALIDATE_EMAIL)) {
-            throw new DomainException('Vui lòng nhập email hợp lệ.', 1);
+            throw new DomainException('Vui lòng nhập email hợp lệ để nhận kết quả xét duyệt.', 1);
         }
         // Khóa chung UC02: bảo vệ cả MSSV trùng ở hai phòng khác nhau.
         $lock = $this->db->prepare('SELECT GET_LOCK(?, 10)');

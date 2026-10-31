@@ -1,5 +1,6 @@
 <?php
 
+// Tìm tài khoản theo tên đăng nhập bằng prepared statement để phục vụ xác thực.
 class User
 {
     private PDO $conn;

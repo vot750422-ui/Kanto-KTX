@@ -20,8 +20,12 @@ class PaymentController
             if (!is_string($invoice) || !preg_match('/^[A-Za-z0-9_-]{1,12}$/D', $invoice)) {
                 http_response_code(400); echo 'Vui lòng chọn hóa đơn cần xác nhận thanh toán.'; return;
             }
+            $studentForUtility = $_POST['student'] ?? null;
+            if ($studentForUtility !== null && (!is_string($studentForUtility) || preg_match('/^[A-Za-z0-9_-]{1,15}$/D', $studentForUtility) !== 1)) {
+                http_response_code(400); echo 'MSSV thanh toán không hợp lệ.'; return;
+            }
             try {
-                $result = $model->confirm($invoice);
+                $result = $model->confirm($invoice, $studentForUtility);
                 // Hiển thị kết quả theo nghiệp vụ: chỉ hóa đơn phòng đầu tiên mới tạo hợp đồng.
                 if ($result['contract'] !== null) {
                     $_SESSION['payment_success'] = 'Xác nhận thành công. Hợp đồng: ' . $result['contract'] . '. Tài khoản sinh viên: ' . $result['username'] . ' (đã cấp khi duyệt đơn).';

@@ -62,7 +62,7 @@ $date = static fn($value) => $value ? date('d/m/Y H:i', strtotime($value)) : '�
                                 <tr>
                                     <td><?= $escape($item['MaHoaDon']) ?></td><td><?= $escape($item['LoaiHoaDon']) ?></td><td><?= $escape($item['SoPhong']) ?></td>
                                     <td><?= $escape($item['LoaiHoaDon'] === 'Tiền phòng' ? $item['TenHocKy'] . ' · ' . $item['NamHoc'] : $item['KyHoaDon']) ?></td>
-                                    <td class="payment-amount"><?= $escape($money($item['TongTien'])) ?></td><td><span class="payment-badge<?= $item['TrangThai'] === 'Đã thu' ? ' is-paid' : '' ?>"><?= $escape($item['TrangThai']) ?></span></td>
+                                    <td class="payment-amount"><?= $escape($money($item['SoTienPhaiThu'])) ?></td><td><span class="payment-badge<?= $item['TrangThai'] === 'Đã thu' ? ' is-paid' : '' ?>"><?= $escape($item['TrangThai']) ?></span></td>
                                     <td><a class="payment-view-button" href="<?= $escape($route('student-invoice', $item['MaHoaDon'])) ?>" aria-label="Xem hóa đơn <?= $escape($item['MaHoaDon']) ?>">Xem hóa đơn</a></td>
                                 </tr>
                             <?php endforeach; ?>
@@ -95,7 +95,7 @@ $date = static fn($value) => $value ? date('d/m/Y H:i', strtotime($value)) : '�
                             <?php endif; ?>
                             <?php if ($bill['TrangThai'] === 'Đã thu'): ?><div><dt>Thời gian thanh toán</dt><dd><?= $escape($date($bill['ThoiGianThanhToan'])) ?></dd></div><?php endif; ?>
                         </dl>
-                        <?php if ($bill['LoaiHoaDon'] === 'Điện nước'): ?><p class="payment-help">Đây là tổng hóa đơn điện nước của phòng. Khi một sinh viên liên quan xác nhận thanh toán, toàn bộ hóa đơn được ghi nhận Đã thu.</p><?php endif; ?>
+                        <?php if ($bill['LoaiHoaDon'] === 'Điện nước'): ?><p class="payment-help">Đây là phần tiền điện nước được phân bổ riêng cho bạn từ tổng hóa đơn của phòng. Các sinh viên khác thanh toán độc lập.</p><?php endif; ?>
                     </section>
                     <?php if ($bill['TrangThai'] !== 'Đã thu'): ?>
                     <section class="payment-card payment-checkout">

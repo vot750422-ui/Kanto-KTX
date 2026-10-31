@@ -13,6 +13,12 @@ $notice = $notice ?? null;
 <?php endif; ?>
 <div class="contract-detail-actions">
     <a class="approval-button" href="<?= $url('index.php?action=contracts') ?>">← Quay lại danh sách</a>
+    <?php if ($contract['TrangThai'] === 'Còn hạn'): ?>
+        <form id="contract-terminate-form" method="POST" action="<?= $url('index.php?action=contract-terminate') ?>">
+            <input type="hidden" name="id" value="<?= $escape($contract['MaHopDong']) ?>">
+            <button type="button" class="approval-button danger" data-open="contract-terminate-confirm">Thanh lý hợp đồng</button>
+        </form>
+    <?php endif; ?>
 </div>
 <div class="contract-detail-grid">
     <section class="approval-panel contract-panel">
@@ -21,6 +27,8 @@ $notice = $notice ?? null;
             <div><dt>Mã hợp đồng</dt><dd><?= $escape($contract['MaHopDong']) ?></dd></div>
             <div><dt>Ngày bắt đầu</dt><dd><?= $escape($date($contract['NgayBatDau'])) ?></dd></div>
             <div><dt>Ngày kết thúc</dt><dd><?= $escape($date($contract['NgayKetThuc'])) ?></dd></div>
+            <?php if (!empty($contract['NgayThanhLy'])): ?><div><dt>Ngày thanh lý</dt><dd><?= $escape($date($contract['NgayThanhLy'])) ?></dd></div><?php endif; ?>
+            <?php if (isset($contract['TienHoanTra']) && $contract['TienHoanTra'] !== null && $contract['TienHoanTra'] !== ''): ?><div><dt>Tiền hoàn trả dự kiến</dt><dd><?= $escape(number_format((float) $contract['TienHoanTra'], 0, ',', '.')) ?> đồng</dd></div><?php endif; ?>
             <div><dt>Trạng thái</dt><dd><span class="contract-status"><?= $escape($contract['TrangThai']) ?></span></dd></div>
         </dl>
     </section>
@@ -49,3 +57,13 @@ $notice = $notice ?? null;
         </dl>
     </section>
 </div>
+<?php if ($contract['TrangThai'] === 'Còn hạn'): ?>
+    <dialog class="approval-dialog" id="contract-terminate-confirm">
+        <h2>Xác nhận thanh lý hợp đồng</h2>
+        <p>Bạn có chắc chắn muốn thanh lý hợp đồng <?= $escape($contract['MaHopDong']) ?> không? Thao tác này sẽ cập nhật trạng thái hợp đồng thành Đã thanh lý.</p>
+        <div class="approval-actions">
+            <button class="approval-button" type="button" data-close>Hủy</button>
+            <button class="approval-button danger" type="submit" form="contract-terminate-form">Có, thanh lý hợp đồng</button>
+        </div>
+    </dialog>
+<?php endif; ?>

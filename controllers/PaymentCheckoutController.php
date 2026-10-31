@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../middleware/Auth.php';
 require_once __DIR__ . '/../services/PaymentLink.php';
 
+// UC17 đọc token QR công khai và chỉ ghi nhận thanh toán khi người dùng POST xác nhận.
 final class PaymentCheckoutController
 {
     public function handle(string $action): void

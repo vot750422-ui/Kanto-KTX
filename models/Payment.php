@@ -8,9 +8,10 @@ class Payment
     {
         $where = '1=1';
         $params = [];
+        $statusColumn = "CASE WHEN h.LoaiHoaDon='Điện nước' THEN us.TrangThai ELSE h.TrangThai END";
         foreach (['student'=>$student, 'status'=>$status, 'invoice'=>$filters['invoice'] ?? '', 'room'=>$filters['room'] ?? '', 'type'=>$filters['type'] ?? ''] as $key=>$value) {
             if ($value === '') { continue; }
-            $column = ['student'=>'s.MSSV','status'=>'h.TrangThai','invoice'=>'h.MaHoaDon','room'=>'r.SoPhong','type'=>'h.LoaiHoaDon'][$key];
+            $column = ['student'=>'s.MSSV','status'=>$statusColumn,'invoice'=>'h.MaHoaDon','room'=>'r.SoPhong','type'=>'h.LoaiHoaDon'][$key];
             $where .= ' AND ' . $column . '=?'; $params[] = $value;
         }
         if (($filters['name'] ?? '') !== '') { $where .= ' AND LOCATE(?,s.HoTen)>0'; $params[] = $filters['name']; }
@@ -24,22 +25,26 @@ class Payment
             LEFT JOIN sinhvien s ON s.MSSV=COALESCE(p.MSSV,us.MSSV)
             JOIN phong r ON r.MaPhong=COALESCE(p.MaPhong,u.MaPhong)
             LEFT JOIN hocky k ON k.MaHocKy=p.MaHocKy LEFT JOIN dondangky a ON a.MaHoaDon=h.MaHoaDon';
-        $stmt = $this->db->prepare('SELECT COUNT(DISTINCT h.MaHoaDon)' . $from . ' WHERE ' . $where);
+        $stmt = $this->db->prepare('SELECT COUNT(*)' . $from . ' WHERE ' . $where);
         $stmt->execute($params); $total = (int)$stmt->fetchColumn();
         $pages = max(1, (int)ceil($total / 20)); $page = max(1, min($page, $pages));
-        $stmt = $this->db->prepare("SELECT h.*, GROUP_CONCAT(DISTINCT s.MSSV ORDER BY s.MSSV SEPARATOR ', ') AS MSSV,
-            GROUP_CONCAT(DISTINCT s.HoTen ORDER BY s.HoTen SEPARATOR ', ') AS HoTen,
+        $stmt = $this->db->prepare("SELECT h.MaHoaDon, h.LoaiHoaDon, h.TongTien AS TongTienPhong,
+            h.ThoiGianLap, h.TrangThai AS TrangThaiHoaDon, h.ThoiGianThanhToan AS ThoiGianThanhToanHoaDon,
+            COALESCE(us.SoTienPhaiThu, h.TongTien) AS SoTienPhaiThu,
+            {$statusColumn} AS TrangThai,
+            CASE WHEN h.LoaiHoaDon='Điện nước' THEN us.ThoiGianThanhToan ELSE h.ThoiGianThanhToan END AS ThoiGianThanhToan,
+            s.MSSV, s.HoTen,
             r.SoPhong, k.TenHocKy, k.NamHoc, k.NgayBatDau, k.NgayKetThuc, a.MaHopDong,
             COALESCE(CONCAT(LPAD(u.Thang,2,'0'),'/',u.Nam),DATE_FORMAT(h.ThoiGianLap,'%m/%Y')) AS KyHoaDon,
-            (h.TrangThai='Chưa thu') AS CanConfirm"
-            . $from . ' WHERE ' . $where . ' GROUP BY h.MaHoaDon, r.SoPhong, k.MaHocKy, a.MaDonDangKy, u.MaHoaDon'
+            ({$statusColumn}='Chưa thu') AS CanConfirm"
+            . $from . ' WHERE ' . $where
             . ' ORDER BY h.ThoiGianLap DESC, h.MaHoaDon DESC LIMIT 20 OFFSET ' . (($page - 1) * 20));
         $stmt->execute($params);
         return ['items'=>$stmt->fetchAll(), 'total'=>$total, 'page'=>$page, 'pages'=>$pages];
     }
-    public function confirm(string $invoice): array
+    public function confirm(string $invoice, ?string $student = null): array
     {
-        return $this->settle($invoice);
+        return $this->settle($invoice, null, null, null, $student);
     }
 
     public function studentForAccount(int $accountId): ?array
@@ -53,8 +58,10 @@ class Payment
     public function studentInvoice(string $invoice, int $accountId, bool $forUpdate = false): ?array
     {
         // The utility invoice is shared by its recorded students, not by current room occupants.
-        $stmt = $this->db->prepare("SELECT h.*, r.SoPhong, k.TenHocKy, k.NamHoc,
-                u.Thang, u.Nam, u.DienTieuThu, u.NuocTieuThu, u.TienDien, u.TienNuoc
+        $stmt = $this->db->prepare("SELECT h.*, COALESCE(p.MSSV, us.MSSV) AS MSSV, r.SoPhong, k.TenHocKy, k.NamHoc,
+                u.Thang, u.Nam, u.DienTieuThu, u.NuocTieuThu, u.TienDien, u.TienNuoc,
+                us.SoTienPhaiThu, us.TrangThai AS TrangThaiPhanBo,
+                us.ThoiGianThanhToan AS ThoiGianThanhToanPhanBo
             FROM hoadon h
             LEFT JOIN hoadontienphong p ON p.MaHoaDon=h.MaHoaDon AND h.LoaiHoaDon='Tiền phòng'
             LEFT JOIN hoadondiennuoc u ON u.MaHoaDon=h.MaHoaDon AND h.LoaiHoaDon='Điện nước'
@@ -66,7 +73,17 @@ class Payment
             WHERE h.MaHoaDon=? AND s.MaTK=? AND t.VaiTro='Sinh viên' AND t.TrangThai='Hoạt động'"
             . ($forUpdate ? ' FOR UPDATE' : ''));
         $stmt->execute([$invoice, $accountId]);
-        return $stmt->fetch() ?: null;
+        $bill = $stmt->fetch();
+        if (!$bill) {
+            return null;
+        }
+        $bill['TongTienPhong'] = $bill['TongTien'];
+        if ($bill['LoaiHoaDon'] === 'Điện nước') {
+            $bill['TongTien'] = $bill['SoTienPhaiThu'];
+            $bill['TrangThai'] = $bill['TrangThaiPhanBo'];
+            $bill['ThoiGianThanhToan'] = $bill['ThoiGianThanhToanPhanBo'];
+        }
+        return $bill;
     }
 
     public function confirmForStudent(string $invoice, int $accountId, string $expectedAmount): array
@@ -82,7 +99,7 @@ class Payment
         return $this->settle('', null, null, $token);
     }
 
-    private function settle(string $invoice, ?int $accountId = null, ?string $expectedAmount = null, ?string $linkToken = null): array
+    private function settle(string $invoice, ?int $accountId = null, ?string $expectedAmount = null, ?string $linkToken = null, ?string $studentMssv = null): array
     {
         $name = 'kanto_uc02_' . substr(hash('sha256', (string)$this->db->query('SELECT DATABASE()')->fetchColumn()), 0, 32);
         $lock = $this->db->prepare('SELECT GET_LOCK(?, 10)');
@@ -97,8 +114,8 @@ class Payment
                 $stmt->execute([$hash]);
                 $link = $stmt->fetch();
                 if (!$link) { throw new DomainException('Liên kết thanh toán không hợp lệ hoặc đã hết hiệu lực.'); }
-                $latest = $this->db->prepare('SELECT MaPhien FROM phienthanhtoan WHERE MaHoaDon=? AND DaDungLuc IS NULL AND HetHanLuc>NOW() AND DATE_ADD(TaoLuc,INTERVAL 5 MINUTE)>NOW() ORDER BY TaoLuc DESC,MaPhien DESC LIMIT 1 FOR UPDATE');
-                $latest->execute([$link['MaHoaDon']]);
+                $latest = $this->db->prepare('SELECT MaPhien FROM phienthanhtoan WHERE MaHoaDon=? AND MaTK=? AND DaDungLuc IS NULL AND HetHanLuc>NOW() AND DATE_ADD(TaoLuc,INTERVAL 5 MINUTE)>NOW() ORDER BY TaoLuc DESC,MaPhien DESC LIMIT 1 FOR UPDATE');
+                $latest->execute([$link['MaHoaDon'], $link['MaTK']]);
                 if (!hash_equals((string)$latest->fetchColumn(), $hash)) { throw new DomainException('Liên kết thanh toán không còn hiệu lực.'); }
                 $invoice = $link['MaHoaDon'];
                 $accountId = (int)$link['MaTK'];
@@ -125,6 +142,27 @@ class Payment
                 if ((string)$owned['TongTien'] !== $expectedAmount) {
                     throw new DomainException('Số tiền hóa đơn đã thay đổi. Vui lòng mở lại trang thanh toán.');
                 }
+                if ($bill['LoaiHoaDon'] === 'Điện nước') {
+                    $studentMssv = $owned['MSSV'];
+                }
+            }
+
+            if ($bill['LoaiHoaDon'] === 'Điện nước') {
+                if (!is_string($studentMssv) || preg_match('/^[A-Za-z0-9_-]{1,15}$/D', $studentMssv) !== 1) {
+                    throw new DomainException('Cần xác định sinh viên thanh toán phần hóa đơn điện nước.');
+                }
+                if ($accountId === null) {
+                    $allocation = $this->utilityAllocation($invoice, $studentMssv, true);
+                    if (!$allocation || $allocation['TrangThai'] !== 'Chưa thu') {
+                        throw new DomainException('Phần hóa đơn điện nước này đã được thanh toán hoặc không tồn tại.');
+                    }
+                    if ($expectedAmount !== null && (string) $allocation['SoTienPhaiThu'] !== (string) $expectedAmount) {
+                        throw new DomainException('Số tiền phân bổ đã thay đổi. Vui lòng tải lại trang.');
+                    }
+                }
+                $this->markUtilityPaid($invoice, $studentMssv);
+                $this->db->commit();
+                return ['contract' => null, 'invoiceType' => $bill['LoaiHoaDon']];
             }
             // Điện nước và tiền phòng định kỳ chỉ chuyển hóa đơn sang Đã thu.
             $stmt = $this->db->prepare('SELECT MaDonDangKy FROM dondangky WHERE MaHoaDon=? FOR UPDATE');
@@ -198,5 +236,33 @@ class Payment
         $stmt = $this->db->prepare("UPDATE hoadon SET TrangThai='Đã thu', ThoiGianThanhToan=NOW() WHERE MaHoaDon=? AND TrangThai='Chưa thu'");
         $stmt->execute([$invoice]);
         if ($stmt->rowCount() !== 1) { throw new DomainException('Hóa đơn đã thay đổi.'); }
+    }
+
+    private function utilityAllocation(string $invoice, string $student, bool $forUpdate = false): ?array
+    {
+        $stmt = $this->db->prepare('SELECT SoTienPhaiThu, TrangThai FROM hoadondiennuocsinhvien
+            WHERE MaHoaDon=? AND MSSV=?' . ($forUpdate ? ' FOR UPDATE' : ''));
+        $stmt->execute([$invoice, $student]);
+        return $stmt->fetch() ?: null;
+    }
+
+    private function markUtilityPaid(string $invoice, string $student): void
+    {
+        $stmt = $this->db->prepare("UPDATE hoadondiennuocsinhvien
+            SET TrangThai='Đã thu', ThoiGianThanhToan=NOW()
+            WHERE MaHoaDon=? AND MSSV=? AND TrangThai='Chưa thu'");
+        $stmt->execute([$invoice, $student]);
+        if ($stmt->rowCount() !== 1) {
+            throw new DomainException('Phần hóa đơn điện nước đã thay đổi.');
+        }
+
+        $remaining = $this->db->prepare("SELECT COUNT(*) FROM hoadondiennuocsinhvien
+            WHERE MaHoaDon=? AND TrangThai='Chưa thu'");
+        $remaining->execute([$invoice]);
+        if ((int) $remaining->fetchColumn() === 0) {
+            $stmt = $this->db->prepare("UPDATE hoadon SET TrangThai='Đã thu', ThoiGianThanhToan=NOW()
+                WHERE MaHoaDon=? AND TrangThai='Chưa thu'");
+            $stmt->execute([$invoice]);
+        }
     }
 }

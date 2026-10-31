@@ -5,6 +5,6 @@
 | `header.php` | Header công khai với logo, điều hướng và liên kết đăng nhập. Một số nút đang bị vô hiệu hóa vì chức năng chưa được xây dựng. |
 | `navbar.php` | Sidebar theo vai trò trong session. Mục Trang chủ liên kết dashboard của vai trò; các nghiệp vụ chưa kết nối URL hiển thị nút bị vô hiệu hóa. |
 | `logout.php` | Nạp CSS và hiển thị form POST đăng xuất. |
-| `chatbot.php` | Nút Chatbot AI dạng giao diện mẫu; hiện bị vô hiệu hóa và chưa kết nối dịch vụ AI. |
+| `chatbot.php` | Nút/cửa sổ UC13, CSS và JavaScript gửi câu hỏi tới endpoint máy chủ. Cần cấu hình `GEMINI_API_KEY` (hoặc model qua `GEMINI_MODEL`/`GEMINI_FALLBACK_MODEL`) trên máy chủ để nhận câu trả lời qua Google Gemini API. |
 
 Dashboard phải gọi `requireRole()` trước khi hiển thị navbar. Việc ẩn hoặc vô hiệu hóa menu không thay thế kiểm tra quyền ở trang xử lý.

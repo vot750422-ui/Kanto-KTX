@@ -4,3 +4,6 @@
 /vendor/
 /config/mail.local.php
 /config/payment.local.php
+
+/tmp/
+~$*.docx

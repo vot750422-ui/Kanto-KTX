@@ -198,6 +198,27 @@ try {
         });
         require __DIR__ . '/../index.php';
     }
+    if (in_array($case, ['contract_terminate_guest', 'contract_terminate_forbidden', 'contract_terminate_get'], true)) {
+        unset($_SESSION['user']);
+        if ($case !== 'contract_terminate_guest') {
+            $role = $case === 'contract_terminate_forbidden' ? 'Sinh viên' : 'Nhân viên quản lý KTX';
+            $matches = array_values(array_filter($active, fn($user) => $user['VaiTro'] === $role));
+            check(count($matches) > 0, 'Cần tài khoản hoạt động để kiểm thử UC05.2.');
+            $_SESSION['user'] = $matches[0];
+        }
+        $_GET = ['action' => 'contract-terminate'];
+        $_POST = ['id' => 'HD001'];
+        $_SERVER['REQUEST_METHOD'] = $case === 'contract_terminate_get' ? 'GET' : 'POST';
+        http_response_code(200);
+        ob_start();
+        register_shutdown_function(function () use ($case) {
+            ob_get_clean();
+            $expected = $case === 'contract_terminate_guest' ? 302 : ($case === 'contract_terminate_forbidden' ? 403 : 405);
+            check(http_response_code() === $expected, 'HTTP status UC05.2 route không đúng.');
+            echo 'PASS';
+        });
+        require __DIR__ . '/../index.php';
+    }
     if (str_starts_with($case, 'payment_')) {
         $forbiddenRoles = ['payment_student' => 'Sinh viên', 'payment_staff' => 'Nhân viên quản lý KTX', 'payment_manager' => 'Quản lý KTX'];
         unset($_SESSION['user']);

@@ -229,27 +229,19 @@ class UtilityInvoiceGenerator
                     $rates['nuoc']['MaDonGia'],
                 ]);
 
-                // c. Tạo các dòng hoadondiennuocsinhvien
-                $stmtHddnSv = $this->db->prepare('INSERT INTO hoadondiennuocsinhvien (MaHoaDon, MSSV) VALUES (?, ?)');
-                foreach ($students as $sv) {
-                    $stmtHddnSv->execute([$invoiceId, $sv['MSSV']]);
+                // c. Chia tổng tiền phòng cho từng sinh viên theo snapshot của tháng.
+                $allocations = $this->splitAmount($tongTien, $students);
+                $allocationByStudent = [];
+                $stmtHddnSv = $this->db->prepare('INSERT INTO hoadondiennuocsinhvien
+                    (MaHoaDon, MSSV, SoTienPhaiThu, TrangThai) VALUES (?, ?, ?, \'Chưa thu\')');
+                foreach ($students as $index => $sv) {
+                    $allocationByStudent[$sv['MSSV']] = $allocations[$index];
+                    $stmtHddnSv->execute([$invoiceId, $sv['MSSV'], $allocations[$index]]);
                 }
 
                 // d. Tạo thông báo cho từng sinh viên liên quan
                 $stmtTb = $this->db->prepare('INSERT INTO thongbao (MaThongBao, MSSV, MaHoaDon, TieuDe, NoiDung) VALUES (?, ?, ?, ?, ?)');
                 $tieuDe = sprintf('Hóa đơn điện nước tháng %02d/%d phòng %s', $period['month'], $period['year'], $room['SoPhong']);
-                $noiDung = sprintf(
-                    'Hóa đơn điện nước tháng %02d/%d của phòng %s đã được lập với tổng tiền %s đ (Điện tiêu thụ: %d kWh = %s đ, Nước tiêu thụ: %d m³ = %s đ). Vui lòng thanh toán theo quy định.',
-                    $period['month'],
-                    $period['year'],
-                    $room['SoPhong'],
-                    number_format($tongTien, 0, ',', '.'),
-                    $dienTieuThu,
-                    number_format($tienDien, 0, ',', '.'),
-                    $nuocTieuThu,
-                    number_format($tienNuoc, 0, ',', '.')
-                );
-
                 foreach ($students as $sv) {
                     do {
                         $tbId = strtoupper(bin2hex(random_bytes(6)));
@@ -257,6 +249,18 @@ class UtilityInvoiceGenerator
                         $stmtCheckTb->execute([$tbId]);
                     } while ($stmtCheckTb->fetchColumn());
 
+                    $noiDung = sprintf(
+                        'Hóa đơn điện nước tháng %02d/%d của phòng %s đã được lập. Tổng tiền phòng là %s đ; phần của bạn là %s đ (Điện tiêu thụ: %d kWh = %s đ, Nước tiêu thụ: %d m³ = %s đ). Vui lòng thanh toán theo quy định.',
+                        $period['month'],
+                        $period['year'],
+                        $room['SoPhong'],
+                        number_format($tongTien, 0, ',', '.'),
+                        number_format((float) $allocationByStudent[$sv['MSSV']], 0, ',', '.'),
+                        $dienTieuThu,
+                        number_format($tienDien, 0, ',', '.'),
+                        $nuocTieuThu,
+                        number_format($tienNuoc, 0, ',', '.')
+                    );
                     $stmtTb->execute([$tbId, $sv['MSSV'], $invoiceId, $tieuDe, $noiDung]);
                 }
 
@@ -290,5 +294,26 @@ class UtilityInvoiceGenerator
             'failed' => $failed,
             'details' => $details,
         ];
+    }
+
+    /** Chia đến đồng, phần dư được phân bổ ổn định theo thứ tự MSSV đã truy vấn. */
+    private function splitAmount(float|int|string $total, array $students): array
+    {
+        $count = count($students);
+        if ($count === 0) {
+            return [];
+        }
+
+        $totalCents = (int) round((float) $total * 100);
+        $baseCents = intdiv($totalCents, $count);
+        $remainder = $totalCents % $count;
+        $amounts = [];
+
+        foreach ($students as $index => $_student) {
+            $cents = $baseCents + ($index < $remainder ? 1 : 0);
+            $amounts[] = number_format($cents / 100, 2, '.', '');
+        }
+
+        return $amounts;
     }
 }

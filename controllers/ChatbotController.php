@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../models/Chatbot.php';
 require_once __DIR__ . '/../models/ChatbotRoomSource.php';
 
+// UC13 nhận câu hỏi, giới hạn đầu vào rồi trả câu trả lời an toàn dưới dạng JSON.
 class ChatbotController
 {
     public function __construct(private ?Chatbot $chatbot = null) {}

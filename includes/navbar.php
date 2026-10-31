@@ -26,7 +26,7 @@
     $currentAction = $_GET['action'] ?? '';
     $actionGroups = [
         'approval' => ['approval', 'approval-detail', 'approval-proof', 'approval-approve', 'approval-reject', 'approval-email-retry'],
-        'contracts' => ['contracts', 'contract-detail'],
+        'contracts' => ['contracts', 'contract-detail', 'contract-terminate'],
         'students' => ['students', 'student-detail', 'student-update'],
         'incident-report' => ['incident-report'],
         'notifications' => ['notifications','notification-detail'],

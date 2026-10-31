@@ -9,8 +9,9 @@ function appUrl(string $path = ''): string
     return '/' . trim(trim($base, '/') . '/' . ltrim($path, '/'), '/');
 }
 
-// WAMP can set a LAN address in ignored config/payment.local.php.
-// Hosted environments can use PAYMENT_PUBLIC_ORIGIN.
+// A QR scanned on another device needs an address reachable from that device.
+// WAMP can set this in ignored config/payment.local.php; hosted environments
+// can use PAYMENT_PUBLIC_ORIGIN. Without either, use the current page's origin.
 function paymentPublicOrigin(): string
 {
     $origin = getenv('PAYMENT_PUBLIC_ORIGIN');

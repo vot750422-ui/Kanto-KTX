@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/app.php';
 
+// UC16 chỉ phục vụ nội dung hướng dẫn công khai bằng request GET.
 class GuideController
 {
     public function show(): void

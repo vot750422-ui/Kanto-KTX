@@ -1,5 +1,6 @@
 <?php
 
+// Lưu ý định thanh toán ngắn hạn trong session và buộc xác nhận đúng tài khoản/số tiền.
 final class StudentPaymentIntent
 {
     public static function issue(string $invoice, int $accountId, string $amount): string
