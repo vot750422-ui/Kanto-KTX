@@ -7,3 +7,5 @@
 
 /tmp/
 ~$*.docx
+
+storage/backup_*.sql
