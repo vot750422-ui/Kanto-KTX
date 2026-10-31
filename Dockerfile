@@ -18,6 +18,4 @@ RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoload
 RUN mkdir -p storage/registration && chown -R www-data:www-data /var/www/html
 EXPOSE 80
 
-# UC17 reads phienthanhtoan when an unpaid invoice is opened. Prepare the
-# additive, idempotent table before Apache accepts requests.
-CMD ["sh", "-c", "php scripts/migrate-payment-links.php && php scripts/migrate-approval-email.php && exec apache2-foreground"]
+CMD ["sh", "-c", "php scripts/migrate-payment-links.php && php scripts/migrate-approval-email.php && php scripts/migrate-contract-settlement.php && exec apache2-foreground"]
