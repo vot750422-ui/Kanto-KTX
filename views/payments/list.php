@@ -65,7 +65,7 @@ $filters ??= ['invoice'=>'','name'=>'','room'=>'','type'=>'','period'=>''];
                                 <td><?= $escape($item['HoTen']) ?></td>
                                 <td><?= $escape($item['SoPhong']) ?></td>
                                 <td><?= $escape($item['KyHoaDon']) ?></td>
-                                <td><?= $escape(number_format((float)$item['TongTien'], 0, ',', '.')) ?> đồng</td>
+                                <td><?= $escape(number_format((float)$item['SoTienPhaiThu'], 0, ',', '.')) ?> đồng</td>
                                 <td><?= $escape($item['TrangThai']) ?><?php if ($item['ThoiGianThanhToan']): ?><br><?= $escape($item['ThoiGianThanhToan']) ?><?php endif; ?></td>
                                 <td><?php if ($item['TrangThai'] === 'Chưa thu' && $item['CanConfirm']): ?><button class="approval-button primary" type="button" data-open="payment-<?= $i ?>">Xác nhận thanh toán</button><?php elseif ($item['TrangThai'] === 'Đã thu'): ?>Đã hoàn tất<?php else: ?>Chưa hỗ trợ xác nhận<?php endif; ?></td>
                             </tr>
@@ -87,9 +87,14 @@ $filters ??= ['invoice'=>'','name'=>'','room'=>'','type'=>'','period'=>''];
                     <form method="post" action="<?= $escape(appUrl('index.php?action=payment-confirm')) ?>">
                         <h2 id="payment-title-<?= $i ?>">Xác nhận thanh toán</h2>
                         <p>Bạn có chắc chắn muốn xác nhận thanh toán hóa đơn này không?</p>
-                        <p><?= $escape($item['MSSV']) ?> · <?= $escape($item['MaHoaDon']) ?> · <strong><?= $escape(number_format((float)$item['TongTien'], 0, ',', '.')) ?> đồng</strong></p>
-                        <p>Chỉ xác nhận sau khi đã nhận đủ tiền. Hợp đồng sẽ theo kỳ <?= $escape($item['NgayBatDau'] . ' → ' . $item['NgayKetThuc']) ?>. Sinh viên dùng tài khoản đã được cấp khi duyệt đơn để xem thông tin lưu trú.</p>
+                        <p><?= $escape($item['MSSV']) ?> · <?= $escape($item['MaHoaDon']) ?> · <strong><?= $escape(number_format((float)$item['SoTienPhaiThu'], 0, ',', '.')) ?> đồng</strong></p>
+                        <?php if ($item['LoaiHoaDon'] === 'Điện nước'): ?>
+                            <p>Chỉ xác nhận sau khi đã nhận đủ phần tiền của MSSV này. Đây là phần điện nước đã chia cho sinh viên; các sinh viên khác trong phòng thanh toán độc lập.</p>
+                        <?php else: ?>
+                            <p>Chỉ xác nhận sau khi đã nhận đủ tiền. Hợp đồng sẽ theo kỳ <?= $escape($item['NgayBatDau'] . ' → ' . $item['NgayKetThuc']) ?>. Sinh viên dùng tài khoản đã được cấp khi duyệt đơn để xem thông tin lưu trú.</p>
+                        <?php endif; ?>
                         <input type="hidden" name="invoice" value="<?= $escape($item['MaHoaDon']) ?>">
+                        <?php if ($item['LoaiHoaDon'] === 'Điện nước'): ?><input type="hidden" name="student" value="<?= $escape($item['MSSV']) ?>"><?php endif; ?>
                         <div class="approval-actions"><button class="approval-button" type="button" data-close>Hủy</button><button class="approval-button primary" type="submit">Có, đã nhận đủ tiền</button></div>
                     </form>
                 </dialog>

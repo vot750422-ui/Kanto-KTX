@@ -32,7 +32,7 @@ $money = static fn($value) => number_format((float)$value, 0, ',', '.') . ' đ';
                     <div><dt>Nội dung</dt><dd>Thanh toán <?= $escape($bill['MaHoaDon']) ?></dd></div>
                 </dl>
                 <p class="payment-total"><?= $escape($money($bill['TongTien'])) ?></p>
-                <?php if ($bill['LoaiHoaDon'] === 'Điện nước'): ?><p class="payment-help">Số tiền trên là tổng hóa đơn điện nước của phòng.</p><?php endif; ?>
+                <?php if ($bill['LoaiHoaDon'] === 'Điện nước'): ?><p class="payment-help">Số tiền trên là phần điện nước được phân bổ riêng cho sinh viên này; các sinh viên khác thanh toán độc lập.</p><?php endif; ?>
                 <form method="post" action="<?= $escape(appUrl('index.php?action=payment-checkout-confirm')) ?>" data-checkout-confirm>
                     <input type="hidden" name="link_token" value="<?= $escape($token) ?>">
                     <button class="payment-button" type="submit">Xác nhận thanh toán mô phỏng</button>

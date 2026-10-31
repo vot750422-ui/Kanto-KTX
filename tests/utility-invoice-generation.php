@@ -193,6 +193,15 @@ try {
         $linkedSv === ['SV101', 'SV102', 'SV103'],
         'UC08 ca 4a: Bảng hoadondiennuocsinhvien liên kết đúng 3 sinh viên liên quan'
     );
+    $allocationRows = $pdo->query("SELECT MSSV, SoTienPhaiThu, TrangThai FROM hoadondiennuocsinhvien WHERE MaHoaDon = '" . $hddnP01['MaHoaDon'] . "' ORDER BY MSSV ASC")->fetchAll();
+    checkUtility(
+        count($allocationRows) === 3 &&
+        (float) $allocationRows[0]['SoTienPhaiThu'] === 68333.34 &&
+        (float) $allocationRows[1]['SoTienPhaiThu'] === 68333.33 &&
+        (float) $allocationRows[2]['SoTienPhaiThu'] === 68333.33 &&
+        array_reduce($allocationRows, static fn (bool $ok, array $row): bool => $ok && $row['TrangThai'] === 'Chưa thu', true),
+        'UC08 ca 4c: Phân bổ tổng tiền điện nước thành phần độc lập cho từng sinh viên'
+    );
 
     $notifs = $pdo->query("SELECT MSSV, MaHoaDon, TieuDe FROM thongbao WHERE MaHoaDon = '" . $hddnP01['MaHoaDon'] . "' ORDER BY MSSV ASC")->fetchAll();
     checkUtility(

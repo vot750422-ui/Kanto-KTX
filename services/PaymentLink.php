@@ -11,8 +11,8 @@ final class PaymentLink
         if (!$bill || $bill['TrangThai'] !== 'Chưa thu') {
             return ['active' => false, 'token' => null, 'expires' => null];
         }
-        $stmt = $this->db->prepare('SELECT MaPhien,MaTK,SoTien,LEAST(HetHanLuc,DATE_ADD(TaoLuc,INTERVAL 5 MINUTE)) AS HetHanLuc FROM phienthanhtoan WHERE MaHoaDon=? AND DaDungLuc IS NULL AND HetHanLuc>NOW() AND DATE_ADD(TaoLuc,INTERVAL 5 MINUTE)>NOW() ORDER BY TaoLuc DESC,MaPhien DESC');
-        $stmt->execute([$invoice]);
+        $stmt = $this->db->prepare('SELECT MaPhien,MaTK,SoTien,LEAST(HetHanLuc,DATE_ADD(TaoLuc,INTERVAL 5 MINUTE)) AS HetHanLuc FROM phienthanhtoan WHERE MaHoaDon=? AND MaTK=? AND DaDungLuc IS NULL AND HetHanLuc>NOW() AND DATE_ADD(TaoLuc,INTERVAL 5 MINUTE)>NOW() ORDER BY TaoLuc DESC,MaPhien DESC');
+        $stmt->execute([$invoice, $accountId]);
         $row = $stmt->fetch();
         if ($row && (string)$row['SoTien'] === (string)$bill['TongTien']) {
             $ownsToken = (int)$row['MaTK'] === $accountId && is_string($knownToken)
@@ -37,8 +37,8 @@ final class PaymentLink
             if (!$bill || $bill['TrangThai'] !== 'Chưa thu') {
                 throw new DomainException('Không thể tạo QR cho hóa đơn này.');
             }
-            $stmt = $this->db->prepare('SELECT MaPhien,MaTK,SoTien FROM phienthanhtoan WHERE MaHoaDon=? AND DaDungLuc IS NULL AND HetHanLuc>NOW() AND DATE_ADD(TaoLuc,INTERVAL 5 MINUTE)>NOW() ORDER BY TaoLuc DESC,MaPhien DESC FOR UPDATE');
-            $stmt->execute([$invoice]);
+            $stmt = $this->db->prepare('SELECT MaPhien,MaTK,SoTien FROM phienthanhtoan WHERE MaHoaDon=? AND MaTK=? AND DaDungLuc IS NULL AND HetHanLuc>NOW() AND DATE_ADD(TaoLuc,INTERVAL 5 MINUTE)>NOW() ORDER BY TaoLuc DESC,MaPhien DESC FOR UPDATE');
+            $stmt->execute([$invoice, $accountId]);
             $rows = $stmt->fetchAll();
             $selected = null;
             foreach ($rows as $row) {
@@ -53,8 +53,8 @@ final class PaymentLink
             }
             if ($rows) {
                 // Retire older links and links for a changed amount.
-                $stmt = $this->db->prepare('UPDATE phienthanhtoan SET HetHanLuc=NOW() WHERE MaHoaDon=? AND DaDungLuc IS NULL AND HetHanLuc>NOW() AND MaPhien<>?');
-                $stmt->execute([$invoice, $selected['MaPhien'] ?? '']);
+                $stmt = $this->db->prepare('UPDATE phienthanhtoan SET HetHanLuc=NOW() WHERE MaHoaDon=? AND MaTK=? AND DaDungLuc IS NULL AND HetHanLuc>NOW() AND MaPhien<>?');
+                $stmt->execute([$invoice, $accountId, $selected['MaPhien'] ?? '']);
             }
             if ($selected !== null) {
                 $this->db->commit();
@@ -84,8 +84,8 @@ final class PaymentLink
         $stmt->execute([hash('sha256',$token)]);
         $link = $stmt->fetch();
         if ($link) {
-            $latest = $this->db->prepare('SELECT MaPhien FROM phienthanhtoan WHERE MaHoaDon=? AND DaDungLuc IS NULL AND HetHanLuc>NOW() AND DATE_ADD(TaoLuc,INTERVAL 5 MINUTE)>NOW() ORDER BY TaoLuc DESC,MaPhien DESC LIMIT 1');
-            $latest->execute([$link['MaHoaDon']]);
+            $latest = $this->db->prepare('SELECT MaPhien FROM phienthanhtoan WHERE MaHoaDon=? AND MaTK=? AND DaDungLuc IS NULL AND HetHanLuc>NOW() AND DATE_ADD(TaoLuc,INTERVAL 5 MINUTE)>NOW() ORDER BY TaoLuc DESC,MaPhien DESC LIMIT 1');
+            $latest->execute([$link['MaHoaDon'], $link['MaTK']]);
             if (!hash_equals((string)$latest->fetchColumn(), hash('sha256', $token))) { $link = null; }
         }
         $bill = $link ? (new Payment($this->db))->studentInvoice($link['MaHoaDon'], (int)$link['MaTK']) : null;

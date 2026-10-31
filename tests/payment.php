@@ -52,10 +52,10 @@ try {
     }
     $pdo->exec("INSERT INTO hoadon (MaHoaDon,LoaiHoaDon,TongTien) VALUES ('UTILITY','Điện nước',100000)");
     $pdo->exec("INSERT INTO hoadondiennuoc VALUES ('UTILITY','P1',10,2026,1,1,50000,50000,'RATE','RATE')");
-    $pdo->exec("INSERT INTO hoadondiennuocsinhvien VALUES ('UTILITY','PAY1')");
+    $pdo->exec("INSERT INTO hoadondiennuocsinhvien (MaHoaDon,MSSV,SoTienPhaiThu,TrangThai) VALUES ('UTILITY','PAY1',100000,'Chưa thu')");
     $utilities = $model->listing('PAY1','',1,['type'=>'Điện nước','period'=>'2026-10','name'=>'Kiểm thử']);
     checkPayment($utilities['total'] === 1 && $utilities['items'][0]['KyHoaDon'] === '10/2026' && $utilities['items'][0]['CanConfirm'], 'Kế toán tra cứu và được xác nhận hóa đơn điện nước');
-    $utilityPayment = $model->confirm('UTILITY');
+    $utilityPayment = $model->confirm('UTILITY', 'PAY1');
     checkPayment($utilityPayment['contract'] === null && $utilityPayment['invoiceType'] === 'Điện nước'
         && $pdo->query("SELECT TrangThai FROM hoadon WHERE MaHoaDon='UTILITY'")->fetchColumn() === 'Đã thu', 'Xác nhận điện nước chỉ thu tiền, không tạo hợp đồng');
     $pdo->exec("DELETE FROM hoadondiennuocsinhvien WHERE MaHoaDon='UTILITY'");
