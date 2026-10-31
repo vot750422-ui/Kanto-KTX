@@ -4,7 +4,7 @@ if (!isset($priorities, $step, $data)) {
     exit;
 }
 $escape = fn($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
-$labels = ['HoTen' => 'Họ tên', 'NgaySinh' => 'Ngày sinh', 'CCCD' => 'CCCD', 'GioiTinh' => 'Giới tính', 'QueQuan' => 'Quê quán', 'SDT' => 'Số điện thoại', 'Email' => 'Email', 'MSSV' => 'MSSV', 'Lop' => 'Lớp', 'NienKhoa' => 'Niên khóa'];
+$labels = ['HoTen' => 'Họ tên', 'NgaySinh' => 'Ngày sinh', 'CCCD' => 'CCCD', 'GioiTinh' => 'Giới tính', 'QueQuan' => 'Quê quán', 'SDT' => 'Số điện thoại', 'Email' => 'Email nhận kết quả', 'MSSV' => 'MSSV', 'Lop' => 'Lớp', 'NienKhoa' => 'Niên khóa'];
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -24,7 +24,7 @@ $labels = ['HoTen' => 'Họ tên', 'NgaySinh' => 'Ngày sinh', 'CCCD' => 'CCCD',
         <div class="registration-success" role="status">
             <h2>Đăng ký lưu trú thành công. Hồ sơ đang chờ xét duyệt.</h2>
             <p>Mã đơn đăng ký: <strong><?= $escape($success) ?></strong></p>
-            <p>Tài khoản sinh viên sẽ được tạo sau khi hồ sơ được duyệt.</p>
+            <p>Kết quả xét duyệt sẽ được thông báo qua email đã đăng ký. Tài khoản sinh viên sẽ được tạo sau khi hồ sơ được duyệt.</p>
             <a href="<?= htmlspecialchars(appUrl('index.php'), ENT_QUOTES, 'UTF-8') ?>">Về trang chủ</a>
         </div>
     <?php else: ?>

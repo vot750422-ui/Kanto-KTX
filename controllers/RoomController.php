@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../models/Room.php';
 
+// UC15 kiểm tra bộ lọc rồi hiển thị thông tin phòng công khai.
 class RoomController
 {
     public function __construct(private PDO $db) {}

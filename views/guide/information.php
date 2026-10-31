@@ -48,8 +48,7 @@ $escape = fn($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
         <li>
             <h2>Chờ xét duyệt</h2>
             <ul>
-                <li>Nhân viên quản lý KTX xem và xét duyệt hồ sơ đã gửi.</li>
-                <li>Gửi đăng ký thành công chưa có nghĩa là hồ sơ đã được duyệt hoặc đã có hợp đồng lưu trú.</li>
+                <li>Chờ nhân viên quản lý KTX xem và xét duyệt hồ sơ đã gửi.</li>
             </ul>
         </li>
     </ol>
@@ -57,8 +56,8 @@ $escape = fn($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
         <h2 id="guide-notes-title">Lưu ý</h2>
         <ul>
             <li>Nhập chính xác MSSV, CCCD và các thông tin đăng ký trước khi gửi.</li>
-            <li>Không gửi thêm đơn khi MSSV đã có đơn Chờ duyệt. MSSV hoặc CCCD đã có hồ sơ sinh viên cũng sẽ được kiểm tra.</li>
-            <li>Phòng đã chọn có thể hết chỗ trước lúc gửi cuối cùng. Khi hệ thống thông báo, hãy quay lại chọn phòng còn chỗ.</li>
+            <li>Không gửi thêm đơn khi MSSV đã có đơn Chờ duyệt.</li>
+            <li>Phòng đã chọn có thể hết chỗ trước lúc gửi. Khi hệ thống thông báo, hãy quay lại chọn phòng còn chỗ.</li>
         </ul>
     </aside>
 </main>

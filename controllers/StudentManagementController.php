@@ -116,6 +116,7 @@ class StudentManagementController
         $limits = [
             'HoTen' => 100,
             'NgaySinh' => 10,
+            'GioiTinh' => 3,
             'QueQuan' => 150,
             'SDT' => 15,
             'Lop' => 30,
@@ -135,6 +136,10 @@ class StudentManagementController
             } elseif (mb_strlen($trimmed, 'UTF-8') > $limit) {
                 $errors[$field] = 'Thông tin vượt quá độ dài cho phép.';
             }
+        }
+
+        if (!in_array($data['GioiTinh'], ['Nam', 'Nữ'], true)) {
+            $errors['GioiTinh'] = 'Giới tính không hợp lệ.';
         }
 
         if (!preg_match('/^0[0-9]{9}$/D', $data['SDT'])) {

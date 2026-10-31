@@ -1,5 +1,16 @@
 # Kiểm thử đăng nhập và phân quyền
 
+## UC05.1 - Quản lý hợp đồng
+
+```powershell
+& 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/contracts.php
+& 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/run.php
+```
+
+`tests/contracts.php` dùng bảng TEMPORARY để kiểm tra tra cứu toàn bộ, kết hợp bộ lọc,
+trạng thái lưu trong CSDL, chi tiết hợp đồng, prepared statement và tính chỉ đọc.
+`tests/run.php` kiểm tra route danh sách/chi tiết, quyền NVQL và phương thức GET.
+
 ## UC16 - Xem hướng dẫn
 
 ```powershell
@@ -57,7 +68,7 @@ Bộ kiểm thử dùng bảng TEMPORARY theo schema thật, không sửa dữ l
 & 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/registration.php
 ```
 
-Test UC02 tạo bảng TEMPORARY theo schema thực tế trong kết nối riêng, không sửa dữ liệu nghiệp vụ. Kiểm tra email bắt buộc và lưu vào đơn, validation, lọc giới tính, tính chỗ còn lại, giữ chỗ, trùng MSSV, rollback, tệp giả, ba bước, quay lại và gửi lặp. Mô phỏng phòng bị đơn khác giữ trước khi gửi; chưa chạy hai tiến trình đồng thời hoặc tự động kiểm tra giao diện trình duyệt và upload ảnh hợp lệ qua HTTP.
+Test UC02 tạo bảng TEMPORARY theo schema thực tế trong kết nối riêng, không sửa dữ liệu nghiệp vụ. Kiểm tra validation, lọc giới tính, tính chỗ còn lại, giữ chỗ, trùng MSSV, rollback, tệp giả, ba bước, quay lại và gửi lặp. Mô phỏng phòng bị đơn khác giữ trước khi gửi; chưa chạy hai tiến trình đồng thời hoặc tự động kiểm tra giao diện trình duyệt và upload ảnh hợp lệ qua HTTP.
 
 ## Đăng nhập và phân quyền
 
@@ -76,7 +87,6 @@ Không thêm, sửa hoặc xóa dữ liệu. Session kiểm thử nằm trong RA
 Khi demo, chạy bộ kiểm thử rồi đăng nhập trên trình duyệt lần lượt với bốn tài khoản mẫu. Thử mở dashboard của vai trò khác để thấy HTTP 403, và mở dashboard trong cửa sổ riêng tư để thấy chuyển về trang đăng nhập.
 
 Giới hạn: chưa tự động kiểm thử đăng nhập thành công bằng mật khẩu thật, tài khoản bị khóa, cookie hoặc giao diện trình duyệt. Chuỗi mật khẩu băm được nhận diện không chứng minh mật khẩu demo nhập vào là đúng.
-
 # UC11 - Xem thông tin lưu trú
 
 - `php -d xdebug.mode=off tests/accommodation.php`: kiểm thử model bằng bảng TEMPORARY, không sửa dữ liệu demo.
@@ -84,27 +94,55 @@ Giới hạn: chưa tự động kiểm thử đăng nhập thành công bằng 
 - Cần MySQL local và tài khoản hoạt động cho các vai trò của bộ kiểm thử chung.
 # Xác nhận thanh toán tiền phòng đầu tiên
 
-- `php -d xdebug.mode=off tests/payment.php`: 29 ca bằng bảng TEMPORARY, từ duyệt UC03 đến hợp đồng UC11, kiểm tra rollback/gửi lặp/giữ tài khoản/form.
-- `php -d xdebug.mode=off tests/run.php`: có 8 ca route/phân quyền cho thanh toán.
+- `php -d xdebug.mode=off tests/payment.php`: 20 ca bằng bảng TEMPORARY, từ duyệt UC03 đến hợp đồng UC11, kiểm tra rollback/gửi lặp/giữ tài khoản/form.
+- `php -d xdebug.mode=off tests/run.php`: có 9 ca route/phân quyền cho thanh toán.
 - Phạm vi demo và quy tắc học kỳ: `docs/UC07_PAYMENT_IMPLEMENTATION_NOTES.md`.
 
-# UC17 - Sinh viên thanh toán QR trên điện thoại
+# UC17 - Sinh viên thanh toán QR mô phỏng
 
-- `php -d xdebug.mode=off tests/student-payments.php`: dùng bảng TEMPORARY để kiểm tra quyền sở hữu, nút tạo QR bằng POST, một mã hiệu lực 5 phút, tải lại không cấp mã mới, thanh toán từ phiên điện thoại chưa đăng nhập, thu lặp và rollback.
-- `php -d xdebug.mode=off tests/run.php`: kiểm tra phân quyền các route sinh viên và ba trường hợp route QR công khai.
-- `node tests/frontend.js`: kiểm tra tạo ảnh QR, chỉ chấp nhận origin được cấu hình, chuyển token fragment thành POST và đếm ngược hạn QR.
-- Preview giao diện: `php tests/student-payments.php --preview-dir <thu-muc-tam-da-ton-tai>`; dùng HTML từ bảng TEMPORARY, không phải thanh toán thật qua HTTP.
-- Môi trường mới cần chạy `php scripts/migrate-payment-links.php` để thêm bảng `phienthanhtoan`. Cấu hình địa chỉ điện thoại theo `docs/02-use-cases/UC17-student-payment.md`.
+- `php -d xdebug.mode=off tests/student-payments.php`: kiểm thử bằng bảng TEMPORARY, gồm nút tạo QR theo POST, không tạo trên GET/tải lại, chỉ một mã hiệu lực trong 5 phút, giới hạn cả token cũ 15 phút, tạo lại sau khi hết hạn, token QR liên thiết bị với session trống, thu lặp giữa QR/kế toán và rollback cả token. Giữ các ca quyền sở hữu, thanh toán đầu tiên/định kỳ/điện nước.
+- `php -d xdebug.mode=off tests/run.php`: kiểm tra khách và ba vai trò khác tại cả năm route UC17, kể cả `student-qr-create`.
+- Có thêm ba ca route công khai: khách mở trang QR, token sai, GET không được thu.
+- `node tests/frontend.js`: có kiểm tra ảnh QR từ thư viện local, chặn URL ngoài origin, chống gửi lặp, bộ đếm 5 phút không tự tạo QR và tải lại khi quay về bằng cache trình duyệt.
+- Để render HTML bằng dữ liệu giả phục vụ kiểm tra giao diện: `php tests/student-payments.php --preview-dir <thu-muc-tam-da-ton-tai>`. Xuất list/detail/qr/confirm/paid; không dùng các file này làm trang chạy thật.
+- Đặc tả: `docs/02-use-cases/UC17-student-payment.md`. Test không sửa dữ liệu nghiệp vụ thật. Ứng dụng cần migration `php scripts/migrate-payment-links.php` để thêm bảng token liên thiết bị; bộ test UC17 tự tạo bảng TEMPORARY tương ứng.
+# Chatbot đọc số liệu phòng công khai
 
+- `php -d xdebug.mode=off tests/chatbot.php`: câu ngắn/lỗi gõ, phạm vi do AI đánh giá, bảo vệ đầu vào, snapshot trong prompt, nguồn phòng lỗi và JSON/giới hạn độ dài câu hỏi.
+- `php -d xdebug.mode=off tests/chatbot-rooms.php`: bảng TEMPORARY, số chỗ đúng UC15, tổng tòa, loại bỏ dữ liệu cá nhân, cập nhật theo dữ liệu mới. Không gọi Gemini.
 # Kiểm tra sau tối ưu ứng dụng
 
 - `tests/run.php` có ca kết nối dùng lại nhưng thay đổi quyền/khóa tài khoản vẫn được xác thực lại, bằng bảng tài khoản TEMPORARY.
 - `tests/registration.php` có đầu vào NUL/UTF-8 sai và phương thức ngoài GET/POST.
 - `tests/rooms.php` đối chiếu truy vấn phòng đơn với danh sách và chặn sai giới tính.
 - `node tests/frontend.js` chạy 8 ca dialog/lọc phòng bằng Node VM và DOM mô phỏng; không cần npm package. Đây không thay cho kiểm tra bố cục trong trình duyệt.
-## UC03 - Email thông báo xét duyệt
 
-- `php -d xdebug.mode=off tests/approval.php`: kiểm tra hàng đợi email, mật khẩu mặc định chỉ trong email duyệt, gửi sau commit, lỗi SMTP, gửi lại và rollback.
-- `php -d xdebug.mode=off tests/smtp-mailer.php`: kiểm tra PHPMailer với SMTP giả trong RAM, không gửi thư thật.
-- `php -d xdebug.mode=off tests/brevo-mailer.php`: kiểm tra payload Brevo HTTPS API và phản hồi lỗi bằng HTTP giả, không gửi thư thật.
-- `php -d xdebug.mode=off tests/run.php`: kiểm tra phân quyền route `approval-email-retry`.
+## Email UC03 và múi giờ (20/10/2026)
+
+`php -d xdebug.mode=off tests/brevo-mailer.php` kiểm tra payload gửi qua Brevo HTTPS API bằng HTTP giả trong tiến trình; không gửi email thật. `tests/smtp-mailer.php` tiếp tục kiểm tra adapter SMTP cho WAMP.
+
+Chạy migration scripts/migrate-approval-email.php trước để trang xét duyệt có bảng emailthongbao; các test approval/payment che bảng này bằng TEMPORARY. tests/registration.php kiểm tra email bắt buộc/hợp lệ, lưu email và giờ Việt Nam. tests/approval.php kiểm tra email sau commit, nội dung, SMTP lỗi/gửi lại, chống lặp, hồ sơ cũ thiếu email và rollback khi hàng đợi lỗi. tests/run.php kiểm tra thêm phân quyền route approval-email-retry. tests/smtp-mailer.php kiểm tra adapter thư bằng SMTP giả trong tiến trình, không kết nối người nhận thật.
+
+## UC bổ sung ngày 27/10/2026
+
+```powershell
+& 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/student-management.php
+& 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/contracts.php
+& 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/utility-meters.php
+& 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/incidents.php
+& 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/notifications.php
+& 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/statistics.php
+& 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off tests/run.php
+```
+
+Các test model dùng bảng TEMPORARY và không sửa dữ liệu nghiệp vụ thật. `tests/run.php`
+kiểm tra thêm khách/sai vai trò cho toàn bộ route mới.
+
+Nếu tài khoản Nhân viên quản lý KTX đã tồn tại nhưng thiếu hồ sơ trong bảng `nhanvien`, chạy:
+
+```powershell
+& 'C:\wamp64\bin\php\php8.3.28\php.exe' -d xdebug.mode=off scripts/migrate-staff-profiles.php
+```
+
+Migration có thể chạy lại an toàn và không tự đặt họ tên cá nhân: hồ sơ thiếu dùng chính tên
+đăng nhập làm giá trị tạm thời. Có thể cập nhật họ tên thật sau khi nhóm cung cấp dữ liệu.

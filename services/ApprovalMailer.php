@@ -2,6 +2,7 @@
 require_once __DIR__ . '/SmtpMailer.php';
 require_once __DIR__ . '/BrevoMailer.php';
 
+// Chọn adapter gửi thư theo cấu hình nhưng giữ nguyên hàng đợi email xét duyệt.
 class ApprovalMailer
 {
     public function send(array $message): void

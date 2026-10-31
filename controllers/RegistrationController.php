@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../models/Registration.php';
 
+// UC02 điều phối ba bước nhập thông tin, chọn phòng và gửi hồ sơ đăng ký.
 class RegistrationController
 {
     public function __construct(private PDO $db) {}
@@ -27,7 +28,7 @@ class RegistrationController
             }
         }
         if (!filter_var($data['Email'], FILTER_VALIDATE_EMAIL)) {
-            $errors['Email'] = 'Vui lòng nhập email hợp lệ.';
+            $errors['Email'] = 'Vui lòng nhập email hợp lệ để nhận kết quả xét duyệt.';
         }
         if (!in_array($data['GioiTinh'], ['Nam', 'Nữ'], true)) {
             $errors['GioiTinh'] = 'Vui lòng chọn giới tính hợp lệ.';

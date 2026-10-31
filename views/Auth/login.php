@@ -15,7 +15,7 @@ unset($_SESSION['error']);
 
     <title>Đăng nhập</title>
     <link rel="stylesheet" href="<?= htmlspecialchars(appUrl('assets/css/login.css'), ENT_QUOTES, 'UTF-8') ?>">
-</head>
+</head> 
 
 <body>
 
