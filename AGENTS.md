@@ -71,3 +71,10 @@ Nếu task liên quan đến công việc trước đó:
 2. Kiểm tra code hiện tại.
 3. Chỉ đọc thêm các file liên quan.
 4. Tiếp tục từ mục "Công việc tiếp theo".
+
+
+## Quy trình làm việc với AI_TASK.md và AI_RESPONSE.md
+
+- Đọc và thực hiện đúng yêu cầu trong `AI_TASK.md`.
+- Sử dụng phong cách code cơ bản, tường minh, dễ hiểu, phù hợp với trình độ sinh viên đồ án; tránh viết tắt, nén dòng hoặc lạm dụng cú pháp nâng cao không cần thiết.
+- Sau khi hoàn thành bất kỳ nhiệm vụ nào trong `AI_TASK.md`, **luôn cập nhật file `AI_RESPONSE.md`** để ghi nhận chi tiết những gì đã làm, kết quả test và thông tin bàn giao cho Codex hoặc các AI khác đọc và tiếp quản.
