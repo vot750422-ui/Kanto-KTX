@@ -7,7 +7,12 @@ class ApprovalEmail
 
     public function __construct(private PDO $db, ?callable $sender = null)
     {
-        $this->sender = $sender === null ? (new ApprovalMailer())->send(...) : Closure::fromCallable($sender);
+        if ($sender === null) {
+            $mailer = new ApprovalMailer();
+            $this->sender = Closure::fromCallable([$mailer, 'send']);
+        } else {
+            $this->sender = Closure::fromCallable($sender);
+        }
     }
 
     // Ghi cùng transaction xét duyệt. Chỉ gửi email sau commit.
