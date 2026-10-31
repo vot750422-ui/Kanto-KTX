@@ -1,4 +1,4 @@
-﻿# BÁO CÁO TIẾN ĐỘ THỰC HIỆN (BM 1.8.a)
+# BÁO CÁO TIẾN ĐỘ THỰC HIỆN (BM 1.8.a)
 
 **TRƯỜNG ĐẠI HỌC KỸ THUẬT - CÔNG NGHỆ CẦN THƠ** — **KHOA CÔNG NGHỆ THÔNG TIN**
 
@@ -30,12 +30,13 @@
 
 | Thời gian | Công việc thực hiện | Kết quả đạt được |
 |---|---|---|
-| Từ 19/10/2026 đến 20/10/2026 | Triển khai chức năng **UC03 – Xét duyệt đơn đăng ký lưu trú** trên nhánh `feature/uc03-approval`: danh sách đơn chờ duyệt có phân trang, trang chi tiết hồ sơ, xem ảnh minh chứng có phân quyền, thao tác duyệt và từ chối. | Hoàn thành 5 route `approval`, `approval-detail`, `approval-proof`, `approval-approve`, `approval-reject`; chỉ Nhân viên quản lý KTX được truy cập; POST ghi dữ liệu có CSRF. |
-| Từ 20/10/2026 đến 21/10/2026 | Xây dựng nghiệp vụ duyệt đơn: tạo tài khoản sinh viên, tạo hồ sơ sinh viên, lập hóa đơn tiền phòng kỳ kế tiếp, giữ chỗ và giải phóng chỗ. | Transaction dùng named lock dùng chung với UC02, mức cô lập `READ COMMITTED`, khóa phòng rồi khóa đơn; lỗi ở bất kỳ bước nào đều rollback toàn bộ. |
-| Từ 21/10/2026 đến 22/10/2026 | Thiết kế migration CSDL cho UC03: thêm cột `MaHoaDon`, `MaHopDong` vào bảng `dondangky` kèm khóa ngoại và ràng buộc duy nhất; cập nhật lại mức ưu tiên `dienuutien`. | File `sql/uc03-approval.sql`; áp dụng thành công trên CSDL local `qlktx_v2`; giữ nguyên dữ liệu và ràng buộc cũ. |
-| Từ 22/10/2026 đến 23/10/2026 | Bổ sung kiểm tra trùng MSSV/CCCD cho UC02 ở cả bước nhập và bước gửi; đồng bộ logic đếm số chỗ khả dụng giữa UC02 và UC03. | UC02 chặn trùng MSSV/CCCD trước khi tạo đơn; công thức số chỗ khả dụng thống nhất giữa hai Use Case. |
-| Từ 23/10/2026 đến 24/10/2026 | Viết bộ kiểm thử tự động cho UC03 và chạy hồi quy toàn bộ hệ thống. | **51 kiểm thử UC03 đạt**; hồi quy **28/28** đăng nhập - phân quyền, **20/20** UC02, **14/14** dữ liệu phòng. Tổng **113/113 đạt**. |
-| Từ 24/10/2026 đến 25/10/2026 | Rà soát tính nhất quán giữa đặc tả Use Case, sơ đồ tuần tự, wireframe và CSDL thực tế; ghi nhận các điểm lệch cần đồng bộ. | Tài liệu bàn giao `docs/UC03_IMPLEMENTATION_NOTES.md`; danh sách việc cần đồng bộ tài liệu và các điểm mâu thuẫn giữa hai bộ tài liệu. |
+| Từ 19/10/2026 đến 20/10/2026 | Hoàn thiện luồng đăng ký lưu trú (UC02) và xét duyệt đơn (UC03): kiểm tra email người đăng ký, bắt buộc minh chứng cho diện ưu tiên, chặn trùng MSSV/CCCD, giữ chỗ theo sức chứa phòng. | Luồng đăng ký và xét duyệt chạy đúng quy tắc nghiệp vụ; đơn được duyệt sinh ra tài khoản, hồ sơ sinh viên và hóa đơn tiền phòng đầu tiên ở trạng thái `Chưa thu`. |
+| Từ 20/10/2026 đến 21/10/2026 | Tích hợp thông báo kết quả xét duyệt qua email (Brevo HTTPS API) và ghi nhận trạng thái gửi vào bảng `emailthongbao`. | Có cơ chế gửi lại khi thất bại, không gửi trùng; nội dung email chứa tên đăng nhập và mật khẩu mặc định. |
+| Từ 21/10/2026 đến 22/10/2026 | Hoàn thiện nhóm chức năng quản lý sinh viên (UC04), hợp đồng (UC05) và thanh lý hợp đồng kèm kiểm tra công nợ. | Tra cứu/cập nhật sinh viên hoạt động; thanh lý hợp đồng chặn khi còn hóa đơn chưa thu và ghi nhận tiền hoàn trả. |
+| Từ 22/10/2026 đến 23/10/2026 | Hoàn thiện nhóm chức năng điện nước (UC07), phản ánh sự cố (UC10, UC11), thông báo (UC12) và thống kê báo cáo (UC14). | Các nhóm chức năng chạy được trên local; phản ánh sự cố có luồng tiếp nhận và xử lý theo vai trò. |
+| Từ 23/10/2026 đến 24/10/2026 | Hoàn thiện lập hóa đơn định kỳ: hóa đơn tiền phòng theo học kỳ và hóa đơn điện nước phân bổ theo từng sinh viên; viết script chạy tự động. | Có script `generate-room-invoices.php` và `generate-utility-invoices.php`; chống tạo trùng theo khóa duy nhất. Scheduler trên môi trường triển khai chưa được xác minh. |
+| Từ 24/10/2026 đến 25/10/2026 | Bổ sung UC17 — thanh toán hóa đơn bằng QR mô phỏng: tạo mã theo hóa đơn, kiểm tra thời hạn phiên, xác nhận trên thiết bị khác. | Hoàn thiện luồng QR từ tạo mã, mở trang xác nhận đến biên nhận. Đây là thanh toán mô phỏng, không phải giao dịch ngân hàng thật. |
+| Từ 24/10/2026 đến 25/10/2026 | Tích hợp toàn bộ chức năng đã lập trình và bắt đầu soạn Chương 3. | Có bản thảo Chương 3 gồm danh sách chức năng, kết quả kiểm thử, hạn chế và danh sách minh chứng cần bổ sung. |
 
 ---
 
@@ -43,17 +44,18 @@
 
 | Thời gian | Dự kiến công việc thực hiện | Dự kiến kết quả đạt được |
 |---|---|---|
-| Từ 26/10/2026 đến 28/10/2026 | Hoàn thiện các Use Case Module 2: UC04.1 Tra cứu sinh viên, UC04.2 Cập nhật thông tin sinh viên, UC05.1 Tra cứu hợp đồng. | Giao diện tra cứu và cập nhật hoạt động; có kiểm thử tự động cho từng Use Case. |
-| Từ 29/10/2026 đến 30/10/2026 | Triển khai UC06 Ghi nhận chỉ số điện nước và UC07.1 Tra cứu hóa đơn. | Chức năng ghi chỉ số có kiểm tra chỉ số không giảm và duy nhất theo tháng; màn hình tra cứu hóa đơn hoạt động. |
-| Từ 31/10/2026 đến 01/11/2026 | Merge nhánh `feature/uc03-approval` vào `main`; soạn thảo Chương 3 báo cáo. | UC03 chạy trên môi trường production; bản thảo Chương 3 (Kết quả và Thảo luận). |
+| Từ 26/10/2026 đến 27/10/2026 | Rà soát toàn bộ route, controller, model và view; sửa lỗi phân quyền, kiểm tra dữ liệu đầu vào và các hộp thoại xác nhận. | Các chức năng chính hoạt động nhất quán; giảm lỗi truy cập sai vai trò và lỗi nhập liệu. |
+| Từ 27/10/2026 đến 29/10/2026 | Tối ưu truy vấn, transaction và thao tác giao diện; rà soát lại lập hóa đơn định kỳ, thanh toán QR và điều kiện công nợ khi thanh lý. | Luồng xử lý dễ đọc hơn, bảo toàn nghiệp vụ và hạn chế tạo trùng dữ liệu. |
+| Từ 29/10/2026 đến 30/10/2026 | Chạy kiểm tra cú pháp PHP, kiểm thử giao diện và chạy lại các bộ kiểm thử nghiệp vụ có CSDL sau khi bật WAMP/MySQL. | Có số liệu PASS/FAIL hiện tại và danh sách lỗi cần xử lý trước khi chốt báo cáo. |
+| Từ 30/10/2026 đến 01/11/2026 | Hoàn thiện Chương 3 bằng ảnh giao diện và kết quả kiểm thử; rà soát Chương 2 và các sơ đồ liên quan. | Bản thảo Chương 3 hoàn chỉnh hơn, tài liệu và mã nguồn được đối chiếu. |
 
 ---
 
 ## 3. Đề xuất và kiến nghị
 
-1. **Đề nghị thống nhất cách đánh số Use Case.** Hiện tồn tại hai cách đánh số khác nhau giữa bộ đặc tả mới (`docs/02-use-cases/`) và báo cáo phân tích thiết kế trước đây (ví dụ: Lập hóa đơn tiền phòng là UC10.1 theo bộ mới nhưng là UC-20 theo báo cáo cũ). Đề nghị chốt một bảng mã duy nhất trước khi hoàn thiện Chương 2 và Chương 3.
-2. **Đề nghị bổ sung đặc tả cho hai Use Case còn thiếu nội dung:** UC05.2 Thanh lý hợp đồng và nhóm quy tắc nghiệp vụ chung hiện đang để trống trong repository.
-3. **Đề nghị góp ý hướng triển khai chức năng Gia hạn (UC18).** Chức năng này do Timer đảm nhiệm, tự động chuyển hợp đồng cũ sang trạng thái `Hết hạn`, tạo hợp đồng mới cho sinh viên đã thanh toán và khóa tài khoản sinh viên còn nợ. Nhóm đã phân tích và nhận thấy một số vướng mắc về dữ liệu: bảng `hopdong` hiện chưa có cột liên kết học kỳ, chưa có bảng nhật ký hệ thống, và cần làm rõ thời điểm xác định "học kỳ hiện tại". Nhóm xin ý kiến hướng xử lý trước khi triển khai.
+1. **Phạm vi trình bày chức năng QR mô phỏng:** đề nghị cán bộ hướng dẫn cho ý kiến về mức độ chấp nhận của luồng thanh toán mô phỏng trong phạm vi Đồ án 1, và cách diễn đạt để không gây hiểu nhầm là đã tích hợp ngân hàng thật.
+2. **Cách ghi nhận tác vụ định kỳ:** hiện nhóm mới kiểm thử script trên môi trường local, chưa có bằng chứng scheduler chạy ổn định trên môi trường triển khai. Đề nghị hướng dẫn cách trình bày trung thực phần này trong Chương 3.
+3. **Số lượng ảnh giao diện:** đề nghị cho ý kiến về số lượng ảnh chụp màn hình cần đưa vào Chương 3 để vừa đủ minh họa, vừa không làm báo cáo quá dài.
 
 ---
 

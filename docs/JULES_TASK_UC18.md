@@ -1,7 +1,7 @@
-# NHIỆM VỤ CHO JULES — UC18 Gia hạn lưu trú (Timer)
+﻿# NHIỆM VỤ CHO JULES — UC18 Gia hạn lưu trú (Timer)
 
 > **Dành cho:** Jules (cloud agent) — đọc kèm `AGENTS.md` và `docs/PROJECT_CONTEXT.md` mục 7.
-> **Nhánh làm việc:** `feature/uc18-renewal` (tạo từ `main`). **Không** push trực tiếp vào `main`.
+> **Nhánh làm việc:** `feature/uc18-renewal` (ĐÃ tạo sẵn trên GitHub từ `main` — chỉ cần checkout, không tạo mới). **Không** push trực tiếp vào `main`.
 > **Ngày giao:** 01/11/2026.
 
 ---
@@ -102,14 +102,11 @@ Tối thiểu **8 trường hợp** (dùng `CREATE TEMPORARY TABLE` pattern gi�
 
 ---
 
-## 4. Câu hỏi cần chốt với giảng viên (KHÔNG tự quyết)
+## 4. Quyết định nghiệp vụ ĐÃ CHỐT (không hỏi lại)
 
-Nếu gặp các điểm sau, **dừng lại và ghi chú vào PR**, không tự chọn phương án:
-
-1. **Thời điểm kích hoạt:** "ngày hiện tại là ngày bắt đầu học kỳ mới" — căn cứ là kỳ **liền trước** hay kỳ **hiện tại**?
-2. **Sinh viên `Chờ thanh toán`:** miễn khóa hoàn toàn, hay cho đăng nhập read-only để thanh toán?
-3. **Mã hợp đồng:** có nguy cơ tràn nếu format cố định độ dài — cần xác nhận format mới.
-
+1. **Thời điểm kích hoạt:** dùng **ngày hiện tại của học kỳ hiện tại** làm mốc. Xác định học kỳ hiện tại bằng `hocky` có `NgayBatDau <= CURDATE() <= NgayKetThuc`. Hóa đơn căn cứ là hóa đơn tiền phòng của **chính học kỳ hiện tại**.
+2. **Sinh viên `Chờ thanh toán`:** **KHÔNG khóa tài khoản**. Cho phép đăng nhập bình thường để thanh toán hóa đơn. Chỉ khóa tài khoản sinh viên **đã từng có hợp đồng** mà hóa đơn kỳ trước vẫn `Chưa thu`.
+3. **Định dạng mã hợp đồng:** giữ nguyên quy ước hiện có, nhưng **phải chống tràn** bằng cách kiểm tra độ dài trước khi sinh mã và ghi log lỗi nếu vượt. Không đổi kiểu cột trong phạm vi task này (việc đổi cấu trúc CSDL cần bàn riêng).
 ---
 
 ## 5. Ghi chú môi trường

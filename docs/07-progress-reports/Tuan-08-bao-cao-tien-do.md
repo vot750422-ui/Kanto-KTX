@@ -1,4 +1,4 @@
-﻿# BÁO CÁO TIẾN ĐỘ THỰC HIỆN (BM 1.8.a)
+# BÁO CÁO TIẾN ĐỘ THỰC HIỆN (BM 1.8.a)
 
 **TRƯỜNG ĐẠI HỌC KỸ THUẬT - CÔNG NGHỆ CẦN THƠ** — **KHOA CÔNG NGHỆ THÔNG TIN**
 
@@ -30,12 +30,12 @@
 
 | Thời gian | Công việc thực hiện | Kết quả đạt được |
 |---|---|---|
-| Từ 26/10/2026 đến 27/10/2026 | Kiểm tra tính ổn định của hệ thống sau khi bổ sung UC03: chạy lại toàn bộ kiểm thử trên môi trường local, đối chiếu schema CSDL thực tế với file migration. | Phát hiện CSDL local thiếu hai cột `MaHoaDon`, `MaHopDong` trong bảng `dondangky`; đã áp dụng lại migration `sql/uc03-approval.sql` và xác minh hai khóa ngoại tồn tại. |
-| Từ 27/10/2026 đến 28/10/2026 | Rà soát và xác định nguyên nhân kiểm thử thất bại trên phiên bản PHP mới. | Xác định nguyên nhân là `session_set_save_handler()` bị deprecate từ PHP 8.4, làm cảnh báo bắn ra trước `session_start()` và khiến bộ kiểm thử báo sai. Đây là lỗi tương thích của bộ kiểm thử, không phải lỗi nghiệp vụ. |
-| Từ 28/10/2026 đến 29/10/2026 | Chuẩn hóa môi trường chạy kiểm thử và ghi lại quy trình. | Chốt dùng PHP 8.0.30 cho bộ kiểm thử; ghi lại 4 lệnh chạy và kết quả chuẩn **113/113 đạt** vào tài liệu hướng dẫn làm việc của dự án. |
-| Từ 29/10/2026 đến 30/10/2026 | Hợp nhất toàn bộ bối cảnh dự án vào một tài liệu duy nhất phục vụ bàn giao và làm việc nhóm. | Tạo `docs/PROJECT_CONTEXT.md`: môi trường chạy, cấu trúc thư mục, trạng thái 20 Use Case, schema 17 bảng, quy tắc nghiệp vụ đã chốt, quy định báo cáo tiến độ. |
-| Từ 30/10/2026 đến 31/10/2026 | Phân tích chức năng **Gia hạn (UC18)** theo yêu cầu mới trong báo cáo phân tích thiết kế; đối chiếu với schema CSDL hiện tại. | Lập danh sách **10 vướng mắc kỹ thuật** cần giải quyết trước khi code (thiếu cột học kỳ trong bảng hợp đồng, thiếu bảng nhật ký hệ thống, nguy cơ tràn mã hợp đồng, ảnh hưởng dây chuyền tới UC02/UC03, chưa có cơ chế Timer trên môi trường production). |
-| Từ 31/10/2026 đến 01/11/2026 | Viết đặc tả chuẩn hóa cho UC18 Gia hạn; bổ sung vào danh mục Use Case của hệ thống. | Tạo `docs/02-use-cases/UC18-renewal.md` (luồng chính, 3 luồng ngoại lệ, 4 quy tắc nghiệp vụ, kế hoạch triển khai 7 bước); cập nhật `USE_CASE_OVERVIEW.md`. |
+| Từ 26/10/2026 đến 27/10/2026 | Rà soát toàn bộ route, controller, model và view; sửa lỗi phân quyền giữa các vai trò, bổ sung kiểm tra dữ liệu đầu vào và hộp thoại xác nhận cho các thao tác xóa/thanh lý. | Các chức năng chính hoạt động nhất quán; khách vãng lai và vai trò sai bị chặn đúng tại từng route. |
+| Từ 27/10/2026 đến 28/10/2026 | Tối ưu truy vấn và transaction: gộp truy vấn đếm về một câu, dùng khóa dòng khi xét duyệt, chống tạo trùng hóa đơn và phiên thanh toán. | Giảm số truy vấn mỗi trang; dữ liệu không bị tạo trùng khi hai yêu cầu chạy đồng thời. |
+| Từ 28/10/2026 đến 29/10/2026 | Chạy kiểm tra cú pháp toàn bộ mã nguồn PHP và kiểm thử giao diện bằng Node.js. | Toàn bộ file PHP không lỗi cú pháp; các kịch bản giao diện (modal, bộ lọc, tạo QR) chạy đúng. |
+| Từ 29/10/2026 đến 30/10/2026 | Chạy lại toàn bộ bộ kiểm thử nghiệp vụ có CSDL sau khi bật WAMP/MySQL và áp dụng đầy đủ migration. | Kết quả: `tests/run.php` 106/106, `tests/approval.php` 70/70, `tests/registration.php` 30/30, `tests/rooms.php` 16/16 — tổng **222/222 đạt**. |
+| Từ 30/10/2026 đến 31/10/2026 | Hợp nhất toàn bộ bối cảnh dự án vào một tài liệu duy nhất phục vụ bàn giao giữa các thành viên và các công cụ hỗ trợ. | Tạo `docs/PROJECT_CONTEXT.md`: môi trường chạy, cấu trúc thư mục, trạng thái 21 use case, schema 20 bảng, quy tắc nghiệp vụ đã chốt, quy định báo cáo tiến độ. |
+| Từ 30/10/2026 đến 01/11/2026 | Phân tích và đặc tả chức năng mới **Gia hạn lưu trú (UC18)** do Timer đảm nhiệm; đối chiếu với schema CSDL hiện tại để tìm vướng mắc kỹ thuật. | Tạo `docs/02-use-cases/UC18-renewal.md` (luồng chính, 3 luồng ngoại lệ, 4 quy tắc nghiệp vụ, kế hoạch triển khai 7 bước); lập danh sách 10 vướng mắc cần chốt trước khi code; cập nhật `USE_CASE_OVERVIEW.md`. |
 
 ---
 
@@ -43,18 +43,19 @@
 
 | Thời gian | Dự kiến công việc thực hiện | Dự kiến kết quả đạt được |
 |---|---|---|
-| Từ 02/11/2026 đến 03/11/2026 | Chốt hướng xử lý các vướng mắc của UC18 với giảng viên hướng dẫn; thiết kế migration bổ sung bảng nhật ký hệ thống. | Biên bản chốt nghiệp vụ; file `sql/uc18-renewal.sql` sẵn sàng; đã giao nhiệm vụ triển khai cho agent cloud (Jules) theo `docs/JULES_TASK_UC18.md`. |
-| Từ 04/11/2026 đến 05/11/2026 | Triển khai model `Renewal` chạy toàn bộ tiến trình trong một transaction; viết endpoint chỉ chấp nhận POST kèm token bí mật. | Chức năng Gia hạn chạy được trên môi trường local. |
-| Từ 06/11/2026 đến 07/11/2026 | Viết bộ kiểm thử UC18 (tối thiểu 8 trường hợp) và cấu hình lịch chạy tự động trên môi trường production. | Kiểm thử UC18 đạt; Timer chạy tự động theo lịch. |
-| Từ 08/11/2026 đến 09/11/2026 | Hoàn thiện Chương 4 báo cáo (Kết luận và Đề xuất), đóng gói sản phẩm. | Bản thảo Chương 4; gói source code và cơ sở dữ liệu. |
+| Từ 02/11/2026 đến 03/11/2026 | Chốt các điểm nghiệp vụ còn mở của UC18 với giảng viên hướng dẫn; viết migration bổ sung bảng nhật ký hệ thống và cột học kỳ cho hợp đồng. | Biên bản chốt nghiệp vụ; file `sql/uc18-renewal.sql` chạy được trên CSDL hiện tại. |
+| Từ 04/11/2026 đến 05/11/2026 | Triển khai model `Renewal` chạy toàn bộ tiến trình trong một transaction, có khóa chống chạy song song; viết endpoint chỉ chấp nhận POST kèm token bí mật. | Chức năng Gia hạn chạy được trên môi trường local. |
+| Từ 06/11/2026 đến 07/11/2026 | Viết bộ kiểm thử UC18 (tối thiểu 8 trường hợp) và cấu hình lịch chạy tự động trên môi trường triển khai. | Kiểm thử UC18 đạt; Timer chạy tự động theo lịch. |
+| Từ 08/11/2026 đến 09/11/2026 | Hoàn thiện Chương 4 (Kết luận và Đề xuất), đóng gói sản phẩm và kiểm tra lại hướng dẫn cài đặt. | Bản thảo Chương 4; gói mã nguồn và cơ sở dữ liệu sẵn sàng nộp. |
 
 ---
 
 ## 3. Đề xuất và kiến nghị
 
-1. **Đề nghị cho ý kiến về thời điểm kích hoạt chức năng Gia hạn.** Đặc tả ghi "ngày hiện tại là ngày bắt đầu học kỳ mới", nhưng tại thời điểm đó hóa đơn tiền phòng của kỳ vừa kết thúc mới là căn cứ xét điều kiện. Nhóm đề xuất xác định kỳ vừa kết thúc là kỳ liền trước kỳ bắt đầu trong ngày, thay vì "học kỳ hiện tại" theo cách hiểu thông thường.
-2. **Đề nghị cho ý kiến về sinh viên mới được duyệt nhưng chưa thanh toán.** Theo UC03, sinh viên được duyệt có trạng thái `Chờ thanh toán` và một hóa đơn `Chưa thu`. Nếu chức năng Gia hạn chạy trước khi sinh viên thanh toán, tài khoản sẽ bị khóa ngay và sinh viên không thể đăng nhập để xem hóa đơn. Nhóm đề xuất miễn trừ nhóm sinh viên chưa từng có hợp đồng, hoặc cho phép đăng nhập ở chế độ chỉ xem để thanh toán.
-3. **Đề nghị bổ sung nội dung cho hai tài liệu đang để trống trong repository:** đặc tả UC05.2 Thanh lý hợp đồng và nhóm quy tắc nghiệp vụ chung.
+1. **Thời điểm kích hoạt chức năng Gia hạn:** nhóm đã chốt lấy **ngày hiện tại của học kỳ hiện tại** làm mốc kích hoạt, thay vì hiểu theo nghĩa "ngày đầu tiên của học kỳ mới". Đề nghị cán bộ hướng dẫn xác nhận cách hiểu này trước khi triển khai.
+2. **Sinh viên mới được duyệt nhưng chưa thanh toán:** theo UC03, sinh viên này có trạng thái `Chờ thanh toán` và một hóa đơn `Chưa thu`. Nhóm đã chốt **cho phép đăng nhập để thanh toán** thay vì khóa tài khoản ngay, nhằm tránh trường hợp sinh viên không thể xem hóa đơn của chính mình. Đề nghị cán bộ hướng dẫn góp ý thêm.
+3. **Định dạng mã hợp đồng:** mã hợp đồng hiện dùng dạng chuỗi cố định độ dài, khi số lượng hợp đồng tăng qua nhiều học kỳ có nguy cơ tràn. Nhóm đề xuất chuyển sang mã sinh tự động hoặc nới độ dài cột — cần ý kiến trước khi đổi cấu trúc CSDL.
+4. **Bổ sung nội dung hai tài liệu đang để trống:** đặc tả UC05.2 Thanh lý hợp đồng và nhóm quy tắc nghiệp vụ chung.
 
 ---
 
