@@ -88,12 +88,12 @@ lỗi phải rollback toàn bộ, luôn RELEASE_LOCK. Chỉ POST được ghi d�
 
 ## Những chức năng cần bổ sung sau UC03
 
-- [ ] Đặc tả UC sinh viên xem hóa đơn và thanh toán mô phỏng qua QR.
-- [ ] Quét QR chỉ mở trang demo; không tự coi lượt mở trang là đã thanh toán.
-- [ ] Khi xác nhận hóa đơn tiền phòng đầu tiên: tạo hợp đồng đúng ngày đã chốt,
+- [x] Đặc tả và triển khai UC17: xem `02-use-cases/UC17-student-payment.md`.
+- [x] Quét QR chỉ mở trang mô phỏng; phải xác nhận POST hợp lệ mới cập nhật thanh toán.
+- [x] Khi xác nhận hóa đơn tiền phòng đầu tiên: tạo hợp đồng đúng ngày đã chốt,
       cập nhật `dondangky.MaHopDong`, sinhvien `Đang ở` và hóa đơn `Đã thu`
       trong cùng transaction/khóa phòng. Xử lý lặp không tạo thêm hợp đồng.
-- [ ] Hóa đơn phòng kỳ sau và điện nước không tự tạo hợp đồng đầu tiên.
+- [x] Hóa đơn phòng kỳ sau và điện nước không tự tạo hợp đồng đầu tiên (UC17).
 - [ ] UC10.1 Timer: bỏ qua hóa đơn đã có theo UNIQUE(MSSV, MaHocKy),
       không lập lại hóa đơn đầu tiên đã tạo khi duyệt.
 - [ ] UC10.2 Timer: điện nước theo tháng; chỉ tính sinh viên chính thức theo quy tắc
@@ -144,6 +144,7 @@ hai tiến trình duyệt đồng thời trên cùng dữ liệu vật lý hoặ
 gửi đơn qua UC02, đăng nhập NVQL và mở menu Xét duyệt đơn đăng ký. Chi tiết hiển thị
 kỳ/số tiền trước khi xác nhận. Thiếu dữ liệu hóa đơn thì vẫn có thể từ chối hồ sơ,
 nhưng không thể xác nhận duyệt. Lệnh chạy test xem `tests/README.md`.
-## Email kết quả xét duyệt (26/10/2026)
 
-UC02 lưu email bắt buộc vào `dondangky.Email`. UC03 sao chép email sang `sinhvien.Email` và ghi `emailthongbao` trong transaction duyệt hoặc từ chối. SMTP chạy sau commit; lỗi gửi không đảo kết quả. Route POST `approval-email-retry` chỉ dành cho NVQL. Chi tiết cấu hình và migration: `UC03_EMAIL_SETUP.md`.
+## Bổ sung email kết quả (20/10/2026)
+
+UC02 đã dùng trường Email để nhận kết quả; UC03 sao chép email sang sinhvien và ghi emailthongbao trong transaction xét duyệt. SMTP chạy sau commit, lỗi không đảo kết quả. Route POST approval-email-retry chỉ cho NVQL, kiểm tra vai trò. Chạy migration sql/uc03-email.sql và cài Composer trước khi dùng code mới. Hướng dẫn cấu hình SMTP trường, gửi lại và giới hạn: UC03_EMAIL_SETUP.md. Không gửi mật khẩu qua email.

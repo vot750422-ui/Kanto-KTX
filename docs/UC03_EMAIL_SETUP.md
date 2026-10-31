@@ -52,7 +52,7 @@ Khi chưa có cấu hình SMTP, có thể kiểm tra toàn bộ luồng nghiệp
 
 Máy chủ triển khai có thể dùng `MAIL_HOST`, `MAIL_PORT`, `MAIL_ENCRYPTION`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM_ADDRESS`, `MAIL_FROM_NAME`; biến môi trường ưu tiên hơn file local. Ứng dụng không tự nạp `.env`.
 
-Dockerfile cài dependency từ `composer.lock`, không chép cấu hình SMTP local vào image. Khi container khởi động, migration email chạy sau migration QR và trước Apache; nếu CSDL chưa có cột `Email` ở `dondangky` hoặc `sinhvien`, container sẽ báo lỗi để kiểm tra schema. Chưa kiểm tra build/deploy Docker trong lần thay đổi này.
+Dockerfile cài dependency từ `composer.lock`; không chép cấu hình SMTP local vào image. Chạy migration trên CSDL triển khai trước khi đưa code mới vào phục vụ. Chưa kiểm tra build/deploy Docker trong lần thay đổi này.
 
 `php -d xdebug.mode=off scripts/retry-approval-email.php` thử tối đa 50 thông báo Chờ gửi/Lỗi theo thứ tự cũ nhất. Có thể gọi định kỳ bằng Task Scheduler/cron; chưa cài lịch tự động. Script chỉ chạy CLI và dùng chung cơ chế khóa/trạng thái với nút gửi lại.
 

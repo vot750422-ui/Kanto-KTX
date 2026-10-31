@@ -28,6 +28,7 @@ rectangle "HỆ THỐNG QUẢN LÝ KÝ TÚC XÁ" {
     usecase "Gửi phản ánh\nsự cố" as UC08
     usecase "Xem thông tin\nlưu trú" as UC11
     usecase "Sử dụng trợ lý AI" as UC13
+    usecase "Thanh toán\nhóa đơn" as UC17
 
     usecase "Xét duyệt đơn đăng ký" as UC03
     usecase "Quản lý hợp đồng\nlưu trú" as UC05
@@ -41,17 +42,21 @@ rectangle "HỆ THỐNG QUẢN LÝ KÝ TÚC XÁ" {
     usecase "Lập hóa đơn" as UC10
 }
 
+' Khách vãng lai
 Guest --> UC15
 Guest --> UC02
 Guest --> UC16
 Guest --> UC13
 
+' Sinh viên
 Student --> UC12
 Student --> UC08
 Student --> UC11
 Student --> UC13
+Student --> UC17
 Student --> UC01
 
+' Nhân viên quản lý KTX
 NVQL --> UC03
 NVQL --> UC05
 NVQL --> UC09
@@ -59,11 +64,15 @@ NVQL --> UC04
 NVQL --> UC06
 NVQL --> UC01
 
+' Nhân viên kế toán
 Accountant --> UC01
 Accountant --> UC07
 
+' Quản lý KTX
 Manager --> UC01
 Manager --> UC14
 
+' Timer
 Timer --> UC10
+
 @enduml

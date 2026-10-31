@@ -45,7 +45,6 @@ Cho phép tác nhân gửi thông tin đăng ký ký túc xá để chờ Nhân 
 - Giới tính
 - Quê quán
 - Số điện thoại
-- Email (bắt buộc, tối đa 100 ký tự)
 
 #### Thông tin học tập và ưu tiên
 
@@ -151,3 +150,7 @@ số `DonDangKy` `Đã duyệt` có `MaHopDong IS NULL` tại phòng.
 phải liên kết `dondangky.MaHopDong` trong cùng transaction để không đếm hai lần.
 Không giảm `phong.SucChua`. Kiểm tra MSSV/CCCD đã có sinh viên và trùng đơn
 chờ duyệt ở cả bước nhập và submit dưới khóa chung.
+
+### BR-UC02-04 - Email và thời gian gửi (20/10/2026)
+
+Email nhận kết quả xét duyệt là thông tin bắt buộc, tối đa 100 ký tự, được kiểm tra phía server ở bước nhập và gửi đơn. Email xuất hiện trong xác nhận trước khi gửi, lưu vào dondangky.Email. ThoiGianGui lấy giờ Việt Nam UTC+7 từ kết nối MySQL. Cột Email vẫn nullable cho hồ sơ lịch sử.

@@ -12,7 +12,7 @@ Tài liệu chi tiết cũ gọi quản lý hóa đơn là UC07, xem lưu trú l
 - Sinh viên đã đăng nhập bằng tài khoản đang hoạt động để xem danh sách và tạo QR; có hồ sơ liên kết qua `sinhvien.MaTK`.
 - Thiết bị quét chỉ cần token QR hợp lệ; không cần tài khoản hoặc phiên đăng nhập sinh viên. Người có liên kết có quyền xác nhận đúng hóa đơn được gắn trong token.
 - Hóa đơn thuộc sinh viên và đang `Chưa thu`.
-- Thành công: chuyển hóa đơn sang `Đã thu`, ghi `ThoiGianThanhToan` theo giờ Việt Nam.
+- Thành công: hóa đơn tiền phòng chuyển sang `Đã thu`; với điện nước, chỉ phần phân bổ của sinh viên chuyển sang `Đã thu`. Hóa đơn điện nước tổng chỉ chuyển `Đã thu` khi tất cả phần đã được thanh toán.
 - Nếu hóa đơn tiền phòng đầu tiên gắn với đơn `Đã duyệt` chưa có hợp đồng: tạo hợp đồng theo học kỳ trên hóa đơn, gắn `dondangky.MaHopDong`, chuyển sinh viên sang `Đang ở` trong cùng transaction. Giữ tài khoản đã cấp tại UC03.
 - Hóa đơn định kỳ/điện nước không tự tạo hoặc gia hạn hợp đồng.
 - Thất bại: rollback toàn bộ; không tạo hợp đồng hoặc thay đổi trạng thái dở dang.
@@ -39,8 +39,9 @@ Tài liệu chi tiết cũ gọi quản lý hóa đơn là UC07, xem lưu trú l
 ## Quy tắc dữ liệu và bảo vệ giao dịch
 
 - Không nhận MSSV/MaTK hay số tiền từ trình duyệt để quyết định quyền/số tiền thu.
-- Tiền phòng thuộc sinh viên qua `hoadontienphong.MSSV`; điện nước thuộc các sinh viên đã ghi trong `hoadondiennuocsinhvien`, không suy từ phòng đang ở hiện tại.
-- Schema hiện có một trạng thái và tổng tiền cho cả hóa đơn điện nước của phòng. Một sinh viên có tên trong danh sách liên quan xác nhận **toàn bộ hóa đơn phòng**; các sinh viên còn lại thấy Đã thu. Không tự chia tiền hoặc bổ sung trạng thái thu theo từng sinh viên.
+- Tiền phòng thuộc sinh viên qua `hoadontienphong.MSSV`; điện nước thuộc snapshot sinh viên trong `hoadondiennuocsinhvien`, không suy từ phòng đang ở hiện tại.
+- `hoadon.TongTien` giữ tổng tiền phòng. Mỗi dòng `hoadondiennuocsinhvien` giữ `SoTienPhaiThu`, `TrangThai` và `ThoiGianThanhToan` riêng. Phần dư khi chia đến đồng được phân bổ ổn định theo thứ tự MSSV.
+- QR của hóa đơn điện nước được phát hành theo tài khoản sinh viên, nên các sinh viên trong cùng phòng có thể thanh toán độc lập. Thanh lý hợp đồng chỉ kiểm tra phần chưa thu của sinh viên đó.
 - QR chứa URL nội bộ và token cấp quyền cho một hóa đơn trong fragment; không chứa tên, MSSV, mật khẩu hoặc số tiền. Token không gửi trong URL HTTP khi mở QR. Không ghi token hoặc nội dung hóa đơn vào log ứng dụng.
 - Token gốc của mã đang hiệu lực chỉ giữ trong session trình duyệt đã tạo; CSDL chỉ lưu hash. POST tạo QR dùng named lock và transaction để tránh phát hành mã thứ hai cho cùng hóa đơn. Nếu dữ liệu cũ có nhiều mã chưa hết hạn, chỉ mã mới nhất được phép mở/xác nhận cho đến khi POST tạo QR xử lý mã trùng. Các token cũ có thời hạn lưu 15 phút cũng bị giới hạn hiệu lực thực tế ở 5 phút kể từ `TaoLuc`.
 - Trang QR chỉ hiện mã hóa đơn, loại, tổng tiền và nội dung thanh toán. Không hiện hồ sơ, thông tin phòng hoặc menu cá nhân. Session ẩn danh giữ kết quả; không đăng nhập hoặc cấp quyền sinh viên.
@@ -65,15 +66,11 @@ Tài liệu chi tiết cũ gọi quản lý hóa đơn là UC07, xem lưu trú l
 
 Năm route `student-*` yêu cầu `requireRole('Sinh viên')`. Controller cá nhân: `controllers/StudentPaymentController.php`; controller trang QR: `controllers/PaymentCheckoutController.php`; model dùng chung: `models/Payment.php`; token liên thiết bị: `services/PaymentLink.php`; view công khai: `views/payments/checkout.php`.
 
-QR được tạo trong trình duyệt bằng bản thư viện qrcode-generator lưu tại `assets/js/vendor/`, không gọi dịch vụ tạo QR bên ngoài. Khi chạy WAMP qua localhost, điện thoại không truy cập localhost của máy tính. Để quét và xác nhận trên điện thoại cùng Wi-Fi:
-
-1. Xem IPv4 của bộ điều hợp Wi-Fi trên máy chạy WAMP (ví dụ `192.168.1.10`), sao chép `config/payment.example.php` thành `config/payment.local.php`, rồi thay địa chỉ mẫu bằng `http://<IPv4-Wi-Fi>`. Tệp `.local.php` bị Git bỏ qua. Môi trường khác có thể đặt `PAYMENT_PUBLIC_ORIGIN` bằng origin HTTPS công khai. Không thêm `/Kanto-KTX` vào giá trị origin.
-2. Cho phép điện thoại truy cập riêng dự án trong VirtualHost Apache theo `config/wamp-phone.example.conf` và mở cổng 80 cho mạng Wi-Fi nội bộ trong Windows Firewall. Giữ chặn truy cập trực tiếp `config`, `sql`, `tests` và các file nội bộ. Khởi động lại Apache sau khi sửa cấu hình.
-3. Trên điện thoại, mở `http://<IPv4-Wi-Fi>/Kanto-KTX/index.php?action=payment-checkout` để kiểm tra trang công khai tải được, rồi quét QR mới được tạo từ trang sinh viên. Điện thoại không cần đăng nhập. Quét QR chỉ mở trang; bấm **Xác nhận thanh toán mô phỏng** mới ghi nhận hóa đơn. Nếu IPv4 Wi-Fi thay đổi, cập nhật `payment.local.php` và tạo QR mới.
+QR được tạo trong trình duyệt bằng bản thư viện qrcode-generator lưu tại `assets/js/vendor/`, không gọi dịch vụ tạo QR bên ngoài. Khi chạy WAMP qua localhost, điện thoại không truy cập localhost của máy tính; dùng nút mở trên cùng thiết bị hoặc truy cập ứng dụng qua địa chỉ mạng đã cấu hình.
 
 ## Kiểm thử
 
-Docker container chạy `php scripts/migrate-payment-links.php` trước khi Apache nhận request, để thêm bảng `phienthanhtoan` và các khóa ngoại trên CSDL đã cấu hình. Nếu chạy ứng dụng ngoài Docker, chạy lệnh đó trước khi dùng UC17. Migration không sửa dữ liệu hóa đơn/hợp đồng; `CREATE TABLE IF NOT EXISTS` có thể chạy lặp. Không import lại SQL dump. Khi khởi động container thất bại, kiểm tra log và quyền `CREATE TABLE` của tài khoản CSDL.
+Trước khi dùng phiên bản mới trên CSDL đích, chạy `php scripts/migrate-payment-links.php` một lần để thêm bảng `phienthanhtoan` và các khóa ngoại. Migration không sửa dữ liệu hóa đơn/hợp đồng. Không import lại SQL dump. Các bảng đang tồn tại không bị tự thay đổi cấu trúc bởi `CREATE TABLE IF NOT EXISTS`.
 
 ```powershell
 php -d xdebug.mode=off tests/student-payments.php
