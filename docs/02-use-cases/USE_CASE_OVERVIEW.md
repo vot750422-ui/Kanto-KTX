@@ -1,4 +1,4 @@
-# USE CASE OVERVIEW
+﻿# USE CASE OVERVIEW
 
 ## 1. Tổng quan
 
@@ -51,6 +51,10 @@ Chi tiết luồng xử lý, tiền điều kiện, hậu điều kiện và cá
 | UC14 | Xem thống kê và báo cáo | Quản lý KTX |
 | UC15 | Xem thông tin phòng | Khách vãng lai |
 | UC16 | Xem hướng dẫn | Khách vãng lai |
+| UC21 | Gia hạn lưu trú | Timer |
+
+> **Ghi chú mã UC:** UC21 lấy theo cách đánh số của `docs/sources/BÁO CÁO BÀI TẬP LỚN` (mục 3.15, mã gốc "UC-21").
+> Bảng đối chiếu đầy đủ giữa hai bộ tài liệu: xem mục 8 của [`docs/PROJECT_CONTEXT.md`](../PROJECT_CONTEXT.md).
 
 ---
 
@@ -116,6 +120,7 @@ Use Case này cung cấp các số liệu tổng hợp phục vụ công tác qu
 ### 4.7. Timer
 
 - UC08 - Lập hóa đơn điện nước
+- UC21 - Gia hạn lưu trú
 
 Timer là tác nhân hệ thống thực hiện nghiệp vụ tự động theo thời gian, không phải người dùng đăng nhập.
 
