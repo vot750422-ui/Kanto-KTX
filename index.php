@@ -80,6 +80,12 @@ if (in_array($action, ['approval', 'approval-detail', 'approval-proof', 'approva
     (new ApprovalController($pdo))->handle($action);
     exit;
 }
+if ($action === 'renewal-run') {
+    require __DIR__ . '/config/db.php';
+    require_once __DIR__ . '/controllers/RenewalController.php';
+    (new RenewalController($pdo))->handle();
+    exit;
+}
 if ($action === 'register') {
     require_once __DIR__ . '/config/db.php';
     require_once __DIR__ . '/controllers/RegistrationController.php';

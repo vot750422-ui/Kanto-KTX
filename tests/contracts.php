@@ -26,7 +26,7 @@ try {
     $stmt = $pdo->prepare('INSERT INTO sinhvien (MSSV,MaTK,MaUuTien,HoTen,NgaySinh,CCCD,GioiTinh,QueQuan,SDT,Email,Lop,NienKhoa,TrangThaiLuuTru) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)');
     $stmt->execute(['SV001',1,'UT00','Nguyễn Văn An','2005-01-01','CCCD001','Nam','Cần Thơ','0900000001','an@example.test','KTPM01','2024-2028','Đang ở']);
     $stmt->execute(['SV002',2,'UT00','Trần Thị Bình','2005-02-02','CCCD002','Nữ','Cần Thơ','0900000002',null,'KTPM02','2024-2028','Đã rời đi']);
-    $pdo->exec("INSERT INTO hopdong VALUES ('HD001','SV001','P1','2026-09-01','2027-01-15','Còn hạn'),('HD002','SV002','P2','2025-09-01','2026-01-15','Hết hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HD001','SV001','P1','2026-09-01','2027-01-15','Còn hạn'),('HD002','SV002','P2','2025-09-01','2026-01-15','Hết hạn')");
     $pdo->exec("INSERT INTO hocky VALUES ('HK1','Kỳ 1','2026-2027','2026-09-01','2027-01-15')");
     $pdo->exec("INSERT INTO hoadon (MaHoaDon, LoaiHoaDon, TongTien, TrangThai) VALUES ('HD_TIENPHONG', 'Tiền phòng', 1500000, 'Đã thu')");
     $pdo->exec("INSERT INTO hoadontienphong (MaHoaDon,MSSV,MaPhong,MaHocKy,MaDonGia) VALUES ('HD_TIENPHONG','SV001','P1','HK1','RATE')");
@@ -53,21 +53,21 @@ try {
 
     // 4. Ngày kết thúc cũ sớm hơn ngày hiện tại không bị kéo dài
     $stmt->execute(['SV003',3,'UT00','Lê Văn Cường','2005-03-03','CCCD003','Nam','Cần Thơ','0900000003',null,'KTPM03','2024-2028','Đang ở']);
-    $pdo->exec("INSERT INTO hopdong VALUES ('HD003','SV003','P1','2026-08-01','2026-09-01','Còn hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HD003','SV003','P1','2026-08-01','2026-09-01','Còn hạn')");
     $model->terminate('HD003', '2026-10-27');
     $hd003After = $model->find('HD003');
     checkContract($hd003After['NgayKetThuc'] === '2026-09-01' && $hd003After['TrangThai'] === 'Đã thanh lý', 'UC05.2: Ngày kết thúc cũ sớm hơn ngày hiện tại không bị kéo dài');
 
     // 5. Sinh viên còn hợp đồng khác Còn hạn không bị đổi sai trạng thái lưu trú
     $stmt->execute(['SV004',4,'UT00','Phạm Thị Dung','2005-04-04','CCCD004','Nữ','Cần Thơ','0900000004',null,'KTPM04','2024-2028','Đang ở']);
-    $pdo->exec("INSERT INTO hopdong VALUES ('HD004A','SV004','P2','2026-09-01','2027-01-15','Còn hạn'),('HD004B','SV004','P2','2027-01-16','2027-05-31','Còn hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HD004A','SV004','P2','2026-09-01','2027-01-15','Còn hạn'),('HD004B','SV004','P2','2027-01-16','2027-05-31','Còn hạn')");
     $model->terminate('HD004A', '2026-10-27');
     $sv004Status = $pdo->query("SELECT TrangThaiLuuTru FROM sinhvien WHERE MSSV = 'SV004'")->fetchColumn();
     checkContract($sv004Status === 'Đang ở', 'UC05.2: Sinh viên còn hợp đồng khác Còn hạn không bị đổi sai trạng thái');
 
     // 6. Hóa đơn tiền phòng chưa thu của đúng sinh viên chặn thanh lý.
     $stmt->execute(['SV006',6,'UT00','Nguyễn Văn Sáu','2005-06-06','CCCD006','Nam','Cần Thơ','0900000006',null,'KTPM06','2024-2028','Đang ở']);
-    $pdo->exec("INSERT INTO hopdong VALUES ('HD006','SV006','P1','2026-09-01','2027-01-15','Còn hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HD006','SV006','P1','2026-09-01','2027-01-15','Còn hạn')");
     $pdo->exec("INSERT INTO hoadon (MaHoaDon,LoaiHoaDon,TongTien,TrangThai) VALUES ('UNPAID_ROOM','Tiền phòng',900000,'Chưa thu')");
     $pdo->exec("INSERT INTO hoadontienphong (MaHoaDon,MSSV,MaPhong,MaHocKy,MaDonGia) VALUES ('UNPAID_ROOM','SV006','P1','HK1','RATE')");
     $blockedByRoom = false;
@@ -76,7 +76,7 @@ try {
 
     // 7. Hóa đơn điện nước chưa thu của đúng sinh viên cũng chặn thanh lý.
     $stmt->execute(['SV007',7,'UT00','Nguyễn Văn Bảy','2005-07-07','CCCD007','Nam','Cần Thơ','0900000007',null,'KTPM07','2024-2028','Đang ở']);
-    $pdo->exec("INSERT INTO hopdong VALUES ('HD007','SV007','P1','2026-09-01','2027-01-15','Còn hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HD007','SV007','P1','2026-09-01','2027-01-15','Còn hạn')");
     $pdo->exec("INSERT INTO hoadon (MaHoaDon,LoaiHoaDon,TongTien,TrangThai) VALUES ('UNPAID_UTIL','Điện nước',200000,'Chưa thu')");
     $pdo->exec("INSERT INTO hoadondiennuoc (MaHoaDon,MaPhong,Thang,Nam,DienTieuThu,NuocTieuThu,TienDien,TienNuoc,MaDonGiaDien,MaDonGiaNuoc) VALUES ('UNPAID_UTIL','P1',10,2026,10,2,160000,40000,'RATE','RATE')");
     $pdo->exec("INSERT INTO hoadondiennuocsinhvien (MaHoaDon,MSSV,SoTienPhaiThu,TrangThai) VALUES ('UNPAID_UTIL','SV007',200000,'Chưa thu')");
@@ -112,7 +112,7 @@ try {
 
     // 10. Lỗi giữa transaction không để lại cập nhật một phần
     $stmt->execute(['SV005',5,'UT00','Hoàng Văn Em','2005-05-05','CCCD005','Nam','Cần Thơ','0900000005',null,'KTPM05','2024-2028','Đang ở']);
-    $pdo->exec("INSERT INTO hopdong VALUES ('HD005','SV005','P1','2026-09-01','2027-01-15','Còn hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HD005','SV005','P1','2026-09-01','2027-01-15','Còn hạn')");
     // Giả lập lỗi bằng cách tự throw ngoại lệ trong một transaction có bước cập nhật tương tự
     try {
         $pdo->beginTransaction();

@@ -105,7 +105,7 @@ try {
     // - SV103: rời đi giữa tháng 10: 2026-09-01 -> 2026-10-10, đã thanh lý (vẫn giao một phần)
     // - SV104: hợp đồng kết thúc trước tháng 10: 2026-08-01 -> 2026-09-30 (ngoài tháng)
     // - SV105: hợp đồng bắt đầu sau tháng 10: 2026-11-01 -> 2027-01-15 (ngoài tháng)
-    $pdo->exec("INSERT INTO hopdong VALUES
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES
         ('HD101', 'SV101', 'P01', '2026-09-01', '2027-01-15', 'Còn hạn'),
         ('HD102', 'SV102', 'P01', '2026-10-15', '2027-01-15', 'Còn hạn'),
         ('HD103', 'SV103', 'P01', '2026-09-01', '2026-10-10', 'Đã thanh lý'),
@@ -122,11 +122,11 @@ try {
         ('CS_P01_10', 'P01', 'NV01', 150, 30, 10, 2026, '2026-10-31 20:00:00')");
 
     // Phòng P02: Thiếu chỉ số tháng 9 (chỉ có tháng 10)
-    $pdo->exec("INSERT INTO hopdong VALUES ('HD201', 'SV101', 'P02', '2026-09-01', '2027-01-15', 'Còn hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HD201', 'SV101', 'P02', '2026-09-01', '2027-01-15', 'Còn hạn')");
     $pdo->exec("INSERT INTO chisodiennuoc VALUES ('CS_P02_10', 'P02', 'NV01', 150, 30, 10, 2026, '2026-10-31 20:00:00')");
 
     // Phòng P03: Chỉ số mới nhỏ hơn chỉ số cũ (Điện cũ 200, mới 190)
-    $pdo->exec("INSERT INTO hopdong VALUES ('HD301', 'SV101', 'P03', '2026-09-01', '2027-01-15', 'Còn hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HD301', 'SV101', 'P03', '2026-09-01', '2027-01-15', 'Còn hạn')");
     $pdo->exec("INSERT INTO chisodiennuoc VALUES
         ('CS_P03_09', 'P03', 'NV01', 200, 20, 9, 2026, '2026-09-30 20:00:00'),
         ('CS_P03_10', 'P03', 'NV01', 190, 30, 10, 2026, '2026-10-31 20:00:00')");
@@ -137,7 +137,7 @@ try {
         ('CS_P04_10', 'P04', 'NV01', 120, 25, 10, 2026, '2026-10-31 20:00:00')");
 
     // Phòng P05: Hợp lệ để kiểm tra xử lý nhiều phòng đồng thời
-    $pdo->exec("INSERT INTO hopdong VALUES ('HD501', 'SV101', 'P05', '2026-09-01', '2027-01-15', 'Còn hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HD501', 'SV101', 'P05', '2026-09-01', '2027-01-15', 'Còn hạn')");
     $pdo->exec("INSERT INTO chisodiennuoc VALUES
         ('CS_P05_09', 'P05', 'NV01', 50, 10, 9, 2026, '2026-09-30 20:00:00'),
         ('CS_P05_10', 'P05', 'NV01', 80, 15, 10, 2026, '2026-10-31 20:00:00')");
@@ -249,7 +249,7 @@ try {
     // ==============================================================
     // Thêm một phòng P06 hợp lệ nhưng giả lập lỗi khi chèn thông báo bằng cách khóa bảng hoặc trigger lỗi
     $pdo->exec("INSERT INTO phong (MaPhong, MaToa, SoPhong, Tang, GioiTinhPhong, SucChua) VALUES ('P06', 'T1', 'A106', 1, 'Nam', 8)");
-    $pdo->exec("INSERT INTO hopdong VALUES ('HD601', 'SV101', 'P06', '2026-09-01', '2027-01-15', 'Còn hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HD601', 'SV101', 'P06', '2026-09-01', '2027-01-15', 'Còn hạn')");
     $pdo->exec("INSERT INTO chisodiennuoc VALUES
         ('CS_P06_09', 'P06', 'NV01', 10, 10, 9, 2026, '2026-09-30 20:00:00'),
         ('CS_P06_10', 'P06', 'NV01', 20, 20, 10, 2026, '2026-10-31 20:00:00')");
@@ -309,7 +309,7 @@ try {
     // Nước: 20 -> 27 (tiêu thụ 7 m3) => 7 * 8000.75 = 56005.25 => round = 56005 đ
     // Tổng tiền = 27505 + 56005 = 83510 đ (nếu không làm tròn đồng nguyên thì sẽ là 83510.20)
     $pdo->exec("INSERT INTO phong (MaPhong, MaToa, SoPhong, Tang, GioiTinhPhong, SucChua) VALUES ('P07', 'T1', 'A107', 1, 'Nam', 8)");
-    $pdo->exec("INSERT INTO hopdong VALUES ('HD701', 'SV101', 'P07', '2026-11-01', '2027-01-15', 'Còn hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HD701', 'SV101', 'P07', '2026-11-01', '2027-01-15', 'Còn hạn')");
     $pdo->exec("INSERT INTO chisodiennuoc VALUES
         ('CS_P07_11', 'P07', 'NV01', 100, 20, 11, 2026, '2026-11-30 20:00:00'),
         ('CS_P07_12', 'P07', 'NV01', 111, 27, 12, 2026, '2026-12-31 20:00:00')");

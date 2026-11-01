@@ -26,7 +26,7 @@ try {
     $student = $pdo->prepare('INSERT INTO sinhvien(MSSV,MaTK,MaUuTien,HoTen,NgaySinh,CCCD,GioiTinh,QueQuan,SDT,Email,Lop,NienKhoa,TrangThaiLuuTru) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)');
     $student->execute(['SV01', 101, 'UT00', 'Nguyễn Văn An', '2005-01-01', 'CCCD01', 'Nam', 'Cần Thơ', '0900000001', 'an@example.test', 'KTPM01', '2024-2028', 'Đang ở']);
     $student->execute(['SV02', 102, 'UT00', 'Trần Thị Bình', '2005-02-02', 'CCCD02', 'Nữ', 'An Giang', '0900000002', null, 'KTPM02', '2024-2028', 'Đã rời đi']);
-    $pdo->exec("INSERT INTO hopdong VALUES ('HD01','SV01','P1','2026-01-01','2027-01-01','Còn hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HD01','SV01','P1','2026-01-01','2027-01-01','Còn hạn')");
     $pdo->exec("INSERT INTO nhanvien(MaNV,MaTK,HoTen,SDT,Email,TrangThaiLamViec) VALUES ('NV01',201,'Nhân viên Một',NULL,NULL,'Đang làm')");
 
     $model = new Incident($pdo);

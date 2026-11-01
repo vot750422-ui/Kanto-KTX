@@ -33,7 +33,7 @@ try {
     $stmt = $pdo->prepare('INSERT INTO sinhvien (MSSV,MaTK,MaUuTien,HoTen,NgaySinh,CCCD,GioiTinh,QueQuan,SDT,Lop,NienKhoa,TrangThaiLuuTru) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)');
     $stmt->execute(['SV101', $accounts[0]['MaTK'], 'UT00', 'Sinh viên 101', '2005-01-01', '000000000101', 'Nam', 'Cần Thơ', '0900000001', 'TEST', '2024-2028', 'Đang ở']);
     $stmt->execute(['SV102', $accounts[1]['MaTK'], 'UT00', 'Sinh viên 102', '2005-01-01', '000000000102', 'Nam', 'Cần Thơ', '0900000002', 'TEST', '2024-2028', 'Đang ở']);
-    $pdo->exec("INSERT INTO hopdong VALUES
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES
         ('HD101','SV101','P1','2026-09-01','2027-01-15','Còn hạn'),
         ('HD102','SV102','P1','2026-09-01','2027-01-15','Còn hạn')");
     $pdo->exec("INSERT INTO hoadon (MaHoaDon,LoaiHoaDon,TongTien,TrangThai) VALUES ('EXISTING','Tiền phòng',903226,'Chưa thu')");

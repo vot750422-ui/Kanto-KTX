@@ -19,7 +19,7 @@ try {
     checkPublicRooms($source->snapshot()['total_rooms'] === 0 && !$pdo->inTransaction(), 'Nguồn rỗng và kết thúc transaction đọc');
     $pdo->exec("INSERT INTO toanha VALUES ('T1','Tòa A'),('T2','Tòa B')");
     $pdo->exec("INSERT INTO phong VALUES ('P1','T1','A101',1,'Nam',8),('P2','T2','B101',1,'Nữ',4),('P3','T1','A102',1,'Nam',1)");
-    $pdo->exec("INSERT INTO hopdong VALUES ('H1','PRIVATE1','P1','2026-01-01','2027-12-31','Còn hạn'),('H2','PRIVATE2','P3','2026-01-01','2027-12-31','Còn hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('H1','PRIVATE1','P1','2026-01-01','2027-12-31','Còn hạn'),('H2','PRIVATE2','P3','2026-01-01','2027-12-31','Còn hạn')");
     $stmt = $pdo->prepare('INSERT INTO dondangky (MaDonDangKy,MSSV,HoTen,NgaySinh,CCCD,GioiTinh,QueQuan,SDT,Lop,NienKhoa,MaUuTien,MaPhong,TrangThai,MaHopDong) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
     foreach ([['D1','P1','Chờ duyệt',null],['D2','P1','Đã duyệt',null],['D3','P1','Đã duyệt','H1'],['D4','P3','Chờ duyệt',null]] as $i=>$row) {
         [$id,$room,$status,$contract] = $row;

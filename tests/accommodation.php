@@ -31,12 +31,12 @@ try {
     checkAccommodation($model->forAccount(999)['student'] === null, 'Tài khoản không có hồ sơ');
     $data = $model->forAccount(1);
     checkAccommodation($data['student']['MSSV'] === 'SELF' && $data['accommodation'] === null, 'Có hồ sơ nhưng chưa có hợp đồng');
-    $pdo->exec("INSERT INTO hopdong VALUES ('HOTHER','OTHER','PTEST','2026-01-01','2027-01-01','Còn hạn'), ('HEXPIRED','SELF','PTEST','2025-01-01','2025-12-31','Hết hạn'), ('HCLOSED','SELF','PTEST','2026-01-01','2026-12-31','Đã thanh lý')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HOTHER','OTHER','PTEST','2026-01-01','2027-01-01','Còn hạn'), ('HEXPIRED','SELF','PTEST','2025-01-01','2025-12-31','Hết hạn'), ('HCLOSED','SELF','PTEST','2026-01-01','2026-12-31','Đã thanh lý')");
     checkAccommodation($model->forAccount(1)['accommodation'] === null, 'Không lấy hợp đồng người khác, hết hạn hoặc đã thanh lý');
-    $pdo->exec("INSERT INTO hopdong VALUES ('HSELF','SELF','PTEST','2026-09-01','2027-08-31','Còn hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HSELF','SELF','PTEST','2026-09-01','2027-08-31','Còn hạn')");
     $data = $model->forAccount(1);
     checkAccommodation($data['accommodation']['MaHopDong'] === 'HSELF' && $data['accommodation']['SoPhong'] === 'A101' && $data['accommodation']['TenToa'] === 'Tòa kiểm thử', 'Lấy phòng/tòa qua hợp đồng của chính sinh viên');
-    $pdo->exec("INSERT INTO hopdong VALUES ('HNEW','SELF','PTEST','2027-09-01','2028-08-31','Còn hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('HNEW','SELF','PTEST','2027-09-01','2028-08-31','Còn hạn')");
     checkAccommodation($model->forAccount(1)['accommodation']['MaHopDong'] === 'HNEW', 'Chọn hợp đồng Còn hạn mới nhất theo đặc tả, kể cả chưa bắt đầu');
     checkAccommodation((int) $pdo->query('SELECT COUNT(*) FROM hopdong')->fetchColumn() === 5 && (int) $pdo->query('SELECT COUNT(*) FROM sinhvien')->fetchColumn() === 2, 'Xem hồ sơ không thay đổi dữ liệu');
 } catch (Throwable $error) {

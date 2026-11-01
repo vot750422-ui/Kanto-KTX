@@ -99,7 +99,7 @@ try {
     $pdo->exec("UPDATE taikhoan SET TrangThai='Khóa' WHERE TenDangNhap='PAY2'");
     checkPayment(denyPayment(fn() => $model->confirm($second['invoice'])), 'Tài khoản bị khóa không được hoàn tất lưu trú');
     $pdo->exec("UPDATE taikhoan SET TrangThai='Hoạt động' WHERE TenDangNhap='PAY2'");
-    $pdo->exec("INSERT INTO hopdong VALUES ('OVERLAP','PAY2','P1','$nextYear-01-01','$nextYear-12-31','Còn hạn')");
+    $pdo->exec("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES ('OVERLAP','PAY2','P1','$nextYear-01-01','$nextYear-12-31','Còn hạn')");
     checkPayment(denyPayment(fn() => $model->confirm($second['invoice'])), 'Không tạo hợp đồng trùng thời gian');
     $pdo->exec("DELETE FROM hopdong WHERE MaHopDong='OVERLAP'");
     $pdo->exec("UPDATE phong SET SucChua=1 WHERE MaPhong='P1'");
