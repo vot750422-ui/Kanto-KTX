@@ -6,8 +6,41 @@ Bản thảo Chương 3 — gửi riêng để lấy ý kiến giảng viên hư
 
 > Khi hoàn thiện file Word, hãy tìm các dòng bắt đầu bằng `[CHÈN ẢNH` và thay từng dòng bằng ảnh sản phẩm hoặc ảnh kết quả tương ứng. Không chụp mật khẩu, token QR gốc hoặc dữ liệu cá nhân không cần thiết.
 
+<a id="muc-luc"></a>
+## MỤC LỤC CHƯƠNG 3
+
+- [3.1. Môi trường triển khai và phạm vi kiểm chứng](#sec-3-1)
+  - [3.1.1. Môi trường phát triển](#sec-3-1-1)
+  - [3.1.2. Phạm vi và nguyên tắc kiểm chứng](#sec-3-1-2)
+- [3.2. Tổng quan sản phẩm và các chức năng đã triển khai](#sec-3-2)
+  - [3.2.1. Đăng nhập, phân quyền và bảo vệ route](#sec-3-2-1)
+  - [3.2.2. Đăng ký lưu trú và xét duyệt](#sec-3-2-2)
+  - [3.2.3. Quản lý sinh viên, thông tin lưu trú và hợp đồng](#sec-3-2-3)
+  - [3.2.4. Hóa đơn, điện nước và thanh toán QR mô phỏng](#sec-3-2-4)
+  - [3.2.5. Điện nước, phản ánh, thông báo, thống kê và trợ lý AI](#sec-3-2-5)
+  - [3.2.6. Tự động gia hạn lưu trú (UC18)](#sec-3-2-6)
+- [3.3. Một số luồng tích hợp tiêu biểu](#sec-3-3)
+- [3.4. Phương pháp và kết quả kiểm thử](#sec-3-4)
+  - [3.4.1. Kiểm tra cú pháp PHP](#sec-3-4-1)
+  - [3.4.2. Kiểm tra frontend](#sec-3-4-2)
+  - [3.4.3. Kiểm tra tích hợp và nghiệp vụ](#sec-3-4-3)
+  - [3.4.4. Kiểm tra route, quyền và phương thức HTTP](#sec-3-4-4)
+- [3.5. Kết quả sửa lỗi và tối ưu hóa](#sec-3-5)
+- [3.6. Danh sách minh chứng giao diện cần bổ sung](#sec-3-6)
+  - [3.6.1. Bảng kiểm soát ảnh trước khi nộp](#sec-3-6-1)
+- [3.7. Đánh giá mức độ hoàn thành theo kế hoạch tuần 7 và tuần 8](#sec-3-7)
+- [3.8. Ưu điểm và hạn chế](#sec-3-8)
+  - [3.8.1. Ưu điểm](#sec-3-8-1)
+  - [3.8.2. Hạn chế](#sec-3-8-2)
+- [3.9. Đánh giá chung](#sec-3-9)
+- [3.10. Kết luận chương](#sec-3-10)
+
+---
+
+<a id="sec-3-1"></a>
 ## 3.1. Môi trường triển khai và phạm vi kiểm chứng
 
+<a id="sec-3-1-1"></a>
 ### 3.1.1. Môi trường phát triển
 
 Hệ thống quản lý ký túc xá trường Đại học Kanto được xây dựng theo mô hình ứng dụng Web. Nhóm em sử dụng các thành phần chính như sau:
@@ -19,6 +52,7 @@ Hệ thống quản lý ký túc xá trường Đại học Kanto được xây 
 - Chạy local bằng WAMP. Dùng Docker, Render, Aiven MySQL và DBeaver để thử nghiệm triển khai.
 - Dùng Git/GitHub để quản lý mã nguồn và theo dõi code.
 
+<a id="sec-3-1-2"></a>
 ### 3.1.2. Phạm vi và nguyên tắc kiểm chứng
 
 Chương này chia làm ba mức bằng chứng:
@@ -38,6 +72,11 @@ Phạm vi nhóm em kiểm chứng gồm:
 - Test lúc ghi dữ liệu.
 - Xem giao diện trên máy tính và điện thoại sau khi bật WAMP và MySQL.
 
+[↑ Trở về mục lục](#muc-luc)
+
+---
+
+<a id="sec-3-2"></a>
 ## 3.2. Tổng quan sản phẩm và các chức năng đã triển khai
 
 Hệ thống có các nhóm chức năng chính như: đăng ký, xét duyệt, quản lý sinh viên, hợp đồng, hóa đơn, điện nước, phản ánh sự cố, thông báo, thống kê, thanh toán QR mô phỏng, và tự động gia hạn lưu trú. Bảng dưới đây tóm tắt trạng thái code và các ảnh cần thêm vào báo cáo sau này.
@@ -64,6 +103,7 @@ Hệ thống có các nhóm chức năng chính như: đăng ký, xét duyệt, 
 | UC17 QR thanh toán mô phỏng | Đã có | Ảnh tạo QR, trang xác nhận và biên nhận mô phỏng |
 | UC18 Gia hạn lưu trú tự động | Đã hoàn thành | Ảnh kết quả test API gia hạn và log hệ thống |
 
+<a id="sec-3-2-1"></a>
 ### 3.2.1. Đăng nhập, phân quyền và bảo vệ route
 
 Người dùng truy cập qua file `index.php`. Đăng nhập xong, hệ thống lưu session để ghi nhận tài khoản. Các controller sẽ kiểm tra quyền trước khi cho vào trang quản lý.
@@ -75,6 +115,7 @@ Những điểm nhóm em đã test:
 - Thao tác ghi dữ liệu dùng POST, có chống CSRF.
 - Dữ liệu hiện lên web được mã hóa tránh lỗi hiển thị. Truy vấn CSDL dùng PDO prepared statement.
 
+<a id="sec-3-2-2"></a>
 ### 3.2.2. Đăng ký lưu trú và xét duyệt
 
 Quy trình đăng ký: sinh viên nhập thông tin, kiểm tra đúng sai, chọn phòng, rồi gửi đơn. Hệ thống tự kiểm tra số CCCD/MSSV, diện ưu tiên và xem phòng còn chỗ không. Đơn hợp lệ sẽ được lưu chờ duyệt.
@@ -87,6 +128,7 @@ Nhóm em cần bổ sung các ảnh sau:
 > [CHÈN ẢNH SẢN PHẨM 3.3: Form đăng ký lưu trú, bước chọn phòng và thông báo lỗi dữ liệu.]  
 > [CHÈN ẢNH SẢN PHẨM 3.4: Danh sách đơn chờ duyệt, chi tiết đơn và kết quả duyệt/từ chối.]
 
+<a id="sec-3-2-3"></a>
 ### 3.2.3. Quản lý sinh viên, thông tin lưu trú và hợp đồng
 
 Nhân viên KTX có thể tìm kiếm, xem và cập nhật hồ sơ sinh viên. Tuy nhiên giới tính không cho đổi tùy tiện vì sẽ sai khu vực nam/nữ.
@@ -102,6 +144,7 @@ Quản lý hợp đồng cho phép tìm hợp đồng và thanh lý. Quy tắc t
 > [CHÈN ẢNH SẢN PHẨM 3.6: Danh sách/chi tiết hợp đồng.]  
 > [CHÈN ẢNH SẢN PHẨM 3.7: Hộp thoại thanh lý và trường hợp hệ thống chặn do còn công nợ.]
 
+<a id="sec-3-2-4"></a>
 ### 3.2.4. Hóa đơn, điện nước và thanh toán QR mô phỏng
 
 Phần này dùng để tra cứu hóa đơn, lọc và xác nhận thanh toán. Với hóa đơn đầu tiên, hệ thống tạo luôn hợp đồng cho sinh viên. Các hóa đơn điện nước hay thu định kỳ sau này chỉ cập nhật chữ "Đã thu".
@@ -122,6 +165,7 @@ Quy trình thanh toán mã QR mô phỏng:
 > [CHÈN ẢNH SẢN PHẨM 3.11: Trang xác nhận trên thiết bị thứ hai hoặc màn hình mô phỏng.]  
 > [CHÈN ẢNH SẢN PHẨM 3.12: Trạng thái/biên nhận sau khi xác nhận mô phỏng.]
 
+<a id="sec-3-2-5"></a>
 ### 3.2.5. Điện nước, phản ánh, thông báo, thống kê và trợ lý AI
 
 Các chức năng còn lại gồm: ghi số điện nước, gửi phản ánh hỏng hóc, xem thông báo từ ban quản lý và thống kê báo cáo. Hệ thống cũng có một trợ lý AI trả lời câu hỏi cơ bản. Trợ lý này không được đụng vào dữ liệu sinh viên, và nếu lỗi mạng thì sẽ báo câu trả lời có sẵn.
@@ -131,6 +175,7 @@ Các chức năng còn lại gồm: ghi số điện nước, gửi phản ánh 
 > [CHÈN ẢNH SẢN PHẨM 3.15: Danh sách thông báo hoặc trang thống kê.]  
 > [CHÈN ẢNH SẢN PHẨM 3.16: Trợ lý AI trả lời câu hỏi trong phạm vi KTX và trường hợp fallback.]
 
+<a id="sec-3-2-6"></a>
 ### 3.2.6. Tự động gia hạn lưu trú (UC18)
 
 Chức năng gia hạn lưu trú tự động giúp hệ thống tự rà soát danh sách sinh viên sắp hết hạn hợp đồng khi chuẩn bị bước sang học kỳ mới:
@@ -140,6 +185,11 @@ Chức năng gia hạn lưu trú tự động giúp hệ thống tự rà soát 
 - Nếu còn nợ tiền phòng: Hệ thống ghi nhận trạng thái từ chối gia hạn, khóa tài khoản sinh viên và tạo thông báo nhắc nợ.
 - Sử dụng cơ chế khóa dữ liệu (mutex lock) để đảm bảo nếu có nhiều tiến trình chạy cùng lúc cũng không bị gia hạn trùng lặp.
 
+[↑ Trở về mục lục](#muc-luc)
+
+---
+
+<a id="sec-3-3"></a>
 ## 3.3. Một số luồng tích hợp tiêu biểu
 
 | Luồng tích hợp | Các bước chính | Kết quả cần kiểm chứng |
@@ -153,14 +203,21 @@ Chức năng gia hạn lưu trú tự động giúp hệ thống tự rà soát 
 
 > [CHÈN ẢNH SẢN PHẨM 3.17: Ảnh ghép hoặc sơ đồ minh họa một luồng tích hợp hoàn chỉnh, ưu tiên đăng ký → xét duyệt → thanh toán → hợp đồng.]
 
+[↑ Trở về mục lục](#muc-luc)
+
+---
+
+<a id="sec-3-4"></a>
 ## 3.4. Phương pháp và kết quả kiểm thử
 
+<a id="sec-3-4-1"></a>
 ### 3.4.1. Kiểm tra cú pháp PHP
 
 Nhóm em đã quét lỗi cú pháp trên 131 file PHP của toàn dự án. Kết quả là 131/131 file đều sạch, không có lỗi đánh máy hay sai cú pháp.
 
 > [CHÈN ẢNH KẾT QUẢ TEST 3.18: Ảnh cửa sổ terminal hiển thị kết quả PHP lint hoặc bảng tổng hợp 131/131 file đạt.]
 
+<a id="sec-3-4-2"></a>
 ### 3.4.2. Kiểm tra frontend
 
 Nhóm em viết file `tests/frontend.js` để test frontend. Có 12 trường hợp test, tất cả 12/12 đều đạt. Việc này kiểm tra các hộp thoại, bộ lọc phòng và nút tải lại trang. Nhóm em sẽ chụp thêm ảnh màn hình để làm bằng chứng.
@@ -168,6 +225,7 @@ Nhóm em viết file `tests/frontend.js` để test frontend. Có 12 trường h
 > [CHÈN ẢNH KẾT QUẢ TEST 3.19: Kết quả chạy `tests/frontend.js` hiển thị 12/12 ca đạt.]  
 > [CHÈN ẢNH KẾT QUẢ TEST 3.20: Ảnh giao diện desktop/mobile của một chức năng chính, ví dụ QR hoặc đăng ký lưu trú.]
 
+<a id="sec-3-4-3"></a>
 ### 3.4.3. Kiểm tra tích hợp và nghiệp vụ
 
 | Bộ kiểm thử | Số ca đạt | Số ca lỗi | Trạng thái hiện tại |
@@ -183,12 +241,18 @@ Nhóm em đã chạy tất cả bộ test, tổng cộng đạt **235/235** (106
 > [CHÈN ẢNH KẾT QUẢ TEST 3.21: Kết quả chạy test hiển thị tổng 235/235 đạt.]  
 > [CHÈN ẢNH KẾT QUẢ TEST 3.22: Kết quả một nhóm test nghiệp vụ có CSDL, ví dụ đăng ký, hợp đồng, hóa đơn hoặc QR.]
 
+<a id="sec-3-4-4"></a>
 ### 3.4.4. Kiểm tra route, quyền và phương thức HTTP
 
 Nhóm em kiểm tra kỹ các link của trang web: ai chưa đăng nhập thì đẩy ra ngoài, sai quyền thì báo lỗi. Bắt buộc dùng POST khi sửa dữ liệu, và check cả mã bảo mật CSRF. Báo cáo trả về mã lỗi 403, 405 rõ ràng.
 
 > [CHÈN ẢNH KẾT QUẢ TEST 3.23: Kết quả kiểm tra route/phân quyền hoặc màn hình thông báo 403/405/CSRF bị từ chối.]
 
+[↑ Trở về mục lục](#muc-luc)
+
+---
+
+<a id="sec-3-5"></a>
 ## 3.5. Kết quả sửa lỗi và tối ưu hóa
 
 Khi code, nhóm em tập trung xử lý mấy vấn đề sau:
@@ -202,6 +266,11 @@ Khi code, nhóm em tập trung xử lý mấy vấn đề sau:
 
 > [CHÈN ẢNH SẢN PHẨM 3.24: Ảnh một màn hình trước/sau khi sửa lỗi hoặc tối ưu, nếu có minh chứng trực quan.]
 
+[↑ Trở về mục lục](#muc-luc)
+
+---
+
+<a id="sec-3-6"></a>
 ## 3.6. Danh sách minh chứng giao diện cần bổ sung
 
 Để chứng minh sản phẩm đã chạy được, nhóm em cần chụp ít nhất các ảnh sau:
@@ -219,6 +288,7 @@ Khi code, nhóm em tập trung xử lý mấy vấn đề sau:
 
 Nhóm em sẽ tránh chụp mật khẩu hay mã thật của sinh viên vào báo cáo.
 
+<a id="sec-3-6-1"></a>
 ### 3.6.1. Bảng kiểm soát ảnh trước khi nộp
 
 | Mã ảnh | Nội dung cần có | Trạng thái/Ghi chú |
@@ -229,12 +299,23 @@ Nhóm em sẽ tránh chụp mật khẩu hay mã thật của sinh viên vào b�
 | 3.18–3.23 | Lint, frontend, test CSDL, route và phân quyền | Chưa chèn; dùng ảnh terminal hoặc trình duyệt |
 | 3.24 | Minh chứng sửa lỗi/tối ưu | Chưa chèn; có thể bỏ nếu không có ảnh phù hợp |
 
+[↑ Trở về mục lục](#muc-luc)
+
+---
+
+<a id="sec-3-7"></a>
 ## 3.7. Đánh giá mức độ hoàn thành theo kế hoạch tuần 7 và tuần 8
 
 Tới tuần 8, nhóm em đã code xong 18 Use Case và kiểm tra kỹ bằng các bộ test (đạt 235/235). Sản phẩm nhìn chung đáp ứng được khối lượng công việc. Tuy nhiên nhóm em vẫn cần bổ sung thêm đủ ảnh chụp giao diện và chạy thực tế trên máy tính để viết cho xong hẳn Chương 4. Các chức năng tự động (timer) cũng cần test trực tiếp trên server xem có lỗi lầm gì không.
 
+[↑ Trở về mục lục](#muc-luc)
+
+---
+
+<a id="sec-3-8"></a>
 ## 3.8. Ưu điểm và hạn chế
 
+<a id="sec-3-8-1"></a>
 ### 3.8.1. Ưu điểm
 
 - Code bao phủ được các chức năng hay gặp ở KTX như đóng tiền, đăng ký phòng, tự động gia hạn lưu trú.
@@ -243,6 +324,7 @@ Tới tuần 8, nhóm em đã code xong 18 Use Case và kiểm tra kỹ bằng c
 - Chức năng thanh toán mã QR khá thú vị và dễ hiểu.
 - File code được tách rõ MVC, dễ sửa chữa về sau.
 
+<a id="sec-3-8-2"></a>
 ### 3.8.2. Hạn chế
 
 - Phần mềm này nhóm em mới chạy thử bằng code trên máy cá nhân, chưa test áp lực nhiều người vào cùng lúc.
@@ -250,10 +332,22 @@ Tới tuần 8, nhóm em đã code xong 18 Use Case và kiểm tra kỹ bằng c
 - QR thanh toán mới là mô phỏng thôi, chưa liên kết thẻ ngân hàng thật.
 - Tính năng gửi mail đôi khi bị chặn hoặc vào mục thư rác.
 
+[↑ Trở về mục lục](#muc-luc)
+
+---
+
+<a id="sec-3-9"></a>
 ## 3.9. Đánh giá chung
 
 Sản phẩm cơ bản đi được nguyên vòng đời sinh viên KTX: từ lúc nộp đơn đăng ký ở web ngoài, nhân viên duyệt xong có tài khoản, lúc nào trả tiền thì tạo hợp đồng. Hàng tháng có ghi số điện nước thu tiền, đến cuối kỳ có cơ chế tự động xét gia hạn lưu trú. Cuối cùng, hệ thống kiểm tra và báo các bài test local đều Passed 100%. Bước tiếp theo nhóm em sẽ đem chạy thử ở server thật để xem còn lỗi vặt gì không, từ đó đóng gói đề tài lại.
 
+[↑ Trở về mục lục](#muc-luc)
+
+---
+
+<a id="sec-3-10"></a>
 ## 3.10. Kết luận chương
 
 Chương 3 trình bày các kết quả mà nhóm em làm được: giao diện, tính năng, test luồng và test code (235 ca đều Pass). Nhóm em cũng tự nhận xét những ưu điểm và những cái chưa làm được (như chưa test server). Việc có đủ các kết quả ở chương này giúp nhóm em có cơ sở viết tiếp Chương 4 và kết thúc báo cáo đồ án.
+
+[↑ Trở về mục lục](#muc-luc)
