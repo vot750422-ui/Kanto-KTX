@@ -40,7 +40,7 @@ Phạm vi nhóm em kiểm chứng gồm:
 
 ## 3.2. Tổng quan sản phẩm và các chức năng đã triển khai
 
-Hệ thống có các nhóm chức năng chính như: đăng ký, xét duyệt, quản lý sinh viên, hợp đồng, hóa đơn, điện nước, phản ánh sự cố, thông báo, thống kê, và cả thanh toán QR mô phỏng. Bảng dưới đây tóm tắt trạng thái code và các ảnh cần thêm vào báo cáo sau này.
+Hệ thống có các nhóm chức năng chính như: đăng ký, xét duyệt, quản lý sinh viên, hợp đồng, hóa đơn, điện nước, phản ánh sự cố, thông báo, thống kê, thanh toán QR mô phỏng, và tự động gia hạn lưu trú. Bảng dưới đây tóm tắt trạng thái code và các ảnh cần thêm vào báo cáo sau này.
 
 > [CHÈN ẢNH SẢN PHẨM 3.1: Ảnh tổng quan trang chủ hoặc dashboard của hệ thống sau khi đăng nhập. Ghi rõ vai trò và môi trường chạy.]
 
@@ -62,6 +62,7 @@ Hệ thống có các nhóm chức năng chính như: đăng ký, xét duyệt, 
 | UC15 Thông tin phòng | Đã có | Ảnh danh sách phòng và bộ lọc |
 | UC16 Hướng dẫn | Đã có | Ảnh trang hướng dẫn |
 | UC17 QR thanh toán mô phỏng | Đã có | Ảnh tạo QR, trang xác nhận và biên nhận mô phỏng |
+| UC18 Gia hạn lưu trú tự động | Đã hoàn thành | Ảnh kết quả test API gia hạn và log hệ thống |
 
 ### 3.2.1. Đăng nhập, phân quyền và bảo vệ route
 
@@ -130,6 +131,15 @@ Các chức năng còn lại gồm: ghi số điện nước, gửi phản ánh 
 > [CHÈN ẢNH SẢN PHẨM 3.15: Danh sách thông báo hoặc trang thống kê.]  
 > [CHÈN ẢNH SẢN PHẨM 3.16: Trợ lý AI trả lời câu hỏi trong phạm vi KTX và trường hợp fallback.]
 
+### 3.2.6. Tự động gia hạn lưu trú (UC18)
+
+Chức năng gia hạn lưu trú tự động giúp hệ thống tự rà soát danh sách sinh viên sắp hết hạn hợp đồng khi chuẩn bị bước sang học kỳ mới:
+
+- Tự động kiểm tra điều kiện: Sinh viên không còn nợ tiền phòng của kỳ hiện tại.
+- Nếu đủ điều kiện: Hệ thống tự động tạo hợp đồng mới cho học kỳ kế tiếp trong cùng một transaction, chuyển trạng thái hợp đồng cũ sang đã gia hạn, và gửi thông báo xác nhận vào tài khoản sinh viên.
+- Nếu còn nợ tiền phòng: Hệ thống ghi nhận trạng thái từ chối gia hạn, khóa tài khoản sinh viên và tạo thông báo nhắc nợ.
+- Sử dụng cơ chế khóa dữ liệu (mutex lock) để đảm bảo nếu có nhiều tiến trình chạy cùng lúc cũng không bị gia hạn trùng lặp.
+
 ## 3.3. Một số luồng tích hợp tiêu biểu
 
 | Luồng tích hợp | Các bước chính | Kết quả cần kiểm chứng |
@@ -139,6 +149,7 @@ Các chức năng còn lại gồm: ghi số điện nước, gửi phản ánh 
 | QR mô phỏng | Xem hóa đơn → bấm tạo QR → ra trang quét giả lập → bấm xác nhận → báo "Đã thu" | QR phải được server kiểm tra là đúng và còn hạn |
 | Thanh lý hợp đồng | Mở hợp đồng → kiểm tra nợ → bấm thanh lý → lưu lại CSDL | Nợ tiền thì không cho thanh lý |
 | Phản ánh sự cố | Sinh viên báo → quản lý nhận thông tin → sửa xong → đổi trạng thái | Phản ánh đúng phòng, đúng sinh viên, lưu đúng trạng thái |
+| Gia hạn lưu trú tự động (UC18) | Kích hoạt chu kỳ gia hạn → kiểm tra nợ tiền phòng → gia hạn hợp đồng mới hoặc khóa tài khoản | Gia hạn đúng điều kiện, không trùng lặp, thông báo đầy đủ |
 
 > [CHÈN ẢNH SẢN PHẨM 3.17: Ảnh ghép hoặc sơ đồ minh họa một luồng tích hợp hoàn chỉnh, ưu tiên đăng ký → xét duyệt → thanh toán → hợp đồng.]
 
@@ -161,14 +172,15 @@ Nhóm em viết file `tests/frontend.js` để test frontend. Có 12 trường h
 
 | Bộ kiểm thử | Số ca đạt | Số ca lỗi | Trạng thái hiện tại |
 |---|---:|---:|---|
-| `tests/run.php` | 106 | 0 | Đã chạy local với DB |
+| `tests/run.php` (Core) | 106 | 0 | Đã chạy local với DB |
 | Đăng ký và xét duyệt | 30 | 0 | Đã chạy local với DB |
 | Mở rộng phòng (rooms) | 16 | 0 | Đã chạy local với DB |
-| Các test nghiệp vụ còn lại | 70 | 0 | Đã chạy local với DB |
+| Xét duyệt mở rộng (approval) | 70 | 0 | Đã chạy local với DB |
+| Tự động gia hạn lưu trú (`tests/renewal.php` - UC18) | 13 | 0 | Đã chạy local với DB |
 
-Nhóm em đã chạy tất cả bộ test, tổng cộng đạt **222/222** (106 + 70 + 30 + 16) trường hợp theo báo cáo tiến độ tuần 8.
+Nhóm em đã chạy tất cả bộ test, tổng cộng đạt **235/235** (106 + 70 + 30 + 16 + 13) trường hợp theo báo cáo tiến độ tuần 8.
 
-> [CHÈN ẢNH KẾT QUẢ TEST 3.21: Kết quả chạy test hiển thị tổng 222/222 đạt.]
+> [CHÈN ẢNH KẾT QUẢ TEST 3.21: Kết quả chạy test hiển thị tổng 235/235 đạt.]  
 > [CHÈN ẢNH KẾT QUẢ TEST 3.22: Kết quả một nhóm test nghiệp vụ có CSDL, ví dụ đăng ký, hợp đồng, hóa đơn hoặc QR.]
 
 ### 3.4.4. Kiểm tra route, quyền và phương thức HTTP
@@ -186,6 +198,7 @@ Khi code, nhóm em tập trung xử lý mấy vấn đề sau:
 - Xử lý rõ luật tính nợ khi sinh viên muốn hủy hợp đồng.
 - Chia nhỏ tiền điện nước ra từng người thay vì gộp chung khó đòi.
 - Bắt lỗi giao diện ở nút bấm QR, tránh ấn nhiều lần.
+- Đảm bảo cơ chế tự động gia hạn hợp đồng có mutex lock chống race-condition.
 
 > [CHÈN ẢNH SẢN PHẨM 3.24: Ảnh một màn hình trước/sau khi sửa lỗi hoặc tối ưu, nếu có minh chứng trực quan.]
 
@@ -206,7 +219,7 @@ Khi code, nhóm em tập trung xử lý mấy vấn đề sau:
 
 Nhóm em sẽ tránh chụp mật khẩu hay mã thật của sinh viên vào báo cáo.
 
-## 3.7.1. Bảng kiểm soát ảnh trước khi nộp
+### 3.6.1. Bảng kiểm soát ảnh trước khi nộp
 
 | Mã ảnh | Nội dung cần có | Trạng thái/Ghi chú |
 |---|---|---|
@@ -218,13 +231,13 @@ Nhóm em sẽ tránh chụp mật khẩu hay mã thật của sinh viên vào b�
 
 ## 3.7. Đánh giá mức độ hoàn thành theo kế hoạch tuần 7 và tuần 8
 
-Tới tuần 8, nhóm em đã code xong 17 Use Case và kiểm tra kỹ bằng các bộ test (đạt 222/222). Sản phẩm nhìn chung đáp ứng được khối lượng công việc. Tuy nhiên nhóm em vẫn cần bổ sung thêm đủ ảnh chụp giao diện và chạy thực tế trên máy tính để viết cho xong hẳn Chương 4. Các chức năng tự động (timer) cũng cần test trực tiếp trên server xem có lỗi lầm gì không.
+Tới tuần 8, nhóm em đã code xong 18 Use Case và kiểm tra kỹ bằng các bộ test (đạt 235/235). Sản phẩm nhìn chung đáp ứng được khối lượng công việc. Tuy nhiên nhóm em vẫn cần bổ sung thêm đủ ảnh chụp giao diện và chạy thực tế trên máy tính để viết cho xong hẳn Chương 4. Các chức năng tự động (timer) cũng cần test trực tiếp trên server xem có lỗi lầm gì không.
 
 ## 3.8. Ưu điểm và hạn chế
 
 ### 3.8.1. Ưu điểm
 
-- Code bao phủ được các chức năng hay gặp ở KTX như đóng tiền, đăng ký phòng.
+- Code bao phủ được các chức năng hay gặp ở KTX như đóng tiền, đăng ký phòng, tự động gia hạn lưu trú.
 - Phân quyền chặt chẽ từng trang.
 - Các chỗ quan trọng như ghi dữ liệu đều dùng transaction bảo vệ, không lo lỗi nửa chừng.
 - Chức năng thanh toán mã QR khá thú vị và dễ hiểu.
@@ -233,14 +246,14 @@ Tới tuần 8, nhóm em đã code xong 17 Use Case và kiểm tra kỹ bằng c
 ### 3.8.2. Hạn chế
 
 - Phần mềm này nhóm em mới chạy thử bằng code trên máy cá nhân, chưa test áp lực nhiều người vào cùng lúc.
-- Tính năng chạy theo giờ (tự lập hóa đơn) mới viết script test ở local, chưa thả lên server thật để chạy thử lâu dài.
+- Tính năng chạy theo giờ (tự lập hóa đơn, gia hạn định kỳ) mới viết script test ở local, chưa thả lên server thật để chạy thử lâu dài.
 - QR thanh toán mới là mô phỏng thôi, chưa liên kết thẻ ngân hàng thật.
 - Tính năng gửi mail đôi khi bị chặn hoặc vào mục thư rác.
 
 ## 3.9. Đánh giá chung
 
-Sản phẩm cơ bản đi được nguyên vòng đời sinh viên KTX: từ lúc nộp đơn đăng ký ở web ngoài, nhân viên duyệt xong có tài khoản, lúc nào trả tiền thì tạo hợp đồng. Hàng tháng có ghi số điện nước thu tiền. Cuối cùng, hệ thống kiểm tra và báo các bài test local đều Passed 100%. Bước tiếp theo nhóm em sẽ đem chạy thử ở server thật để xem còn lỗi vặt gì không, từ đó đóng gói đề tài lại.
+Sản phẩm cơ bản đi được nguyên vòng đời sinh viên KTX: từ lúc nộp đơn đăng ký ở web ngoài, nhân viên duyệt xong có tài khoản, lúc nào trả tiền thì tạo hợp đồng. Hàng tháng có ghi số điện nước thu tiền, đến cuối kỳ có cơ chế tự động xét gia hạn lưu trú. Cuối cùng, hệ thống kiểm tra và báo các bài test local đều Passed 100%. Bước tiếp theo nhóm em sẽ đem chạy thử ở server thật để xem còn lỗi vặt gì không, từ đó đóng gói đề tài lại.
 
 ## 3.10. Kết luận chương
 
-Chương 3 trình bày các kết quả mà nhóm em làm được: giao diện, tính năng, test luồng và test code (222 ca đều Pass). Nhóm em cũng tự nhận xét những ưu điểm và những cái chưa làm được (như chưa test server). Việc có đủ các kết quả ở chương này giúp nhóm em có cơ sở viết tiếp Chương 4 và kết thúc báo cáo đồ án.
+Chương 3 trình bày các kết quả mà nhóm em làm được: giao diện, tính năng, test luồng và test code (235 ca đều Pass). Nhóm em cũng tự nhận xét những ưu điểm và những cái chưa làm được (như chưa test server). Việc có đủ các kết quả ở chương này giúp nhóm em có cơ sở viết tiếp Chương 4 và kết thúc báo cáo đồ án.
