@@ -98,7 +98,7 @@ storage/                   # ảnh minh chứng đăng ký (giới hạn quyền
 | UC14 | Thống kê báo cáo | ⬜ Chưa code | |
 | UC15 | Xem thông tin phòng | ⬜ Chưa code | |
 | UC16 | Xem hướng dẫn | ⬜ Chưa code | |
-| **UC-18** | **Gia hạn (Timer)** | ⬜ **Chưa code** | ⭐ Yêu cầu mới, xem mục 7 |
+| **UC-18** | **Gia hạn (Timer)** | ✅ **Đã code** | 13/13 test đạt (`tests/renewal.php`), xem mục 7 |
 
 > ⚠️ **Lệch mã UC giữa hai bộ tài liệu** — xem mục 8.
 

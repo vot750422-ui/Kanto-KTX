@@ -6,7 +6,7 @@
 - **Tên Use Case:** Gia hạn
 - **Tác nhân chính:** Timer (Hệ thống)
 - **Use Case liên quan:** UC10.1 (Lập hóa đơn tiền phòng), UC05 (Quản lý hợp đồng), UC12 (Xem thông báo)
-- **Trạng thái triển khai:** ⬜ Chưa code — đang chờ chốt nghiệp vụ
+- **Trạng thái triển khai:** ✅ Đã code — 13/13 kiểm thử đạt (`tests/renewal.php`)
 
 ## 2. Mục đích
 
