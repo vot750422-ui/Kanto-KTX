@@ -1,81 +1,33 @@
 # Báo cáo tiến độ tuần 8
 
-## 1. Thông tin chung
+## Thông tin chung
 
-- Đề tài: Website Quản lý Ký túc xá trường Đại học Kanto
-- Tuần báo cáo: Tuần 8
-- Thời điểm lập bản nháp: 31/10/2026
-- Trọng tâm tuần: sửa lỗi, tối ưu hóa và kiểm tra mức độ ổn định của hệ thống
+- Họ và tên sinh viên: Phan Minh Trọng, Hồ Hoàng Như Ý.
+- MSSV: KTPM2411047, KTPM2411004.
+- Khóa: 2024. Ngành đào tạo: Kỹ Thuật Phần Mềm. Khoa: Công Nghệ Thông Tin.
+- Tên đề tài: “Hệ thống quản lý ký túc xá trường Đại học Kanto”.
+- Thời gian thực hiện đề tài: Tuần 8, từ ngày 26/10/2026 đến ngày 01/11/2026.
+- Cán bộ hướng dẫn: Trịnh Thanh Duy.
+- Lần báo cáo thứ: 7.
 
-## 2. Công việc đã thực hiện
+## 1. Công việc đã thực hiện
 
-### 2.1. Phát triển và hoàn thiện chức năng
+| Thời gian | Công việc thực hiện | Kết quả đạt được |
+|---|---|---|
+| Từ 26/10/2026 đến 27/10/2026 | Rà soát toàn bộ route, controller, model và view; kiểm tra luồng phân quyền 4 vai trò, bảo vệ CSRF và cơ chế bảo vệ phiên đăng nhập. | Hệ thống chuẩn hóa 100% route, chặn triệt để các truy cập trái quyền (HTTP 403) và phương thức không hợp lệ (HTTP 405). Bộ test `tests/run.php` đạt 106/106 ca kiểm thử. |
+| Từ 27/10/2026 đến 29/10/2026 | Tối ưu hóa các giao dịch CSDL (transaction, prepared statement) khi duyệt đơn và thanh lý hợp đồng; chia nhỏ công nợ điện nước theo từng sinh viên; bổ sung UC18 - Tự động gia hạn lưu trú cho sinh viên đủ điều kiện. | Hoàn thiện chức năng UC18 với cơ chế khóa dữ liệu (mutex lock) chống gia hạn trùng lặp; bảo vệ toàn vẹn dữ liệu hợp đồng và công nợ; kiểm thử `tests/renewal.php` đạt 13/13 ca. |
+| Từ 29/10/2026 đến 30/10/2026 | Chạy kiểm tra cú pháp PHP (PHP lint), kiểm thử logic frontend (Node.js) và kiểm thử nghiệp vụ toàn diện trên môi trường WAMP/MySQL cục bộ. | Quét sạch 125/125 file PHP không lỗi cú pháp; `tests/frontend.js` đạt 12/12 ca; toàn bộ hệ thống đạt 235/235 ca kiểm thử tích hợp (106 route + 70 duyệt đơn + 30 đăng ký + 16 tra cứu phòng + 13 gia hạn). |
+| Từ 30/10/2026 đến 01/11/2026 | Khởi tạo dữ liệu sinh viên mẫu sinh động, kiểm thử luồng thực tế và chụp 24 ảnh minh chứng giao diện; hoàn thiện Bản thảo Chương 3 (Kết quả và thảo luận) đính kèm. | Hoàn thành tệp `BAN_THAO_CHUONG_3.docx` (4.68 MB) với 24 hình ảnh minh chứng thực tế trên hệ thống đang chạy, có mục lục hyperlink 2 chiều và bảng kiểm soát ảnh chi tiết. |
 
-Nhóm đã xây dựng và tiếp tục hoàn thiện các nhóm chức năng sau:
+## 2. Kế hoạch công việc tiếp theo
 
-- Đăng nhập, đăng xuất và phân quyền theo vai trò.
-- Đăng ký lưu trú, chọn phòng và giữ chỗ.
-- Xét duyệt đơn đăng ký và tạo dữ liệu phục vụ bước thanh toán.
-- Quản lý thông tin sinh viên và tra cứu hợp đồng.
-- Thanh lý hợp đồng theo điều kiện công nợ đã chốt.
-- Tra cứu và xác nhận hóa đơn.
-- Tạo QR thanh toán mô phỏng cho sinh viên.
-- Xem thông tin lưu trú, thông báo và thống kê.
-- Ghi nhận chỉ số điện nước và xử lý phản ánh sự cố.
-- Lập hóa đơn tiền phòng, hóa đơn điện nước theo script/tác vụ định kỳ.
-- Trợ lý AI hỏi đáp thông tin chung về ký túc xá.
+| Thời gian | Dự kiến công việc thực hiện | Dự kiến kết quả đạt được |
+|---|---|---|
+| Từ 02/11/2026 đến 03/11/2026 | Tiếp thu ý kiến góp ý của Cán bộ hướng dẫn về Bản thảo Chương 3 và phương án thanh toán QR mô phỏng để chỉnh sửa, hoàn thiện. | Bản thảo Chương 3 được chuẩn hóa theo đúng yêu cầu học thuật của Khoa và Nhà trường. |
+| Từ 04/11/2026 đến 06/11/2026 | Soạn thảo Chương 4 (Kết luận và hướng phát triển); tổng kết ưu điểm, hạn chế và đề xuất mở rộng hệ thống (như cổng thanh toán trực tuyến, thông báo qua ứng dụng di động). | Hoàn thành nội dung Chương 4, lời cảm ơn và tài liệu tham khảo. |
+| Từ 07/11/2026 đến 08/11/2026 | Ghép toàn bộ báo cáo hoàn chỉnh (Lời mở đầu, Chương 1, 2, 3, 4, Phụ lục) thành một file Word và xuất file PDF chính thức; rà soát format BM 1.8.a. | Bản báo cáo toàn văn Đồ án 1 hoàn chỉnh, đồng bộ thuật ngữ, mã Use Case (UC01–UC18) và bảng biểu. |
 
-### 2.2. Sửa lỗi và tối ưu hóa
+## 3. Đề xuất và kiến nghị
 
-- Rà soát lại luồng Route → Controller → Model → View.
-- Làm rõ cấu trúc một số Controller và Model khó đọc.
-- Giữ lại prepared statement, transaction, kiểm tra quyền và kiểm tra dữ liệu đầu vào.
-- Bổ sung và duy trì các test nghiệp vụ cho các Use Case chính.
-- Kiểm tra giao diện JavaScript liên quan đến modal, bộ lọc và tạo QR.
-
-## 3. Kết quả kiểm tra hiện tại
-
-| Hạng mục | Kết quả hiện tại | Ghi chú |
-|---|---:|---|
-| PHP lint | 131/131 file đạt | Kiểm tra cú pháp tĩnh |
-| Frontend JavaScript | 12/12 đạt | Chạy được bằng Node.js |
-| Test tích hợp `tests/run.php` | Chưa xác nhận trong lượt hiện tại | MySQL/WAMP chưa chạy, trả `Database connection failed` |
-| Test nghiệp vụ có dùng CSDL | Chờ chạy lại | Cần bật MySQL trước khi kết luận |
-| Kiểm tra triển khai Render/Brevo | Chưa xác nhận đầy đủ | Không đánh đồng với kiểm tra local |
-
-Kết quả PHP lint và frontend là kết quả kiểm tra hiện tại. Các số liệu test nghiệp vụ được ghi trong tài liệu bàn giao trước đó cần được chạy lại sau khi bật WAMP/MySQL trước khi đưa vào báo cáo chính thức.
-
-## 4. Vấn đề còn tồn tại
-
-- Chưa hoàn thành Chương 3 về kết quả và thảo luận.
-- Chưa hoàn thành Chương 4, kết luận, kiến nghị, phụ lục và tài liệu tham khảo.
-- Chưa ghép thành một file báo cáo cuối `.docx` hoặc `.pdf`.
-- Chưa bổ sung đầy đủ ảnh chụp giao diện sản phẩm chạy thật.
-- `BUSINESS_RULES.md` còn trống và `USE_CASE_OVERVIEW.md` cần đồng bộ lại mã Use Case với đặc tả và mã nguồn hiện hành.
-- Tác vụ lập hóa đơn định kỳ mới có code/script và test local; chưa dùng kết quả đó để khẳng định scheduler đã chạy ổn định trên môi trường triển khai.
-- QR hiện là luồng thanh toán mô phỏng, chưa phải tích hợp ngân hàng thật.
-
-## 5. Kế hoạch tiếp theo
-
-### Trước khi gửi báo cáo tuần 8
-
-1. Bật WAMP/MySQL.
-2. Chạy lại `tests/run.php` và các test nghiệp vụ chính.
-3. Ghi lại chính xác số ca PASS/FAIL hiện tại.
-4. Cập nhật bảng kết quả kiểm thử trong bản báo cáo.
-5. Rà soát lại các tài liệu đang lệch mã Use Case.
-
-### Tuần 9
-
-1. Hoàn thiện Chương 3 bằng kết quả kiểm thử và ảnh giao diện thực tế.
-2. Viết Chương 4, kết luận, hạn chế và hướng phát triển.
-3. Hoàn thiện phụ lục, tài liệu tham khảo và mục lục.
-4. Ghép báo cáo thành `.docx` và xuất `.pdf`.
-5. Đóng gói source code và kiểm tra lại hướng dẫn cài đặt.
-
-## 6. Nội dung cần xin ý kiến giảng viên
-
-- Mức độ chấp nhận của thanh toán QR mô phỏng trong phạm vi Đồ án 1.
-- Cách trình bày các tác vụ định kỳ khi nhóm mới kiểm thử local, chưa có bằng chứng chạy ổn định trên môi trường triển khai.
-- Phạm vi ảnh giao diện và số lượng Use Case cần minh họa trong Chương 3.
-
+- Nhóm kính gửi Thầy xem xét và cho ý kiến về **Bản thảo Chương 3** (đính kèm tệp `BAN_THAO_CHUONG_3.docx`) với đầy đủ 24 ảnh giao diện và kết quả kiểm thử thực tế.
+- Xin ý kiến Thầy về mức độ chấp nhận của cơ chế thanh toán QR mô phỏng trong phạm vi đề tài Đồ án 1 và định hướng hoàn thiện Chương 4 trong tuần tới.

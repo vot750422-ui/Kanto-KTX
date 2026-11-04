@@ -1,6 +1,7 @@
 """Chuyen bao cao tien do (Markdown) sang .docx theo mau BM 1.8.a voi ho tro Muc luc va Hyperlink."""
 import re
 import sys
+import os
 from docx import Document
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -194,6 +195,28 @@ def convert(md_path, docx_path):
             clean_anchor = re.sub(r"[^a-zA-Z0-9_]", "_", m_anchor.group(1).strip("#").replace("-", "_"))[:40]
             if clean_anchor not in pending_bookmarks:
                 pending_bookmarks.append(clean_anchor)
+            i += 1
+            continue
+
+        # Anh markdown (![alt](path))
+        m_img = re.match(r"^\s*!\[([^\]]*)\]\(([^)]+)\)\s*$", line)
+        if m_img:
+            caption = m_img.group(1).strip()
+            img_rel_path = m_img.group(2).strip()
+            base_dir = os.path.dirname(os.path.abspath(md_path))
+            full_img_path = os.path.normpath(os.path.join(base_dir, img_rel_path)) if not os.path.isabs(img_rel_path) else img_rel_path
+            if os.path.exists(full_img_path):
+                p_img = doc.add_paragraph()
+                p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                p_img.paragraph_format.space_before = Pt(8)
+                p_img.paragraph_format.space_after = Pt(2)
+                p_img.add_run().add_picture(full_img_path, width=Cm(15))
+                if caption:
+                    p_cap = doc.add_paragraph()
+                    p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    p_cap.paragraph_format.space_after = Pt(8)
+                    run_cap = p_cap.add_run(caption)
+                    set_font(run_cap, size=11, italic=True)
             i += 1
             continue
 

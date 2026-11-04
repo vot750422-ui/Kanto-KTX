@@ -1,4 +1,4 @@
-/storage/registration/
+﻿/storage/registration/
 .env
 .env.*
 /vendor/
@@ -9,3 +9,10 @@
 ~$*.docx
 
 storage/backup_*.sql
+
+# Backups & Temp files
+*.bak
+*.bak*
+*.pyc
+__pycache__/
+repomix-output.xml
