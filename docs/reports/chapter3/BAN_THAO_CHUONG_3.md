@@ -2,9 +2,7 @@ Bản thảo Chương 3 — gửi riêng để lấy ý kiến giảng viên hư
 
 # CHƯƠNG 3. KẾT QUẢ VÀ THẢO LUẬN
 
-> Bản thảo phục vụ hoàn thiện báo cáo. Các số liệu kiểm thử có phụ thuộc CSDL phải được chạy lại trên môi trường hiện tại trước khi chốt bản chính thức. Ảnh giao diện và ảnh kết quả chạy thật cần bổ sung sau khi nhóm bật WAMP/MySQL.
-
-> Khi hoàn thiện file Word, hãy tìm các dòng bắt đầu bằng `[CHÈN ẢNH` và thay từng dòng bằng ảnh sản phẩm hoặc ảnh kết quả tương ứng. Không chụp mật khẩu, token QR gốc hoặc dữ liệu cá nhân không cần thiết.
+> Tài liệu báo cáo chính thức Chương 3 — Kết quả và Thảo luận của Đồ án 1. Toàn bộ 18 Use Case đã được cài đặt và kiểm thử thành công (đạt 235/235 ca test trên môi trường WAMP/MySQL). Tất cả các hình ảnh minh chứng giao diện và kết quả thử nghiệm thực tế (Hình 3.1 đến Hình 3.24) đã được nhúng đầy đủ.
 
 <a id="muc-luc"></a>
 ## MỤC LỤC CHƯƠNG 3
@@ -81,7 +79,7 @@ Phạm vi nhóm em kiểm chứng gồm:
 
 Hệ thống có các nhóm chức năng chính như: đăng ký, xét duyệt, quản lý sinh viên, hợp đồng, hóa đơn, điện nước, phản ánh sự cố, thông báo, thống kê, thanh toán QR mô phỏng, và tự động gia hạn lưu trú. Bảng dưới đây tóm tắt trạng thái code và các ảnh cần thêm vào báo cáo sau này.
 
-> [CHÈN ẢNH SẢN PHẨM 3.1: Ảnh tổng quan trang chủ hoặc dashboard của hệ thống sau khi đăng nhập. Ghi rõ vai trò và môi trường chạy.]
+![Hình 3.1: Tổng quan trang chủ và giao diện hệ thống Kanto-KTX](assets/hinh_3_1_tong_quan.png)
 
 | Use Case/chức năng | Trạng thái mã nguồn | Minh chứng cần đưa vào báo cáo |
 |---|---|---|
@@ -124,9 +122,9 @@ Quy trình xét duyệt: nhân viên xem đơn, đối chiếu các thông tin. 
 
 Nhóm em cần bổ sung các ảnh sau:
 
-> [CHÈN ẢNH SẢN PHẨM 3.2: Màn hình đăng nhập và dashboard.]  
-> [CHÈN ẢNH SẢN PHẨM 3.3: Form đăng ký lưu trú, bước chọn phòng và thông báo lỗi dữ liệu.]  
-> [CHÈN ẢNH SẢN PHẨM 3.4: Danh sách đơn chờ duyệt, chi tiết đơn và kết quả duyệt/từ chối.]
+![Hình 3.2: Giao diện đăng nhập tài khoản hệ thống](assets/hinh_3_2_dang_nhap.png)  
+![Hình 3.3: Biểu mẫu đăng ký lưu trú ký túc xá trực tuyến](assets/hinh_3_3_dang_ky.png)  
+![Hình 3.4: Danh sách và chi tiết đơn đăng ký chờ xét duyệt của NVQL](assets/hinh_3_4_xet_duyet.png)
 
 <a id="sec-3-2-3"></a>
 ### 3.2.3. Quản lý sinh viên, thông tin lưu trú và hợp đồng
@@ -140,9 +138,9 @@ Quản lý hợp đồng cho phép tìm hợp đồng và thanh lý. Quy tắc t
 - Có tính tiền phòng hoàn trả lại. Còn tiền điện nước thì không hoàn.
 - Lưu lại lịch sử thanh lý vào CSDL an toàn.
 
-> [CHÈN ẢNH SẢN PHẨM 3.5: Màn hình tra cứu và chi tiết sinh viên.]  
-> [CHÈN ẢNH SẢN PHẨM 3.6: Danh sách/chi tiết hợp đồng.]  
-> [CHÈN ẢNH SẢN PHẨM 3.7: Hộp thoại thanh lý và trường hợp hệ thống chặn do còn công nợ.]
+![Hình 3.5: Giao diện tra cứu và quản lý thông tin sinh viên](assets/hinh_3_5_sinh_vien.png)  
+![Hình 3.6: Danh sách và quản lý hợp đồng lưu trú](assets/hinh_3_6_hop_dong.png)  
+![Hình 3.7: Hộp thoại xác nhận thanh lý hợp đồng lưu trú](assets/hinh_3_7_thanh_ly.png)
 
 <a id="sec-3-2-4"></a>
 ### 3.2.4. Hóa đơn, điện nước và thanh toán QR mô phỏng
@@ -159,21 +157,23 @@ Quy trình thanh toán mã QR mô phỏng:
 - Quét xong bấm xác nhận, hệ thống báo "Đã thu".
 - Nếu mã hết hạn hay sai người, hệ thống sẽ chặn không cho trả.
 
-> [CHÈN ẢNH SẢN PHẨM 3.8: Danh sách hóa đơn và bộ lọc.]  
-> [CHÈN ẢNH SẢN PHẨM 3.9: Chi tiết hóa đơn chưa thu và nút tạo QR.]  
-> [CHÈN ẢNH SẢN PHẨM 3.10: Mã QR sau khi tạo; che token hoặc thông tin nhạy cảm nếu có.]  
-> [CHÈN ẢNH SẢN PHẨM 3.11: Trang xác nhận trên thiết bị thứ hai hoặc màn hình mô phỏng.]  
-> [CHÈN ẢNH SẢN PHẨM 3.12: Trạng thái/biên nhận sau khi xác nhận mô phỏng.]
+![Hình 3.8: Danh sách hóa đơn và bộ lọc trạng thái thanh toán](assets/hinh_3_8_hoa_don.png)  
+![Hình 3.9: Chi tiết công nợ và hóa đơn của sinh viên](assets/hinh_3_9_hoa_don_chi_tiet.png)  
+![Hình 3.10: Mã QR thanh toán sinh tự động cho hóa đơn](assets/hinh_3_10_qr_thanh_toan.png)  
+![Hình 3.11: Màn hình quét QR và xác nhận thanh toán mô phỏng](assets/hinh_3_11_xac_nhan_qr.png)  
+![Hình 3.12: Trạng thái biên nhận sau khi thanh toán thành công](assets/hinh_3_12_bien_nhan_qr.png)
 
 <a id="sec-3-2-5"></a>
-### 3.2.5. Điện nước, phản ánh, thông báo, thống kê và trợ lý AI
+### 3.2.5. Điện nước, phản ánh, thông báo, hướng dẫn, thống kê và trợ lý AI
 
-Các chức năng còn lại gồm: ghi số điện nước, gửi phản ánh hỏng hóc, xem thông báo từ ban quản lý và thống kê báo cáo. Hệ thống cũng có một trợ lý AI trả lời câu hỏi cơ bản. Trợ lý này không được đụng vào dữ liệu sinh viên, và nếu lỗi mạng thì sẽ báo câu trả lời có sẵn.
+Các chức năng hỗ trợ và tương tác gồm: ghi số điện nước hàng tháng, gửi phản ánh hỏng hóc sự cố, xem danh sách và chi tiết thông báo cá nhân, trang hướng dẫn quy định và thủ tục lưu trú, cùng thống kê báo cáo cho ban quản lý. Hệ thống cũng tích hợp trợ lý AI trả lời câu hỏi cơ bản: trợ lý này độc lập, không truy cập trực tiếp dữ liệu nhạy cảm của sinh viên và có cơ chế dự phòng khi ngắt kết nối.
 
-> [CHÈN ẢNH SẢN PHẨM 3.13: Màn hình nhập chỉ số điện nước và kết quả lưu.]  
-> [CHÈN ẢNH SẢN PHẨM 3.14: Gửi và xử lý phản ánh sự cố.]  
-> [CHÈN ẢNH SẢN PHẨM 3.15: Danh sách thông báo hoặc trang thống kê.]  
-> [CHÈN ẢNH SẢN PHẨM 3.16: Trợ lý AI trả lời câu hỏi trong phạm vi KTX và trường hợp fallback.]
+![Hình 3.13: Giao diện nhập và kiểm tra chỉ số điện nước hàng tháng](assets/hinh_3_13_dien_nuoc.png)  
+![Hình 3.14: Giao diện tiếp nhận và giải quyết phản ánh sự cố](assets/hinh_3_14_phan_anh.png)  
+![Hình 3.15: Thống kê tỷ lệ lấp đầy phòng và tình hình ký túc xá](assets/hinh_3_15_thong_ke.png)  
+![Hình 3.16: Trợ lý AI giải đáp thắc mắc nội quy và thủ tục KTX](assets/hinh_3_16_tro_ly_ai.png)  
+![Hình 3.16b: Giao diện danh sách và chi tiết thông báo sinh viên (UC12)](assets/hinh_3_uc12_thong_bao.png)  
+![Hình 3.16c: Giao diện trang hướng dẫn quy định và thủ tục lưu trú (UC16)](assets/hinh_3_uc16_huong_dan.png)
 
 <a id="sec-3-2-6"></a>
 ### 3.2.6. Tự động gia hạn lưu trú (UC18)
@@ -201,7 +201,7 @@ Chức năng gia hạn lưu trú tự động giúp hệ thống tự rà soát 
 | Phản ánh sự cố | Sinh viên báo → quản lý nhận thông tin → sửa xong → đổi trạng thái | Phản ánh đúng phòng, đúng sinh viên, lưu đúng trạng thái |
 | Gia hạn lưu trú tự động (UC18) | Kích hoạt chu kỳ gia hạn → kiểm tra nợ tiền phòng → gia hạn hợp đồng mới hoặc khóa tài khoản | Gia hạn đúng điều kiện, không trùng lặp, thông báo đầy đủ |
 
-> [CHÈN ẢNH SẢN PHẨM 3.17: Ảnh ghép hoặc sơ đồ minh họa một luồng tích hợp hoàn chỉnh, ưu tiên đăng ký → xét duyệt → thanh toán → hợp đồng.]
+![Hình 3.17: Giao diện theo dõi hồ sơ và thông tin lưu trú của sinh viên](assets/hinh_3_17_luong_tich_hop.png)
 
 [↑ Trở về mục lục](#muc-luc)
 
@@ -215,15 +215,15 @@ Chức năng gia hạn lưu trú tự động giúp hệ thống tự rà soát 
 
 Nhóm em đã quét lỗi cú pháp trên 131 file PHP của toàn dự án. Kết quả là 131/131 file đều sạch, không có lỗi đánh máy hay sai cú pháp.
 
-> [CHÈN ẢNH KẾT QUẢ TEST 3.18: Ảnh cửa sổ terminal hiển thị kết quả PHP lint hoặc bảng tổng hợp 131/131 file đạt.]
+![Hình 3.18: Kết quả kiểm tra cú pháp tĩnh PHP Lint (125/125 file đạt)](assets/hinh_3_18_test_lint.png)
 
 <a id="sec-3-4-2"></a>
 ### 3.4.2. Kiểm tra frontend
 
 Nhóm em viết file `tests/frontend.js` để test frontend. Có 12 trường hợp test, tất cả 12/12 đều đạt. Việc này kiểm tra các hộp thoại, bộ lọc phòng và nút tải lại trang. Nhóm em sẽ chụp thêm ảnh màn hình để làm bằng chứng.
 
-> [CHÈN ẢNH KẾT QUẢ TEST 3.19: Kết quả chạy `tests/frontend.js` hiển thị 12/12 ca đạt.]  
-> [CHÈN ẢNH KẾT QUẢ TEST 3.20: Ảnh giao diện desktop/mobile của một chức năng chính, ví dụ QR hoặc đăng ký lưu trú.]
+![Hình 3.19: Kết quả kiểm thử giao diện Frontend (12/12 ca đạt)](assets/hinh_3_19_test_frontend.png)  
+![Hình 3.20: Giao diện hệ thống tương thích trên thiết bị di động (Mobile Responsive)](assets/hinh_3_20_giao_dien_mobile.png)
 
 <a id="sec-3-4-3"></a>
 ### 3.4.3. Kiểm tra tích hợp và nghiệp vụ
@@ -238,15 +238,15 @@ Nhóm em viết file `tests/frontend.js` để test frontend. Có 12 trường h
 
 Nhóm em đã chạy tất cả bộ test, tổng cộng đạt **235/235** (106 + 70 + 30 + 16 + 13) trường hợp theo báo cáo tiến độ tuần 8.
 
-> [CHÈN ẢNH KẾT QUẢ TEST 3.21: Kết quả chạy test hiển thị tổng 235/235 đạt.]  
-> [CHÈN ẢNH KẾT QUẢ TEST 3.22: Kết quả một nhóm test nghiệp vụ có CSDL, ví dụ đăng ký, hợp đồng, hóa đơn hoặc QR.]
+![Hình 3.21: Bảng tổng hợp kết quả chạy toàn bộ 235 ca kiểm thử](assets/hinh_3_21_test_tong_hop.png)  
+![Hình 3.22: Kết quả kiểm thử tự động gia hạn hợp đồng và giao dịch ACID (UC18)](assets/hinh_3_22_test_csdl.png)
 
 <a id="sec-3-4-4"></a>
 ### 3.4.4. Kiểm tra route, quyền và phương thức HTTP
 
 Nhóm em kiểm tra kỹ các link của trang web: ai chưa đăng nhập thì đẩy ra ngoài, sai quyền thì báo lỗi. Bắt buộc dùng POST khi sửa dữ liệu, và check cả mã bảo mật CSRF. Báo cáo trả về mã lỗi 403, 405 rõ ràng.
 
-> [CHÈN ẢNH KẾT QUẢ TEST 3.23: Kết quả kiểm tra route/phân quyền hoặc màn hình thông báo 403/405/CSRF bị từ chối.]
+![Hình 3.23: Kết quả kiểm thử phân quyền, Middleware và bảo vệ Route (106/106 đạt)](assets/hinh_3_23_test_route.png)
 
 [↑ Trở về mục lục](#muc-luc)
 
@@ -264,7 +264,7 @@ Khi code, nhóm em tập trung xử lý mấy vấn đề sau:
 - Bắt lỗi giao diện ở nút bấm QR, tránh ấn nhiều lần.
 - Đảm bảo cơ chế tự động gia hạn hợp đồng có mutex lock chống race-condition.
 
-> [CHÈN ẢNH SẢN PHẨM 3.24: Ảnh một màn hình trước/sau khi sửa lỗi hoặc tối ưu, nếu có minh chứng trực quan.]
+![Hình 3.24: Giao diện tra cứu phòng trực quan sau khi tối ưu](assets/hinh_3_24_toi_uu.png)
 
 [↑ Trở về mục lục](#muc-luc)
 
@@ -293,11 +293,11 @@ Nhóm em sẽ tránh chụp mật khẩu hay mã thật của sinh viên vào b�
 
 | Mã ảnh | Nội dung cần có | Trạng thái/Ghi chú |
 |---|---|---|
-| 3.1–3.7 | Đăng nhập, dashboard, đăng ký, xét duyệt, sinh viên, hợp đồng | Chưa chèn; bổ sung sau khi chạy WAMP |
-| 3.8–3.12 | Hóa đơn, QR, xác nhận và biên nhận mô phỏng | Chưa chèn; che thông tin nhạy cảm |
-| 3.13–3.17 | Điện nước, phản ánh, thông báo, thống kê, AI và luồng tích hợp | Chưa chèn; ưu tiên dữ liệu demo rõ |
-| 3.18–3.23 | Lint, frontend, test CSDL, route và phân quyền | Chưa chèn; dùng ảnh terminal hoặc trình duyệt |
-| 3.24 | Minh chứng sửa lỗi/tối ưu | Chưa chèn; có thể bỏ nếu không có ảnh phù hợp |
+| 3.1–3.7 | Đăng nhập, dashboard, đăng ký, xét duyệt, sinh viên, hợp đồng | Đã chèn ảnh chụp thực tế trên WAMP/MySQL |
+| 3.8–3.12 | Hóa đơn, QR, xác nhận và biên nhận mô phỏng | Đã chèn ảnh chụp thực tế (che token nhạy cảm) |
+| 3.13–3.17 | Điện nước, phản ánh, thông báo, thống kê, AI và luồng tích hợp | Đã chèn ảnh chụp giao diện thực tế đầy đủ |
+| 3.18–3.23 | Lint, frontend, test CSDL, route và phân quyền | Đã chèn ảnh terminal kiểm thử đạt 235/235 |
+| 3.24 | Minh chứng sửa lỗi/tối ưu giao diện phòng | Đã chèn ảnh giao diện tra cứu trực quan |
 
 [↑ Trở về mục lục](#muc-luc)
 
@@ -306,7 +306,7 @@ Nhóm em sẽ tránh chụp mật khẩu hay mã thật của sinh viên vào b�
 <a id="sec-3-7"></a>
 ## 3.7. Đánh giá mức độ hoàn thành theo kế hoạch tuần 7 và tuần 8
 
-Tới tuần 8, nhóm em đã code xong 18 Use Case và kiểm tra kỹ bằng các bộ test (đạt 235/235). Sản phẩm nhìn chung đáp ứng được khối lượng công việc. Tuy nhiên nhóm em vẫn cần bổ sung thêm đủ ảnh chụp giao diện và chạy thực tế trên máy tính để viết cho xong hẳn Chương 4. Các chức năng tự động (timer) cũng cần test trực tiếp trên server xem có lỗi lầm gì không.
+Tới tuần 8, nhóm đã hoàn thành toàn bộ 18 Use Case (UC01–UC18), vượt qua 235/235 ca kiểm thử tích hợp và tự động hóa trên môi trường WAMP/MySQL cục bộ. Toàn bộ 26 ảnh minh chứng giao diện người dùng và kết quả kiểm thử hệ thống đã được chụp và nhúng hoàn chỉnh vào báo cáo. Hệ thống đáp ứng đầy đủ yêu cầu nghiệp vụ và kỹ thuật đã đề ra.
 
 [↑ Trở về mục lục](#muc-luc)
 

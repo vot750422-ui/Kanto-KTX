@@ -27,7 +27,7 @@ rectangle "HỆ THỐNG QUẢN LÝ KÝ TÚC XÁ" {
     usecase "Xem thông báo" as UC12
     usecase "Gửi phản ánh\nsự cố" as UC08
     usecase "Xem thông tin\nlưu trú" as UC11
-    usecase "Sử dụng trợ lý AI" as UC13
+    usecase "Chatbot AI" as UC13
     usecase "Thanh toán\nhóa đơn" as UC17
 
     usecase "Xét duyệt đơn đăng ký" as UC03
@@ -40,6 +40,7 @@ rectangle "HỆ THỐNG QUẢN LÝ KÝ TÚC XÁ" {
     usecase "Quản lý hóa đơn" as UC07
     usecase "Xem thống kê\nvà báo cáo" as UC14
     usecase "Lập hóa đơn" as UC10
+    usecase "Gia hạn lưu trú\n(tự động)" as UC18
 }
 
 ' Khách vãng lai
@@ -72,7 +73,8 @@ Accountant --> UC07
 Manager --> UC01
 Manager --> UC14
 
-' Timer
+' Timer (System)
 Timer --> UC10
+Timer --> UC18
 
 @enduml
