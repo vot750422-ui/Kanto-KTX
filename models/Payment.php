@@ -216,8 +216,13 @@ class Payment
             $stmt->execute([$roomId, $roomId]);
             if ((int)$stmt->fetchColumn() > (int)$room['SucChua']) { throw new DomainException('Số chỗ đang sử dụng vượt sức chứa phòng.'); }
             $contract = strtoupper(bin2hex(random_bytes(5)));
-            $stmt = $this->db->prepare("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai,MaHocKy) VALUES (?,?,?,?,?,'Còn hạn',?)");
-            $stmt->execute([$contract, $detail['MSSV'], $roomId, $semester['NgayBatDau'], $semester['NgayKetThuc'], $detail['MaHocKy']]);
+            if ($this->hasHopdongSemesterColumn()) {
+                $stmt = $this->db->prepare("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai,MaHocKy) VALUES (?,?,?,?,?,'Còn hạn',?)");
+                $stmt->execute([$contract, $detail['MSSV'], $roomId, $semester['NgayBatDau'], $semester['NgayKetThuc'], $detail['MaHocKy']]);
+            } else {
+                $stmt = $this->db->prepare("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES (?,?,?,?,?,'Còn hạn')");
+                $stmt->execute([$contract, $detail['MSSV'], $roomId, $semester['NgayBatDau'], $semester['NgayKetThuc']]);
+            }
             $stmt = $this->db->prepare('UPDATE dondangky SET MaHopDong=? WHERE MaDonDangKy=? AND MaHopDong IS NULL');
             $stmt->execute([$contract, $application['MaDonDangKy']]);
             if ($stmt->rowCount() !== 1) { throw new DomainException('Đơn đăng ký đã thay đổi. Vui lòng tải lại trang.'); }
@@ -274,5 +279,21 @@ class Payment
                 WHERE MaHoaDon=? AND TrangThai='Chưa thu'");
             $stmt->execute([$invoice]);
         }
+    }
+
+    private function hasHopdongSemesterColumn(): bool
+    {
+        static $hasColumn = null;
+        if ($hasColumn !== null) {
+            return $hasColumn;
+        }
+        try {
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'hopdong' AND column_name = 'MaHocKy'");
+            $stmt->execute();
+            $hasColumn = (int) $stmt->fetchColumn() > 0;
+        } catch (Throwable) {
+            $hasColumn = false;
+        }
+        return $hasColumn;
     }
 }
