@@ -37,7 +37,9 @@ class PaymentController
                 http_response_code(409); $error = $exception->getMessage();
             } catch (Throwable $exception) {
                 http_response_code(500); $error = 'Chưa thể xác nhận thanh toán. Vui lòng thử lại sau.';
-                error_log('UC07 thanh toán thất bại (' . get_class($exception) . ').');
+                // Ghi kèm thông báo gốc để chẩn đoán lỗi hạ tầng mà không lộ chi tiết ra giao diện.
+                error_log('UC07 thanh toán thất bại (' . get_class($exception) . '): ' . $exception->getMessage()
+                    . ' @ ' . $exception->getFile() . ':' . $exception->getLine());
             }
         }
         $student = $_GET['student'] ?? '';

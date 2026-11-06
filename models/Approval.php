@@ -176,8 +176,12 @@ class Approval
         if ((int) $stmt->fetchColumn() !== 1) {
             throw new RuntimeException('Không lấy được khóa xét duyệt.');
         }
+        $locked = true;
         try {
-            $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+            // MySQL từ chối đổi isolation level khi kết nối đang có transaction.
+            if (!$this->db->inTransaction()) {
+                $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+            }
             $this->db->beginTransaction();
             $stmt = $this->db->prepare('SELECT MaPhong FROM dondangky WHERE MaDonDangKy = ?');
             $stmt->execute([$id]);
@@ -206,8 +210,14 @@ class Approval
             }
             throw $error;
         } finally {
-            $stmt = $this->db->prepare('SELECT RELEASE_LOCK(?)');
-            $stmt->execute([$name]);
+            // Lỗi nhả khóa không được che mất lỗi gốc của giao dịch.
+            if ($locked) {
+                try {
+                    $this->db->prepare('SELECT RELEASE_LOCK(?)')->execute([$name]);
+                } catch (Throwable $ignored) {
+                    error_log('UC03 không nhả được khóa xét duyệt (' . get_class($ignored) . ').');
+                }
+            }
         }
     }
 

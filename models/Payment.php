@@ -105,8 +105,12 @@ class Payment
         $lock = $this->db->prepare('SELECT GET_LOCK(?, 10)');
         $lock->execute([$name]);
         if ((int)$lock->fetchColumn() !== 1) { throw new DomainException('Hệ thống đang xử lý đăng ký. Vui lòng thử lại.'); }
+        $locked = true;
         try {
-            $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+            // MySQL từ chối đổi isolation level khi kết nối đang có transaction.
+            if (!$this->db->inTransaction()) {
+                $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+            }
             $this->db->beginTransaction();
             if ($linkToken !== null) {
                 $hash = hash('sha256', $linkToken);
@@ -226,8 +230,14 @@ class Payment
             if ($this->db->inTransaction()) { $this->db->rollBack(); }
             throw $error;
         } finally {
-            $lock = $this->db->prepare('SELECT RELEASE_LOCK(?)');
-            $lock->execute([$name]);
+            // Lỗi nhả khóa không được che mất lỗi gốc của giao dịch.
+            if ($locked) {
+                try {
+                    $this->db->prepare('SELECT RELEASE_LOCK(?)')->execute([$name]);
+                } catch (Throwable $ignored) {
+                    error_log('UC07 không nhả được khóa phiên thanh toán (' . get_class($ignored) . ').');
+                }
+            }
         }
     }
 
