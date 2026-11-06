@@ -212,8 +212,8 @@ class Payment
             $stmt->execute([$roomId, $roomId]);
             if ((int)$stmt->fetchColumn() > (int)$room['SucChua']) { throw new DomainException('Số chỗ đang sử dụng vượt sức chứa phòng.'); }
             $contract = strtoupper(bin2hex(random_bytes(5)));
-            $stmt = $this->db->prepare("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES (?,?,?,?,?,'Còn hạn')");
-            $stmt->execute([$contract, $detail['MSSV'], $roomId, $semester['NgayBatDau'], $semester['NgayKetThuc']]);
+            $stmt = $this->db->prepare("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai,MaHocKy) VALUES (?,?,?,?,?,'Còn hạn',?)");
+            $stmt->execute([$contract, $detail['MSSV'], $roomId, $semester['NgayBatDau'], $semester['NgayKetThuc'], $detail['MaHocKy']]);
             $stmt = $this->db->prepare('UPDATE dondangky SET MaHopDong=? WHERE MaDonDangKy=? AND MaHopDong IS NULL');
             $stmt->execute([$contract, $application['MaDonDangKy']]);
             if ($stmt->rowCount() !== 1) { throw new DomainException('Đơn đăng ký đã thay đổi. Vui lòng tải lại trang.'); }

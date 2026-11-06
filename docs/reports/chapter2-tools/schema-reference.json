@@ -1,0 +1,783 @@
+{
+    "chisodiennuoc": {
+        "columns": [
+            {
+                "Field": "MaChiSo",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "MaPhong",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "MaNV",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "ChiSoDien",
+                "Type": "int",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "ChiSoNuoc",
+                "Type": "int",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "Thang",
+                "Type": "tinyint unsigned",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "Nam",
+                "Type": "smallint unsigned",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "ThoiGianGhi",
+                "Type": "datetime",
+                "Null": "NO",
+                "Key": ""
+            }
+        ],
+        "create": "CREATE TABLE `chisodiennuoc` (\n  `MaChiSo` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MaPhong` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MaNV` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `ChiSoDien` int NOT NULL,\n  `ChiSoNuoc` int NOT NULL,\n  `Thang` tinyint unsigned NOT NULL,\n  `Nam` smallint unsigned NOT NULL,\n  `ThoiGianGhi` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`MaChiSo`),\n  UNIQUE KEY `uq_chiso_phong_thang_nam` (`MaPhong`,`Thang`,`Nam`),\n  KEY `idx_chiso_manv` (`MaNV`),\n  CONSTRAINT `fk_chiso_nhanvien` FOREIGN KEY (`MaNV`) REFERENCES `nhanvien` (`MaNV`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `fk_chiso_phong` FOREIGN KEY (`MaPhong`) REFERENCES `phong` (`MaPhong`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `chk_chiso_dien` CHECK ((`ChiSoDien` >= 0)),\n  CONSTRAINT `chk_chiso_nam` CHECK ((`Nam` >= 2000)),\n  CONSTRAINT `chk_chiso_nuoc` CHECK ((`ChiSoNuoc` >= 0)),\n  CONSTRAINT `chk_chiso_thang` CHECK ((`Thang` between 1 and 12))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "dienuutien": {
+        "columns": [
+            {
+                "Field": "MaUuTien",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "TenDienUuTien",
+                "Type": "varchar(100)",
+                "Null": "NO",
+                "Key": "UNI"
+            },
+            {
+                "Field": "MucUuTien",
+                "Type": "int",
+                "Null": "NO",
+                "Key": ""
+            }
+        ],
+        "create": "CREATE TABLE `dienuutien` (\n  `MaUuTien` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `TenDienUuTien` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MucUuTien` int NOT NULL DEFAULT '0',\n  PRIMARY KEY (`MaUuTien`),\n  UNIQUE KEY `uq_dienuutien_ten` (`TenDienUuTien`),\n  CONSTRAINT `chk_dienuutien_muc` CHECK ((`MucUuTien` >= 0))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "dondangky": {
+        "columns": [
+            {
+                "Field": "MaDonDangKy",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "MSSV",
+                "Type": "varchar(15)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "HoTen",
+                "Type": "varchar(100)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "NgaySinh",
+                "Type": "date",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "CCCD",
+                "Type": "varchar(20)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "GioiTinh",
+                "Type": "enum('Nam','Nữ')",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "QueQuan",
+                "Type": "varchar(150)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "SDT",
+                "Type": "varchar(15)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "Email",
+                "Type": "varchar(100)",
+                "Null": "YES",
+                "Key": ""
+            },
+            {
+                "Field": "Lop",
+                "Type": "varchar(30)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "NienKhoa",
+                "Type": "varchar(20)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "MaUuTien",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "FileMinhChung",
+                "Type": "varchar(255)",
+                "Null": "YES",
+                "Key": ""
+            },
+            {
+                "Field": "MaPhong",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "ThoiGianGui",
+                "Type": "datetime",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "TrangThai",
+                "Type": "enum('Chờ duyệt','Đã duyệt','Từ chối')",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "LyDoTuChoi",
+                "Type": "varchar(500)",
+                "Null": "YES",
+                "Key": ""
+            },
+            {
+                "Field": "MaHoaDon",
+                "Type": "varchar(12)",
+                "Null": "YES",
+                "Key": "UNI"
+            },
+            {
+                "Field": "MaHopDong",
+                "Type": "varchar(10)",
+                "Null": "YES",
+                "Key": "UNI"
+            }
+        ],
+        "create": "CREATE TABLE `dondangky` (\n  `MaDonDangKy` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MSSV` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `HoTen` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `NgaySinh` date NOT NULL,\n  `CCCD` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `GioiTinh` enum('Nam','Nữ') COLLATE utf8mb4_unicode_ci NOT NULL,\n  `QueQuan` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `SDT` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `Email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `Lop` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `NienKhoa` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MaUuTien` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `FileMinhChung` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `MaPhong` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `ThoiGianGui` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `TrangThai` enum('Chờ duyệt','Đã duyệt','Từ chối') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Chờ duyệt',\n  `LyDoTuChoi` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `MaHoaDon` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `MaHopDong` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  PRIMARY KEY (`MaDonDangKy`),\n  UNIQUE KEY `uq_dondangky_hoadon` (`MaHoaDon`),\n  UNIQUE KEY `uq_dondangky_hopdong` (`MaHopDong`),\n  KEY `idx_dondangky_mssv` (`MSSV`),\n  KEY `idx_dondangky_trangthai` (`TrangThai`),\n  KEY `idx_dondangky_maphong` (`MaPhong`),\n  KEY `idx_dondangky_mauutien` (`MaUuTien`),\n  CONSTRAINT `fk_dondangky_dienuutien` FOREIGN KEY (`MaUuTien`) REFERENCES `dienuutien` (`MaUuTien`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `fk_dondangky_hoadon` FOREIGN KEY (`MaHoaDon`) REFERENCES `hoadontienphong` (`MaHoaDon`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `fk_dondangky_hopdong` FOREIGN KEY (`MaHopDong`) REFERENCES `hopdong` (`MaHopDong`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `fk_dondangky_phong` FOREIGN KEY (`MaPhong`) REFERENCES `phong` (`MaPhong`) ON DELETE RESTRICT ON UPDATE CASCADE\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "dongia": {
+        "columns": [
+            {
+                "Field": "MaDonGia",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "LoaiDonGia",
+                "Type": "enum('Tiền phòng','Điện','Nước')",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "GiaTri",
+                "Type": "decimal(12,2)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "DonViTinh",
+                "Type": "varchar(30)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "NgayApDung",
+                "Type": "date",
+                "Null": "NO",
+                "Key": ""
+            }
+        ],
+        "create": "CREATE TABLE `dongia` (\n  `MaDonGia` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `LoaiDonGia` enum('Tiền phòng','Điện','Nước') COLLATE utf8mb4_unicode_ci NOT NULL,\n  `GiaTri` decimal(12,2) NOT NULL,\n  `DonViTinh` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `NgayApDung` date NOT NULL,\n  PRIMARY KEY (`MaDonGia`),\n  UNIQUE KEY `uq_dongia_loai_ngay` (`LoaiDonGia`,`NgayApDung`),\n  CONSTRAINT `chk_dongia_giatri` CHECK ((`GiaTri` >= 0))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "hoadon": {
+        "columns": [
+            {
+                "Field": "MaHoaDon",
+                "Type": "varchar(12)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "LoaiHoaDon",
+                "Type": "enum('Tiền phòng','Điện nước')",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "TongTien",
+                "Type": "decimal(12,2)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "ThoiGianLap",
+                "Type": "datetime",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "TrangThai",
+                "Type": "enum('Chưa thu','Đã thu')",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "ThoiGianThanhToan",
+                "Type": "datetime",
+                "Null": "YES",
+                "Key": "MUL"
+            }
+        ],
+        "create": "CREATE TABLE `hoadon` (\n  `MaHoaDon` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `LoaiHoaDon` enum('Tiền phòng','Điện nước') COLLATE utf8mb4_unicode_ci NOT NULL,\n  `TongTien` decimal(12,2) NOT NULL,\n  `ThoiGianLap` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `TrangThai` enum('Chưa thu','Đã thu') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Chưa thu',\n  `ThoiGianThanhToan` datetime DEFAULT NULL,\n  PRIMARY KEY (`MaHoaDon`),\n  KEY `idx_hoadon_loai` (`LoaiHoaDon`),\n  KEY `idx_hoadon_trangthai` (`TrangThai`),\n  KEY `idx_hoadon_thoigianlap` (`ThoiGianLap`),\n  KEY `idx_hoadon_thoigianthanhtoan` (`ThoiGianThanhToan`),\n  CONSTRAINT `chk_hoadon_tongtien` CHECK ((`TongTien` >= 0))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "hoadondiennuoc": {
+        "columns": [
+            {
+                "Field": "MaHoaDon",
+                "Type": "varchar(12)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "MaPhong",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "Thang",
+                "Type": "tinyint unsigned",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "Nam",
+                "Type": "smallint unsigned",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "DienTieuThu",
+                "Type": "int",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "NuocTieuThu",
+                "Type": "int",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "TienDien",
+                "Type": "decimal(12,2)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "TienNuoc",
+                "Type": "decimal(12,2)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "MaDonGiaDien",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "MaDonGiaNuoc",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "MUL"
+            }
+        ],
+        "create": "CREATE TABLE `hoadondiennuoc` (\n  `MaHoaDon` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MaPhong` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `Thang` tinyint unsigned NOT NULL,\n  `Nam` smallint unsigned NOT NULL,\n  `DienTieuThu` int NOT NULL,\n  `NuocTieuThu` int NOT NULL,\n  `TienDien` decimal(12,2) NOT NULL,\n  `TienNuoc` decimal(12,2) NOT NULL,\n  `MaDonGiaDien` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MaDonGiaNuoc` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  PRIMARY KEY (`MaHoaDon`),\n  UNIQUE KEY `uq_hddn_phong_thang_nam` (`MaPhong`,`Thang`,`Nam`),\n  KEY `idx_hddn_dongiadien` (`MaDonGiaDien`),\n  KEY `idx_hddn_dongianuoc` (`MaDonGiaNuoc`),\n  CONSTRAINT `fk_hddn_dongiadien` FOREIGN KEY (`MaDonGiaDien`) REFERENCES `dongia` (`MaDonGia`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `fk_hddn_dongianuoc` FOREIGN KEY (`MaDonGiaNuoc`) REFERENCES `dongia` (`MaDonGia`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `fk_hddn_hoadon` FOREIGN KEY (`MaHoaDon`) REFERENCES `hoadon` (`MaHoaDon`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_hddn_phong` FOREIGN KEY (`MaPhong`) REFERENCES `phong` (`MaPhong`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `chk_hddn_dientieuthu` CHECK ((`DienTieuThu` >= 0)),\n  CONSTRAINT `chk_hddn_nam` CHECK ((`Nam` >= 2000)),\n  CONSTRAINT `chk_hddn_nuoctieuthu` CHECK ((`NuocTieuThu` >= 0)),\n  CONSTRAINT `chk_hddn_thang` CHECK ((`Thang` between 1 and 12)),\n  CONSTRAINT `chk_hddn_tiendien` CHECK ((`TienDien` >= 0)),\n  CONSTRAINT `chk_hddn_tiennuoc` CHECK ((`TienNuoc` >= 0))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "hoadondiennuocsinhvien": {
+        "columns": [
+            {
+                "Field": "MaHoaDon",
+                "Type": "varchar(12)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "MSSV",
+                "Type": "varchar(15)",
+                "Null": "NO",
+                "Key": "PRI"
+            }
+        ],
+        "create": "CREATE TABLE `hoadondiennuocsinhvien` (\n  `MaHoaDon` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MSSV` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,\n  PRIMARY KEY (`MaHoaDon`,`MSSV`),\n  KEY `idx_hddnsv_mssv` (`MSSV`),\n  CONSTRAINT `fk_hddnsv_hddn` FOREIGN KEY (`MaHoaDon`) REFERENCES `hoadondiennuoc` (`MaHoaDon`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_hddnsv_sinhvien` FOREIGN KEY (`MSSV`) REFERENCES `sinhvien` (`MSSV`) ON DELETE RESTRICT ON UPDATE CASCADE\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "hoadontienphong": {
+        "columns": [
+            {
+                "Field": "MaHoaDon",
+                "Type": "varchar(12)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "MSSV",
+                "Type": "varchar(15)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "MaPhong",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "MaHocKy",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "MaDonGia",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "MUL"
+            }
+        ],
+        "create": "CREATE TABLE `hoadontienphong` (\n  `MaHoaDon` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MSSV` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MaPhong` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MaHocKy` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MaDonGia` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  PRIMARY KEY (`MaHoaDon`),\n  UNIQUE KEY `uq_hdphong_sv_hocky` (`MSSV`,`MaHocKy`),\n  KEY `idx_hdphong_maphong` (`MaPhong`),\n  KEY `idx_hdphong_mahocky` (`MaHocKy`),\n  KEY `idx_hdphong_madongia` (`MaDonGia`),\n  CONSTRAINT `fk_hdphong_dongia` FOREIGN KEY (`MaDonGia`) REFERENCES `dongia` (`MaDonGia`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `fk_hdphong_hoadon` FOREIGN KEY (`MaHoaDon`) REFERENCES `hoadon` (`MaHoaDon`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_hdphong_hocky` FOREIGN KEY (`MaHocKy`) REFERENCES `hocky` (`MaHocKy`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `fk_hdphong_phong` FOREIGN KEY (`MaPhong`) REFERENCES `phong` (`MaPhong`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `fk_hdphong_sinhvien` FOREIGN KEY (`MSSV`) REFERENCES `sinhvien` (`MSSV`) ON DELETE RESTRICT ON UPDATE CASCADE\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "hocky": {
+        "columns": [
+            {
+                "Field": "MaHocKy",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "TenHocKy",
+                "Type": "varchar(50)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "NamHoc",
+                "Type": "varchar(20)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "NgayBatDau",
+                "Type": "date",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "NgayKetThuc",
+                "Type": "date",
+                "Null": "NO",
+                "Key": ""
+            }
+        ],
+        "create": "CREATE TABLE `hocky` (\n  `MaHocKy` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `TenHocKy` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `NamHoc` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `NgayBatDau` date NOT NULL,\n  `NgayKetThuc` date NOT NULL,\n  PRIMARY KEY (`MaHocKy`),\n  UNIQUE KEY `uq_hocky_ten_namhoc` (`TenHocKy`,`NamHoc`),\n  CONSTRAINT `chk_hocky_ngay` CHECK ((`NgayKetThuc` >= `NgayBatDau`))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "hopdong": {
+        "columns": [
+            {
+                "Field": "MaHopDong",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "MSSV",
+                "Type": "varchar(15)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "MaPhong",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "NgayBatDau",
+                "Type": "date",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "NgayKetThuc",
+                "Type": "date",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "TrangThai",
+                "Type": "enum('Còn hạn','Hết hạn','Đã thanh lý')",
+                "Null": "NO",
+                "Key": "MUL"
+            }
+        ],
+        "create": "CREATE TABLE `hopdong` (\n  `MaHopDong` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MSSV` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MaPhong` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `NgayBatDau` date NOT NULL,\n  `NgayKetThuc` date NOT NULL,\n  `TrangThai` enum('Còn hạn','Hết hạn','Đã thanh lý') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Còn hạn',\n  PRIMARY KEY (`MaHopDong`),\n  KEY `idx_hopdong_mssv` (`MSSV`),\n  KEY `idx_hopdong_maphong` (`MaPhong`),\n  KEY `idx_hopdong_trangthai` (`TrangThai`),\n  CONSTRAINT `fk_hopdong_phong` FOREIGN KEY (`MaPhong`) REFERENCES `phong` (`MaPhong`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `fk_hopdong_sinhvien` FOREIGN KEY (`MSSV`) REFERENCES `sinhvien` (`MSSV`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `chk_hopdong_ngay` CHECK ((`NgayKetThuc` >= `NgayBatDau`))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "nhanvien": {
+        "columns": [
+            {
+                "Field": "MaNV",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "MaTK",
+                "Type": "int",
+                "Null": "NO",
+                "Key": "UNI"
+            },
+            {
+                "Field": "HoTen",
+                "Type": "varchar(100)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "SDT",
+                "Type": "varchar(15)",
+                "Null": "YES",
+                "Key": ""
+            },
+            {
+                "Field": "Email",
+                "Type": "varchar(100)",
+                "Null": "YES",
+                "Key": "UNI"
+            },
+            {
+                "Field": "TrangThaiLamViec",
+                "Type": "enum('Đang làm','Nghỉ việc')",
+                "Null": "NO",
+                "Key": ""
+            }
+        ],
+        "create": "CREATE TABLE `nhanvien` (\n  `MaNV` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MaTK` int NOT NULL,\n  `HoTen` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `SDT` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `Email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `TrangThaiLamViec` enum('Đang làm','Nghỉ việc') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Đang làm',\n  PRIMARY KEY (`MaNV`),\n  UNIQUE KEY `uq_nhanvien_matk` (`MaTK`),\n  UNIQUE KEY `uq_nhanvien_email` (`Email`),\n  CONSTRAINT `fk_nhanvien_taikhoan` FOREIGN KEY (`MaTK`) REFERENCES `taikhoan` (`MaTK`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "phananhsuco": {
+        "columns": [
+            {
+                "Field": "MaPhanAnh",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "MSSV",
+                "Type": "varchar(15)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "MaPhong",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "MaNhanVienXuLy",
+                "Type": "varchar(10)",
+                "Null": "YES",
+                "Key": "MUL"
+            },
+            {
+                "Field": "LoaiSuCo",
+                "Type": "enum('Điện','Nước','Nội thất','Khác')",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "MoTa",
+                "Type": "text",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "ThoiGianGui",
+                "Type": "datetime",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "ChiPhiSuaChua",
+                "Type": "decimal(12,2)",
+                "Null": "YES",
+                "Key": ""
+            },
+            {
+                "Field": "TrangThai",
+                "Type": "enum('Chờ xử lý','Đã xử lý')",
+                "Null": "NO",
+                "Key": "MUL"
+            }
+        ],
+        "create": "CREATE TABLE `phananhsuco` (\n  `MaPhanAnh` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MSSV` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MaPhong` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MaNhanVienXuLy` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `LoaiSuCo` enum('Điện','Nước','Nội thất','Khác') COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MoTa` text COLLATE utf8mb4_unicode_ci NOT NULL,\n  `ThoiGianGui` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `ChiPhiSuaChua` decimal(12,2) DEFAULT NULL,\n  `TrangThai` enum('Chờ xử lý','Đã xử lý') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Chờ xử lý',\n  PRIMARY KEY (`MaPhanAnh`),\n  KEY `idx_phananh_mssv` (`MSSV`),\n  KEY `idx_phananh_maphong` (`MaPhong`),\n  KEY `idx_phananh_nhanvien` (`MaNhanVienXuLy`),\n  KEY `idx_phananh_trangthai` (`TrangThai`),\n  KEY `idx_phananh_thoigiangui` (`ThoiGianGui`),\n  CONSTRAINT `fk_phananh_nhanvien` FOREIGN KEY (`MaNhanVienXuLy`) REFERENCES `nhanvien` (`MaNV`) ON DELETE SET NULL ON UPDATE CASCADE,\n  CONSTRAINT `fk_phananh_phong` FOREIGN KEY (`MaPhong`) REFERENCES `phong` (`MaPhong`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `fk_phananh_sinhvien` FOREIGN KEY (`MSSV`) REFERENCES `sinhvien` (`MSSV`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `chk_phananh_chiphi` CHECK (((`ChiPhiSuaChua` is null) or (`ChiPhiSuaChua` >= 0)))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "phong": {
+        "columns": [
+            {
+                "Field": "MaPhong",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "MaToa",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "SoPhong",
+                "Type": "varchar(20)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "Tang",
+                "Type": "tinyint unsigned",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "GioiTinhPhong",
+                "Type": "enum('Nam','Nữ')",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "SucChua",
+                "Type": "int",
+                "Null": "NO",
+                "Key": ""
+            }
+        ],
+        "create": "CREATE TABLE `phong` (\n  `MaPhong` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MaToa` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `SoPhong` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `Tang` tinyint unsigned NOT NULL,\n  `GioiTinhPhong` enum('Nam','Nữ') COLLATE utf8mb4_unicode_ci NOT NULL,\n  `SucChua` int NOT NULL,\n  PRIMARY KEY (`MaPhong`),\n  UNIQUE KEY `uq_phong_toa_sophong` (`MaToa`,`SoPhong`),\n  KEY `idx_phong_matoa` (`MaToa`),\n  KEY `idx_phong_toa_tang` (`MaToa`,`Tang`),\n  CONSTRAINT `fk_phong_toanha` FOREIGN KEY (`MaToa`) REFERENCES `toanha` (`MaToa`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `chk_phong_succhua` CHECK ((`SucChua` > 0)),\n  CONSTRAINT `chk_phong_tang` CHECK ((`Tang` between 1 and 4))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "sinhvien": {
+        "columns": [
+            {
+                "Field": "MSSV",
+                "Type": "varchar(15)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "MaTK",
+                "Type": "int",
+                "Null": "NO",
+                "Key": "UNI"
+            },
+            {
+                "Field": "MaUuTien",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "HoTen",
+                "Type": "varchar(100)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "NgaySinh",
+                "Type": "date",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "CCCD",
+                "Type": "varchar(20)",
+                "Null": "NO",
+                "Key": "UNI"
+            },
+            {
+                "Field": "GioiTinh",
+                "Type": "enum('Nam','Nữ')",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "QueQuan",
+                "Type": "varchar(150)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "SDT",
+                "Type": "varchar(15)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "Email",
+                "Type": "varchar(100)",
+                "Null": "YES",
+                "Key": ""
+            },
+            {
+                "Field": "Lop",
+                "Type": "varchar(30)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "NienKhoa",
+                "Type": "varchar(20)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "TrangThaiLuuTru",
+                "Type": "enum('Đang ở','Đã rời đi','Chờ thanh toán')",
+                "Null": "NO",
+                "Key": "MUL"
+            }
+        ],
+        "create": "CREATE TABLE `sinhvien` (\n  `MSSV` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MaTK` int NOT NULL,\n  `MaUuTien` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `HoTen` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `NgaySinh` date NOT NULL,\n  `CCCD` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `GioiTinh` enum('Nam','Nữ') COLLATE utf8mb4_unicode_ci NOT NULL,\n  `QueQuan` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `SDT` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `Email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `Lop` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `NienKhoa` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `TrangThaiLuuTru` enum('Đang ở','Đã rời đi','Chờ thanh toán') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Đang ở',\n  PRIMARY KEY (`MSSV`),\n  UNIQUE KEY `uq_sinhvien_matk` (`MaTK`),\n  UNIQUE KEY `uq_sinhvien_cccd` (`CCCD`),\n  KEY `idx_sinhvien_mauutien` (`MaUuTien`),\n  KEY `idx_sinhvien_trangthai` (`TrangThaiLuuTru`),\n  CONSTRAINT `fk_sinhvien_dienuutien` FOREIGN KEY (`MaUuTien`) REFERENCES `dienuutien` (`MaUuTien`) ON DELETE RESTRICT ON UPDATE CASCADE,\n  CONSTRAINT `fk_sinhvien_taikhoan` FOREIGN KEY (`MaTK`) REFERENCES `taikhoan` (`MaTK`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "taikhoan": {
+        "columns": [
+            {
+                "Field": "MaTK",
+                "Type": "int",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "TenDangNhap",
+                "Type": "varchar(50)",
+                "Null": "NO",
+                "Key": "UNI"
+            },
+            {
+                "Field": "MatKhau",
+                "Type": "varchar(255)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "VaiTro",
+                "Type": "enum('Sinh viên','Nhân viên quản lý KTX','Nhân viên kế toán','Quản lý KTX')",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "TrangThai",
+                "Type": "enum('Hoạt động','Khóa')",
+                "Null": "NO",
+                "Key": ""
+            }
+        ],
+        "create": "CREATE TABLE `taikhoan` (\n  `MaTK` int NOT NULL AUTO_INCREMENT,\n  `TenDangNhap` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MatKhau` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,\n  `VaiTro` enum('Sinh viên','Nhân viên quản lý KTX','Nhân viên kế toán','Quản lý KTX') COLLATE utf8mb4_unicode_ci NOT NULL,\n  `TrangThai` enum('Hoạt động','Khóa') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Hoạt động',\n  PRIMARY KEY (`MaTK`),\n  UNIQUE KEY `uq_taikhoan_tendangnhap` (`TenDangNhap`),\n  UNIQUE KEY `TenDangNhap` (`TenDangNhap`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "thongbao": {
+        "columns": [
+            {
+                "Field": "MaThongBao",
+                "Type": "varchar(12)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "MSSV",
+                "Type": "varchar(15)",
+                "Null": "NO",
+                "Key": "MUL"
+            },
+            {
+                "Field": "MaHoaDon",
+                "Type": "varchar(12)",
+                "Null": "YES",
+                "Key": "MUL"
+            },
+            {
+                "Field": "TieuDe",
+                "Type": "varchar(150)",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "NoiDung",
+                "Type": "text",
+                "Null": "NO",
+                "Key": ""
+            },
+            {
+                "Field": "ThoiGianTao",
+                "Type": "datetime",
+                "Null": "NO",
+                "Key": "MUL"
+            }
+        ],
+        "create": "CREATE TABLE `thongbao` (\n  `MaThongBao` varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MSSV` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `MaHoaDon` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `TieuDe` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `NoiDung` text COLLATE utf8mb4_unicode_ci NOT NULL,\n  `ThoiGianTao` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`MaThongBao`),\n  KEY `idx_thongbao_mssv` (`MSSV`),\n  KEY `idx_thongbao_mahoadon` (`MaHoaDon`),\n  KEY `idx_thongbao_thoigiantao` (`ThoiGianTao`),\n  CONSTRAINT `fk_thongbao_hoadon` FOREIGN KEY (`MaHoaDon`) REFERENCES `hoadon` (`MaHoaDon`) ON DELETE SET NULL ON UPDATE CASCADE,\n  CONSTRAINT `fk_thongbao_sinhvien` FOREIGN KEY (`MSSV`) REFERENCES `sinhvien` (`MSSV`) ON DELETE RESTRICT ON UPDATE CASCADE\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    },
+    "toanha": {
+        "columns": [
+            {
+                "Field": "MaToa",
+                "Type": "varchar(10)",
+                "Null": "NO",
+                "Key": "PRI"
+            },
+            {
+                "Field": "TenToa",
+                "Type": "varchar(100)",
+                "Null": "NO",
+                "Key": "UNI"
+            }
+        ],
+        "create": "CREATE TABLE `toanha` (\n  `MaToa` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `TenToa` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,\n  PRIMARY KEY (`MaToa`),\n  UNIQUE KEY `uq_toanha_ten` (`TenToa`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    }
+}

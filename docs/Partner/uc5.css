@@ -1,0 +1,479 @@
+/* ============================
+   1. CÀI ĐẶT CHUNG
+============================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    color: #292929;
+    background-color: #f5f5f5;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ============================
+   2. THANH HEADER
+============================ */
+.topbar {
+    width: 100%;
+    height: 100px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #d5d5d5;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 30px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.logo img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.logo span {
+    font-size: 23px;
+    font-weight: bold;
+    color: #222222;
+    letter-spacing: 0.5px;
+}
+
+.infor_user {
+    font-size: 16px;
+    color: #444444;
+    background-color: #f8f8f8;
+    border: 1px solid #d0d0d0;
+    border-radius: 5px;
+    padding: 15px 25px;
+}
+
+/* ============================
+   3. BỐ CỤC CHÍNH
+============================ */
+.layout {
+    display: flex;
+    min-height: calc(100vh - 100px);
+}
+
+/* ============================
+   4. MENU BÊN TRÁI
+============================ */
+.slidebar {
+    width: 285px;
+    min-width: 285px;
+    background-color: #f5f5f5;
+    border-right: 1px solid #d5d5d5;
+    padding-top: 25px;
+}
+
+.slidebar h3 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #555555;
+    padding: 0 28px;
+    margin-bottom: 20px;
+}
+
+.slidebar ul {
+    list-style: none;
+}
+
+.slidebar ul li {
+    width: 100%;
+    transition: background-color 0.2s;
+}
+
+.slidebar ul li a {
+    display: block;
+    padding: 15px 38px;
+    font-size: 17px;
+    color: #292929;
+}
+
+.slidebar ul li:hover {
+    background-color: #e7e7e7;
+}
+
+/* Menu đang được chọn */
+.slidebar ul li.active {
+    background-color: #dedede;
+}
+
+.slidebar ul li.active a {
+    font-weight: normal;
+    color: #222222;
+}
+
+/* ============================
+   5. KHU VỰC NỘI DUNG
+============================ */
+.content {
+    flex: 1;
+    min-width: 0;
+    padding: 27px 22px;
+    background-color: #f5f5f5;
+}
+
+.content h1 {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #222222;
+}
+
+/* Dòng mô tả dưới tiêu đề */
+.content h1 + .panel {
+    margin-top: 25px;
+}
+
+/* ============================
+   6. KHUNG TÌM KIẾM
+============================ */
+.panel {
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #d8d8d8;
+    border-radius: 5px;
+    padding: 18px 21px;
+    margin-top: 25px;
+    margin-bottom: 16px;
+}
+
+.panel h2 {
+    font-size: 22px;
+    margin-bottom: 17px;
+    color: #222222;
+}
+
+/* Bốn ô nhập liệu */
+.form_grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 17px;
+}
+
+.form_group {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.form_group > label {
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #333333;
+}
+
+/* Ô nhập liệu */
+.form_group input[type="text"] {
+    width: 100%;
+    height: 41px;
+    padding: 0 14px;
+
+    border: 1px solid #c9c9c9;
+    border-radius: 4px;
+
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+
+    background-color: #ffffff;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form_group input[type="text"]::placeholder {
+    color: #aaaaaa;
+}
+
+.form_group input[type="text"]:focus {
+    border-color: #888888;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
+}
+
+/* ============================
+   7. NHÓM NÚT TRẠNG THÁI
+============================ */
+.radio_group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.radio_group label {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    min-height: 41px;
+    padding: 0 17px;
+
+    border: 1px solid #c9c9c9;
+    border-radius: 4px;
+
+    background-color: #ffffff;
+    color: #333333;
+    font-size: 16px;
+
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.radio_group label:hover {
+    background-color: #eeeeee;
+}
+
+/* Ẩn radio mặc định */
+.radio_group input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: 0;
+    height: 0;
+    margin: 0;
+}
+
+/* Trạng thái đang chọn */
+.radio_group label:has(input[type="radio"]:checked) {
+    background-color: #dedede;
+    border-color: #bcbcbc;
+}
+
+/* ============================
+   8. CÁC NÚT CHỨC NĂNG
+============================ */
+.form_actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: -42px;
+}
+
+/* Nút tìm kiếm */
+.btn_search {
+    min-width: 135px;
+    height: 43px;
+    padding: 0 22px;
+
+    background-color: #808080;
+    color: #ffffff;
+
+    border: 1px solid #808080;
+    border-radius: 4px;
+
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn_search:hover {
+    background-color: #666666;
+}
+
+/* Nút làm mới */
+.btn_reset {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    min-width: 135px;
+    height: 43px;
+    padding: 0 20px;
+
+    background-color: #ffffff;
+    color: #333333;
+
+    border: 1px solid #888888;
+    border-radius: 4px;
+
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
+
+.btn_reset:hover {
+    background-color: #eeeeee;
+}
+
+/* ============================
+   9. KHUNG DANH SÁCH HỢP ĐỒNG
+============================ */
+.panel2 {
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #d8d8d8;
+    border-radius: 5px;
+    padding: 15px 16px 18px;
+}
+
+.panel2 h2 {
+    font-size: 22px;
+    color: #222222;
+    margin-bottom: 12px;
+}
+
+/* Cho phép cuộn ngang nếu màn hình nhỏ */
+.table_container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* ============================
+   10. BẢNG DỮ LIỆU
+============================ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    font-size: 16px;
+}
+
+table thead {
+    background-color: #e5e5e5;
+}
+
+table th {
+    height: 47px;
+    padding: 10px 12px;
+
+    border: 1px solid #d5d5d5;
+
+    font-weight: normal;
+    text-align: center;
+    white-space: nowrap;
+    color: #333333;
+}
+
+table td {
+    height: 39px;
+    padding: 8px 12px;
+
+    border: 1px solid #dddddd;
+
+    text-align: center;
+    color: #333333;
+    white-space: nowrap;
+}
+
+table tbody tr:hover {
+    background-color: #f7f7f7;
+}
+
+/* Khi không tìm thấy dữ liệu */
+.no_data {
+    height: 55px;
+    text-align: center;
+    color: #666666;
+    font-size: 15px;
+}
+
+/* ============================
+   11. RESPONSIVE
+============================ */
+@media screen and (max-width: 1100px) {
+    .slidebar {
+        width: 240px;
+        min-width: 240px;
+    }
+
+    .slidebar ul li a {
+        padding-left: 25px;
+        font-size: 15px;
+    }
+
+    .form_grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form_actions {
+        margin-top: 18px;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .topbar {
+        height: 80px;
+        padding: 0 15px;
+    }
+
+    .logo {
+        gap: 10px;
+    }
+
+    .logo img {
+        width: 45px;
+        height: 45px;
+    }
+
+    .logo span {
+        font-size: 19px;
+    }
+
+    .infor_user {
+        font-size: 13px;
+        padding: 10px;
+    }
+
+    .layout {
+        flex-direction: column;
+    }
+
+    .slidebar {
+        width: 100%;
+        min-width: 0;
+        border-right: none;
+        border-bottom: 1px solid #d5d5d5;
+    }
+
+    .slidebar h3 {
+        padding-left: 15px;
+    }
+
+    .slidebar ul li a {
+        padding: 12px 20px;
+    }
+
+    .content {
+        padding: 20px 12px;
+    }
+
+    .content h1 {
+        font-size: 25px;
+    }
+
+    .form_grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form_actions {
+        margin-top: 18px;
+        flex-wrap: wrap;
+    }
+
+    .btn_search,
+    .btn_reset {
+        flex: 1;
+        min-width: 100px;
+    }
+
+    .panel,
+    .panel2 {
+        padding: 15px;
+    }
+}
