@@ -173,9 +173,54 @@ class Payment
             $stmt->execute([$invoice]);
             $initialApplication = $stmt->fetchColumn();
             if ($bill['LoaiHoaDon'] !== 'Tiền phòng' || $initialApplication === false) {
+                $reopenedContract = null;
+                $studentUsername = null;
+                $isReopened = false;
+
+                // Nếu là hóa đơn tiền phòng định kỳ/gia hạn: kiểm tra tài khoản sinh viên có bị Khóa do nợ phí không
+                if ($bill['LoaiHoaDon'] === 'Tiền phòng') {
+                    $stmt = $this->db->prepare('SELECT MSSV, MaPhong, MaHocKy FROM hoadontienphong WHERE MaHoaDon=? FOR UPDATE');
+                    $stmt->execute([$invoice]);
+                    $roomInvoiceDetail = $stmt->fetch();
+                    if ($roomInvoiceDetail) {
+                        $stmt = $this->db->prepare('SELECT s.MaTK, s.TrangThaiLuuTru, t.TenDangNhap, t.TrangThai AS AccountStatus 
+                            FROM sinhvien s JOIN taikhoan t ON t.MaTK=s.MaTK WHERE s.MSSV=? FOR UPDATE');
+                        $stmt->execute([$roomInvoiceDetail['MSSV']]);
+                        $stAcc = $stmt->fetch();
+                        if ($stAcc && ($stAcc['AccountStatus'] === 'Khóa' || $stAcc['TrangThaiLuuTru'] === 'Đã rời đi')) {
+                            // Mở khóa tài khoản & cập nhật lại trạng thái lưu trú Đang ở
+                            $this->db->prepare("UPDATE taikhoan SET TrangThai='Hoạt động' WHERE MaTK=?")->execute([$stAcc['MaTK']]);
+                            $this->db->prepare("UPDATE sinhvien SET TrangThaiLuuTru='Đang ở' WHERE MSSV=?")->execute([$roomInvoiceDetail['MSSV']]);
+
+                            // Kiểm tra nếu chưa có hợp đồng Còn hạn cho học kỳ này thì tự động cấp lại
+                            $stmt = $this->db->prepare("SELECT MaHopDong FROM hopdong WHERE MSSV=? AND MaHocKy=? AND TrangThai='Còn hạn' FOR UPDATE");
+                            $stmt->execute([$roomInvoiceDetail['MSSV'], $roomInvoiceDetail['MaHocKy']]);
+                            if (!$stmt->fetchColumn()) {
+                                $stmt = $this->db->prepare('SELECT NgayBatDau, NgayKetThuc, TenHocKy FROM hocky WHERE MaHocKy=?');
+                                $stmt->execute([$roomInvoiceDetail['MaHocKy']]);
+                                $sem = $stmt->fetch();
+                                if ($sem) {
+                                    $reopenedContract = strtoupper(bin2hex(random_bytes(5)));
+                                    $this->db->prepare("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai,MaHocKy) 
+                                        VALUES (?,?,?,?,?,'Còn hạn',?)")
+                                        ->execute([$reopenedContract, $roomInvoiceDetail['MSSV'], $roomInvoiceDetail['MaPhong'], $sem['NgayBatDau'], $sem['NgayKetThuc'], $roomInvoiceDetail['MaHocKy']]);
+
+                                    $tbId = strtoupper(bin2hex(random_bytes(6)));
+                                    $title = 'Mở khóa tài khoản và khôi phục lưu trú';
+                                    $content = 'Hóa đơn tiền phòng ' . $sem['TenHocKy'] . ' đã được xác nhận thanh toán. Tài khoản của bạn đã được mở khóa và hợp đồng lưu trú phòng ' . $roomInvoiceDetail['MaPhong'] . ' đã được khôi phục.';
+                                    $this->db->prepare('INSERT INTO thongbao (MaThongBao, MSSV, MaHoaDon, TieuDe, NoiDung) VALUES (?, ?, ?, ?, ?)')
+                                        ->execute([$tbId, $roomInvoiceDetail['MSSV'], $invoice, $title, $content]);
+                                }
+                            }
+                            $studentUsername = $stAcc['TenDangNhap'];
+                            $isReopened = true;
+                        }
+                    }
+                }
+
                 $this->markPaid($invoice);
                 $this->db->commit();
-                return ['contract' => null, 'invoiceType' => $bill['LoaiHoaDon']];
+                return ['contract' => $reopenedContract, 'invoiceType' => $bill['LoaiHoaDon'], 'username' => $studentUsername, 'reopened' => $isReopened];
             }
             $stmt = $this->db->prepare('SELECT MaPhong FROM hoadontienphong WHERE MaHoaDon=?');
             $stmt->execute([$invoice]);

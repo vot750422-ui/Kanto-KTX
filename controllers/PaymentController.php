@@ -28,7 +28,11 @@ class PaymentController
                 $result = $model->confirm($invoice, $studentForUtility);
                 // Hiển thị kết quả theo nghiệp vụ: chỉ hóa đơn phòng đầu tiên mới tạo hợp đồng.
                 if ($result['contract'] !== null) {
-                    $_SESSION['payment_success'] = 'Xác nhận thành công. Hợp đồng: ' . $result['contract'] . '. Tài khoản sinh viên: ' . $result['username'] . ' (đã cấp khi duyệt đơn).';
+                    if (!empty($result['reopened'])) {
+                        $_SESSION['payment_success'] = 'Xác nhận thành công. Đã mở khóa tài khoản ' . $result['username'] . ' và khôi phục hợp đồng lưu trú: ' . $result['contract'] . '.';
+                    } else {
+                        $_SESSION['payment_success'] = 'Xác nhận thành công. Hợp đồng: ' . $result['contract'] . '. Tài khoản sinh viên: ' . $result['username'] . ' (đã cấp khi duyệt đơn).';
+                    }
                 } else {
                     $_SESSION['payment_success'] = 'Xác nhận thành công. Hóa đơn đã được ghi nhận Đã thu.';
                 }
