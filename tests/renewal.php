@@ -3,6 +3,7 @@ if (PHP_SAPI !== 'cli') {
     http_response_code(404);
     exit;
 }
+ob_start();
 @session_start();
 require __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../models/Renewal.php';
@@ -165,6 +166,8 @@ try {
     $responseData = json_decode($responseJson, true);
     checkRenewal(http_response_code() === 200 && ($responseData['status'] ?? '') === 'success', 'UC18 Case 8c: Endpoint renewal-run chấp nhận đúng token và trả kết quả JSON 200');
 
+    $out = ob_get_clean();
+    echo $out;
     echo "\n----------------------------------------\n";
     echo "Tổng kết kiểm thử UC18: {$passed} đạt, {$failed} thất bại.\n";
     if ($failed > 0) {
