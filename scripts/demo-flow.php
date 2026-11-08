@@ -124,7 +124,7 @@ function showGuide(string $sessionFile): void
     echo "     - Tên đăng nhập : " . $unpaid['MSSV'] . "\n";
     echo "     - Mật khẩu      : 123456\n";
     echo "  3. Kết quả hiển thị: Thông báo lỗi màu đỏ:\n";
-    echo "     'Tài khoản đã bị khóa do chưa hoàn tất thanh toán. Vui lòng liên hệ Nhân viên Kế toán...'\n\n";
+    echo "     'Tài khoản đã bị khóa.'\n\n";
 
     echo ">>> BƯỚC B: NHÂN VIÊN KẾ TOÁN THU TIỀN VÀ MỞ KHÓA TÀI KHOẢN\n";
     echo "  1. Đăng nhập tài khoản Nhân viên Kế toán:\n";
