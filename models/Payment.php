@@ -165,6 +165,11 @@ class Payment
                     }
                 }
                 $this->markUtilityPaid($invoice, $studentMssv);
+                $tbId = strtoupper(bin2hex(random_bytes(6)));
+                $tbTitle = 'Thanh toán hóa đơn điện nước thành công';
+                $tbContent = 'Hóa đơn điện nước ' . $invoice . ' đã được ghi nhận thanh toán thành công.';
+                $this->db->prepare('INSERT INTO thongbao (MaThongBao, MSSV, MaHoaDon, TieuDe, NoiDung) VALUES (?, ?, ?, ?, ?)')
+                    ->execute([$tbId, $studentMssv, $invoice, $tbTitle, $tbContent]);
                 $this->db->commit();
                 return ['contract' => null, 'invoiceType' => $bill['LoaiHoaDon']];
             }
@@ -274,6 +279,11 @@ class Payment
             $stmt = $this->db->prepare("UPDATE sinhvien SET TrangThaiLuuTru='Đang ở' WHERE MSSV=?");
             $stmt->execute([$detail['MSSV']]);
             $this->markPaid($invoice);
+            $tbId = strtoupper(bin2hex(random_bytes(6)));
+            $tbTitle = 'Thanh toán thành công & Cấp hợp đồng lưu trú';
+            $tbContent = 'Hóa đơn tiền phòng ' . $invoice . ' đã được xác nhận thanh toán thành công. Hợp đồng lưu trú ' . $contract . ' tại phòng ' . $roomId . ' đã chính thức có hiệu lực từ ' . (new DateTimeImmutable($semester['NgayBatDau']))->format('d/m/Y') . ' đến ' . (new DateTimeImmutable($semester['NgayKetThuc']))->format('d/m/Y') . '. Chúc bạn có kỳ lưu trú thuận lợi tại Kanto KTX!';
+            $this->db->prepare('INSERT INTO thongbao (MaThongBao, MSSV, MaHoaDon, TieuDe, NoiDung) VALUES (?, ?, ?, ?, ?)')
+                ->execute([$tbId, $detail['MSSV'], $invoice, $tbTitle, $tbContent]);
             $this->db->commit();
             return ['contract' => $contract, 'username' => $student['TenDangNhap']];
         } catch (Throwable $error) {

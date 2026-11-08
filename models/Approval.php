@@ -163,6 +163,11 @@ class Approval
                 throw new DomainException('Đơn đăng ký đã được xử lý.');
             }
             (new ApprovalEmail($this->db))->enqueue($application, 'Đã duyệt', invoice: $invoiceId);
+            $tbId = strtoupper(bin2hex(random_bytes(6)));
+            $tbTitle = 'Đơn đăng ký lưu trú đã được duyệt';
+            $tbContent = 'Chúc mừng bạn! Đơn đăng ký lưu trú ' . $id . ' đã được phê duyệt. Hóa đơn tiền phòng ' . $invoiceId . ' đã được lập (số tiền: ' . number_format((float) $billing['total'], 0, ',', '.') . ' đ). Vui lòng hoàn tất thanh toán để nhận chỗ và hoàn tất hợp đồng lưu trú.';
+            $this->db->prepare('INSERT INTO thongbao (MaThongBao, MSSV, MaHoaDon, TieuDe, NoiDung) VALUES (?, ?, ?, ?, ?)')
+                ->execute([$tbId, $application['MSSV'], $invoiceId, $tbTitle, $tbContent]);
             return ['username' => $application['MSSV'], 'invoice' => $invoiceId];
         });
     }

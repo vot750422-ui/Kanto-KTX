@@ -54,6 +54,50 @@ $statIcons = ['Phòng được bố trí' => 'room', 'Hợp đồng' => 'contrac
                 </div>
             <?php endforeach; ?>
         </section>
+
+        <section class="student-notifications-widget" aria-label="Thông báo mới nhất" style="margin-top: 36px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: #17233b; display: flex; align-items: center; gap: 10px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px; color: #2563eb;" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+                    Thông báo mới nhất
+                </h2>
+                <a href="<?= htmlspecialchars(appUrl('index.php?action=notifications'), ENT_QUOTES, 'UTF-8') ?>" style="color: #2563eb; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                    Xem tất cả &rarr;
+                </a>
+            </div>
+            <?php if (!empty($dashboard['notifications'])): ?>
+                <div style="display: grid; gap: 12px;">
+                    <?php foreach ($dashboard['notifications'] as $nb): ?>
+                        <div style="padding: 18px 22px; background: #fff; border: 1px solid #e1e8f2; border-radius: 12px; box-shadow: 0 4px 12px rgba(32, 55, 100, 0.04);">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 8px;">
+                                <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #1e293b;">
+                                    <a href="<?= htmlspecialchars(appUrl('index.php?action=notification-detail&id=' . rawurlencode($nb['MaThongBao'])), ENT_QUOTES, 'UTF-8') ?>" style="color: inherit; text-decoration: none;">
+                                        <?= htmlspecialchars($nb['TieuDe'], ENT_QUOTES, 'UTF-8') ?>
+                                    </a>
+                                </h3>
+                                <time style="font-size: 13px; color: #64748b; white-space: nowrap;">
+                                    <?= (new DateTimeImmutable($nb['ThoiGianTao']))->format('d/m/Y H:i') ?>
+                                </time>
+                            </div>
+                            <p style="margin: 0; color: #475569; font-size: 14px; line-height: 1.6;">
+                                <?= nl2br(htmlspecialchars($nb['NoiDung'], ENT_QUOTES, 'UTF-8')) ?>
+                            </p>
+                            <?php if (!empty($nb['MaHoaDon'])): ?>
+                                <div style="margin-top: 10px;">
+                                    <span style="display: inline-block; padding: 3px 10px; background: #eff6ff; color: #1d4ed8; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                                        Hóa đơn: <?= htmlspecialchars($nb['MaHoaDon'], ENT_QUOTES, 'UTF-8') ?>
+                                    </span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <div style="padding: 24px; background: #fff; border: 1px dashed #cbd5e1; border-radius: 12px; color: #64748b; text-align: center; font-size: 14px;">
+                    Hiện chưa có thông báo mới nào dành cho bạn.
+                </div>
+            <?php endif; ?>
+        </section>
     </main>
     </div>
     <?php require __DIR__ . '/../../includes/chatbot.php'; ?>
