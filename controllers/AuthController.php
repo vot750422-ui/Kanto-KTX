@@ -52,7 +52,7 @@ class AuthController
         }
 
         if ($user['TrangThai'] !== 'Hoạt động') {
-            $_SESSION['error'] = 'Tài khoản đã bị khóa.';
+            $_SESSION['error'] = 'Tài khoản đã bị khóa do chưa hoàn tất thanh toán. Vui lòng liên hệ Nhân viên Kế toán để nộp phí và kích hoạt lại tài khoản.';
             header('Location: ' . appUrl('index.php?action=login'));
             exit;
         }

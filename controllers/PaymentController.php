@@ -26,13 +26,17 @@ class PaymentController
             }
             try {
                 $result = $model->confirm($invoice, $studentForUtility);
-                // Hiển thị kết quả theo nghiệp vụ: chỉ hóa đơn phòng đầu tiên mới tạo hợp đồng.
-                if ($result['contract'] !== null) {
-                    if (!empty($result['reopened'])) {
-                        $_SESSION['payment_success'] = 'Xác nhận thành công. Đã mở khóa tài khoản ' . $result['username'] . ' và khôi phục hợp đồng lưu trú: ' . $result['contract'] . '.';
+                // Hiển thị kết quả theo nghiệp vụ: ưu tiên thông báo mở khóa tài khoản nếu sinh viên từng bị khóa do nợ phí
+                if (!empty($result['reopened'])) {
+                    $unlockedMsg = 'Xác nhận thành công. Đã mở khóa tài khoản ' . htmlspecialchars($result['username'] ?? '', ENT_QUOTES, 'UTF-8');
+                    if (!empty($result['contract'])) {
+                        $unlockedMsg .= ' và khôi phục hợp đồng lưu trú: ' . htmlspecialchars($result['contract'], ENT_QUOTES, 'UTF-8') . '.';
                     } else {
-                        $_SESSION['payment_success'] = 'Xác nhận thành công. Hợp đồng: ' . $result['contract'] . '. Tài khoản sinh viên: ' . $result['username'] . ' (đã cấp khi duyệt đơn).';
+                        $unlockedMsg .= ' và khôi phục trạng thái lưu trú sang Đang ở.';
                     }
+                    $_SESSION['payment_success'] = $unlockedMsg;
+                } elseif ($result['contract'] !== null) {
+                    $_SESSION['payment_success'] = 'Xác nhận thành công. Hợp đồng: ' . htmlspecialchars($result['contract'], ENT_QUOTES, 'UTF-8') . '. Tài khoản sinh viên: ' . htmlspecialchars($result['username'] ?? '', ENT_QUOTES, 'UTF-8') . ' (đã cấp khi duyệt đơn).';
                 } else {
                     $_SESSION['payment_success'] = 'Xác nhận thành công. Hóa đơn đã được ghi nhận Đã thu.';
                 }

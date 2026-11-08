@@ -36,7 +36,7 @@ function uc17request(string $action, array $get = [], array $post = [], string $
 }
 try {
     $pdo->exec(str_replace('CREATE TABLE IF NOT EXISTS', 'CREATE TEMPORARY TABLE', file_get_contents(__DIR__ . '/../sql/uc03-email.sql')));
-    foreach (['toanha','phong','dienuutien','dondangky','sinhvien','taikhoan','hopdong','hoadon','hoadontienphong','hocky','dongia','hoadondiennuocsinhvien','hoadondiennuoc'] as $table) {
+    foreach (['toanha','phong','dienuutien','dondangky','sinhvien','taikhoan','hopdong','hoadon','hoadontienphong','hocky','dongia','hoadondiennuocsinhvien','hoadondiennuoc','thongbao'] as $table) {
         $ddl = $pdo->query("SHOW CREATE TABLE `$table`")->fetch(PDO::FETCH_NUM)[1];
         $ddl = preg_replace('/^.*CONSTRAINT `[^`]+` FOREIGN KEY .*\r?\n/m', '', $ddl);
         $ddl = preg_replace('/,\s*\n\)/', "\n)", $ddl);
