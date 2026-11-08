@@ -105,8 +105,12 @@ class Payment
         $lock = $this->db->prepare('SELECT GET_LOCK(?, 10)');
         $lock->execute([$name]);
         if ((int)$lock->fetchColumn() !== 1) { throw new DomainException('Hệ thống đang xử lý đăng ký. Vui lòng thử lại.'); }
+        $locked = true;
         try {
-            $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+            // MySQL từ chối đổi isolation level khi kết nối đang có transaction.
+            if (!$this->db->inTransaction()) {
+                $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+            }
             $this->db->beginTransaction();
             if ($linkToken !== null) {
                 $hash = hash('sha256', $linkToken);
@@ -160,18 +164,91 @@ class Payment
                         throw new DomainException('Số tiền phân bổ đã thay đổi. Vui lòng tải lại trang.');
                     }
                 }
+                $stmt = $this->db->prepare('SELECT s.MaTK, s.TrangThaiLuuTru, t.TenDangNhap, t.TrangThai AS AccountStatus 
+                    FROM sinhvien s JOIN taikhoan t ON t.MaTK=s.MaTK WHERE s.MSSV=? FOR UPDATE');
+                $stmt->execute([$studentMssv]);
+                $stAcc = $stmt->fetch();
+                $isReopened = false;
+                $studentUsername = null;
+                if ($stAcc && ($stAcc['AccountStatus'] === 'Khóa' || $stAcc['TrangThaiLuuTru'] === 'Đã rời đi')) {
+                    $unpaidRoom = $this->db->prepare("SELECT COUNT(*) FROM hoadon h 
+                        JOIN hoadontienphong p ON p.MaHoaDon=h.MaHoaDon 
+                        WHERE p.MSSV=? AND h.TrangThai='Chưa thu'");
+                    $unpaidRoom->execute([$studentMssv]);
+                    if ((int)$unpaidRoom->fetchColumn() === 0) {
+                        $this->db->prepare("UPDATE taikhoan SET TrangThai='Hoạt động' WHERE MaTK=?")->execute([$stAcc['MaTK']]);
+                        $this->db->prepare("UPDATE sinhvien SET TrangThaiLuuTru='Đang ở' WHERE MSSV=?")->execute([$studentMssv]);
+                        $isReopened = true;
+                        $studentUsername = $stAcc['TenDangNhap'];
+                    }
+                }
+
                 $this->markUtilityPaid($invoice, $studentMssv);
+                $tbId = strtoupper(bin2hex(random_bytes(6)));
+                $tbTitle = 'Thanh toán hóa đơn điện nước thành công';
+                $tbContent = 'Hóa đơn điện nước ' . $invoice . ' đã được ghi nhận thanh toán thành công.' . ($isReopened ? ' Tài khoản của bạn đã được mở khóa.' : '');
+                $this->db->prepare('INSERT INTO thongbao (MaThongBao, MSSV, MaHoaDon, TieuDe, NoiDung) VALUES (?, ?, ?, ?, ?)')
+                    ->execute([$tbId, $studentMssv, $invoice, $tbTitle, $tbContent]);
                 $this->db->commit();
-                return ['contract' => null, 'invoiceType' => $bill['LoaiHoaDon']];
+                return ['contract' => null, 'invoiceType' => $bill['LoaiHoaDon'], 'username' => $studentUsername, 'reopened' => $isReopened];
             }
             // Điện nước và tiền phòng định kỳ chỉ chuyển hóa đơn sang Đã thu.
             $stmt = $this->db->prepare('SELECT MaDonDangKy FROM dondangky WHERE MaHoaDon=? FOR UPDATE');
             $stmt->execute([$invoice]);
             $initialApplication = $stmt->fetchColumn();
             if ($bill['LoaiHoaDon'] !== 'Tiền phòng' || $initialApplication === false) {
+                $reopenedContract = null;
+                $studentUsername = null;
+                $isReopened = false;
+
+                // Nếu là hóa đơn tiền phòng định kỳ/gia hạn: kiểm tra tài khoản sinh viên có bị Khóa do nợ phí không
+                if ($bill['LoaiHoaDon'] === 'Tiền phòng') {
+                    $stmt = $this->db->prepare('SELECT MSSV, MaPhong, MaHocKy FROM hoadontienphong WHERE MaHoaDon=? FOR UPDATE');
+                    $stmt->execute([$invoice]);
+                    $roomInvoiceDetail = $stmt->fetch();
+                    if ($roomInvoiceDetail) {
+                        $stmt = $this->db->prepare('SELECT s.MaTK, s.TrangThaiLuuTru, t.TenDangNhap, t.TrangThai AS AccountStatus 
+                            FROM sinhvien s JOIN taikhoan t ON t.MaTK=s.MaTK WHERE s.MSSV=? FOR UPDATE');
+                        $stmt->execute([$roomInvoiceDetail['MSSV']]);
+                        $stAcc = $stmt->fetch();
+                        if ($stAcc && ($stAcc['AccountStatus'] === 'Khóa' || $stAcc['TrangThaiLuuTru'] === 'Đã rời đi')) {
+                            // Mở khóa tài khoản & cập nhật lại trạng thái lưu trú Đang ở
+                            $this->db->prepare("UPDATE taikhoan SET TrangThai='Hoạt động' WHERE MaTK=?")->execute([$stAcc['MaTK']]);
+                            $this->db->prepare("UPDATE sinhvien SET TrangThaiLuuTru='Đang ở' WHERE MSSV=?")->execute([$roomInvoiceDetail['MSSV']]);
+
+                            // Kiểm tra nếu chưa có hợp đồng Còn hạn cho học kỳ này thì tự động cấp lại
+                            $stmt = $this->db->prepare("SELECT MaHopDong FROM hopdong WHERE MSSV=? AND MaHocKy=? AND TrangThai='Còn hạn' FOR UPDATE");
+                            $stmt->execute([$roomInvoiceDetail['MSSV'], $roomInvoiceDetail['MaHocKy']]);
+                            $existingContract = $stmt->fetchColumn();
+                            if ($existingContract) {
+                                $reopenedContract = $existingContract;
+                            } else {
+                                $stmt = $this->db->prepare('SELECT NgayBatDau, NgayKetThuc, TenHocKy FROM hocky WHERE MaHocKy=?');
+                                $stmt->execute([$roomInvoiceDetail['MaHocKy']]);
+                                $sem = $stmt->fetch();
+                                if ($sem) {
+                                    $reopenedContract = strtoupper(bin2hex(random_bytes(5)));
+                                    $this->db->prepare("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai,MaHocKy) 
+                                        VALUES (?,?,?,?,?,'Còn hạn',?)")
+                                        ->execute([$reopenedContract, $roomInvoiceDetail['MSSV'], $roomInvoiceDetail['MaPhong'], $sem['NgayBatDau'], $sem['NgayKetThuc'], $roomInvoiceDetail['MaHocKy']]);
+                                }
+                            }
+
+                            $tbId = strtoupper(bin2hex(random_bytes(6)));
+                            $title = 'Mở khóa tài khoản và khôi phục lưu trú';
+                            $content = 'Hóa đơn tiền phòng ' . $invoice . ' đã được xác nhận thanh toán. Tài khoản của bạn đã được mở khóa và quyền lưu trú phòng ' . $roomInvoiceDetail['MaPhong'] . ' đã được khôi phục.';
+                            $this->db->prepare('INSERT INTO thongbao (MaThongBao, MSSV, MaHoaDon, TieuDe, NoiDung) VALUES (?, ?, ?, ?, ?)')
+                                ->execute([$tbId, $roomInvoiceDetail['MSSV'], $invoice, $title, $content]);
+
+                            $studentUsername = $stAcc['TenDangNhap'];
+                            $isReopened = true;
+                        }
+                    }
+                }
+
                 $this->markPaid($invoice);
                 $this->db->commit();
-                return ['contract' => null, 'invoiceType' => $bill['LoaiHoaDon']];
+                return ['contract' => $reopenedContract, 'invoiceType' => $bill['LoaiHoaDon'], 'username' => $studentUsername, 'reopened' => $isReopened];
             }
             $stmt = $this->db->prepare('SELECT MaPhong FROM hoadontienphong WHERE MaHoaDon=?');
             $stmt->execute([$invoice]);
@@ -212,22 +289,38 @@ class Payment
             $stmt->execute([$roomId, $roomId]);
             if ((int)$stmt->fetchColumn() > (int)$room['SucChua']) { throw new DomainException('Số chỗ đang sử dụng vượt sức chứa phòng.'); }
             $contract = strtoupper(bin2hex(random_bytes(5)));
-            $stmt = $this->db->prepare("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES (?,?,?,?,?,'Còn hạn')");
-            $stmt->execute([$contract, $detail['MSSV'], $roomId, $semester['NgayBatDau'], $semester['NgayKetThuc']]);
+            if ($this->hasHopdongSemesterColumn()) {
+                $stmt = $this->db->prepare("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai,MaHocKy) VALUES (?,?,?,?,?,'Còn hạn',?)");
+                $stmt->execute([$contract, $detail['MSSV'], $roomId, $semester['NgayBatDau'], $semester['NgayKetThuc'], $detail['MaHocKy']]);
+            } else {
+                $stmt = $this->db->prepare("INSERT INTO hopdong (MaHopDong,MSSV,MaPhong,NgayBatDau,NgayKetThuc,TrangThai) VALUES (?,?,?,?,?,'Còn hạn')");
+                $stmt->execute([$contract, $detail['MSSV'], $roomId, $semester['NgayBatDau'], $semester['NgayKetThuc']]);
+            }
             $stmt = $this->db->prepare('UPDATE dondangky SET MaHopDong=? WHERE MaDonDangKy=? AND MaHopDong IS NULL');
             $stmt->execute([$contract, $application['MaDonDangKy']]);
             if ($stmt->rowCount() !== 1) { throw new DomainException('Đơn đăng ký đã thay đổi. Vui lòng tải lại trang.'); }
             $stmt = $this->db->prepare("UPDATE sinhvien SET TrangThaiLuuTru='Đang ở' WHERE MSSV=?");
             $stmt->execute([$detail['MSSV']]);
             $this->markPaid($invoice);
+            $tbId = strtoupper(bin2hex(random_bytes(6)));
+            $tbTitle = 'Thanh toán thành công & Cấp hợp đồng lưu trú';
+            $tbContent = 'Hóa đơn tiền phòng ' . $invoice . ' đã được xác nhận thanh toán thành công. Hợp đồng lưu trú ' . $contract . ' tại phòng ' . $roomId . ' đã chính thức có hiệu lực từ ' . (new DateTimeImmutable($semester['NgayBatDau']))->format('d/m/Y') . ' đến ' . (new DateTimeImmutable($semester['NgayKetThuc']))->format('d/m/Y') . '. Chúc bạn có kỳ lưu trú thuận lợi tại Kanto KTX!';
+            $this->db->prepare('INSERT INTO thongbao (MaThongBao, MSSV, MaHoaDon, TieuDe, NoiDung) VALUES (?, ?, ?, ?, ?)')
+                ->execute([$tbId, $detail['MSSV'], $invoice, $tbTitle, $tbContent]);
             $this->db->commit();
             return ['contract' => $contract, 'username' => $student['TenDangNhap']];
         } catch (Throwable $error) {
             if ($this->db->inTransaction()) { $this->db->rollBack(); }
             throw $error;
         } finally {
-            $lock = $this->db->prepare('SELECT RELEASE_LOCK(?)');
-            $lock->execute([$name]);
+            // Lỗi nhả khóa không được che mất lỗi gốc của giao dịch.
+            if ($locked) {
+                try {
+                    $this->db->prepare('SELECT RELEASE_LOCK(?)')->execute([$name]);
+                } catch (Throwable $ignored) {
+                    error_log('UC07 không nhả được khóa phiên thanh toán (' . get_class($ignored) . ').');
+                }
+            }
         }
     }
 
@@ -264,5 +357,21 @@ class Payment
                 WHERE MaHoaDon=? AND TrangThai='Chưa thu'");
             $stmt->execute([$invoice]);
         }
+    }
+
+    private function hasHopdongSemesterColumn(): bool
+    {
+        static $hasColumn = null;
+        if ($hasColumn !== null) {
+            return $hasColumn;
+        }
+        try {
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'hopdong' AND column_name = 'MaHocKy'");
+            $stmt->execute();
+            $hasColumn = (int) $stmt->fetchColumn() > 0;
+        } catch (Throwable) {
+            $hasColumn = false;
+        }
+        return $hasColumn;
     }
 }

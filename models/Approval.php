@@ -163,6 +163,11 @@ class Approval
                 throw new DomainException('Đơn đăng ký đã được xử lý.');
             }
             (new ApprovalEmail($this->db))->enqueue($application, 'Đã duyệt', invoice: $invoiceId);
+            $tbId = strtoupper(bin2hex(random_bytes(6)));
+            $tbTitle = 'Đơn đăng ký lưu trú đã được duyệt';
+            $tbContent = 'Chúc mừng bạn! Đơn đăng ký lưu trú ' . $id . ' đã được phê duyệt. Hóa đơn tiền phòng ' . $invoiceId . ' đã được lập (số tiền: ' . number_format((float) $billing['total'], 0, ',', '.') . ' đ). Vui lòng hoàn tất thanh toán để nhận chỗ và hoàn tất hợp đồng lưu trú.';
+            $this->db->prepare('INSERT INTO thongbao (MaThongBao, MSSV, MaHoaDon, TieuDe, NoiDung) VALUES (?, ?, ?, ?, ?)')
+                ->execute([$tbId, $application['MSSV'], $invoiceId, $tbTitle, $tbContent]);
             return ['username' => $application['MSSV'], 'invoice' => $invoiceId];
         });
     }
@@ -176,8 +181,12 @@ class Approval
         if ((int) $stmt->fetchColumn() !== 1) {
             throw new RuntimeException('Không lấy được khóa xét duyệt.');
         }
+        $locked = true;
         try {
-            $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+            // MySQL từ chối đổi isolation level khi kết nối đang có transaction.
+            if (!$this->db->inTransaction()) {
+                $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+            }
             $this->db->beginTransaction();
             $stmt = $this->db->prepare('SELECT MaPhong FROM dondangky WHERE MaDonDangKy = ?');
             $stmt->execute([$id]);
@@ -206,8 +215,14 @@ class Approval
             }
             throw $error;
         } finally {
-            $stmt = $this->db->prepare('SELECT RELEASE_LOCK(?)');
-            $stmt->execute([$name]);
+            // Lỗi nhả khóa không được che mất lỗi gốc của giao dịch.
+            if ($locked) {
+                try {
+                    $this->db->prepare('SELECT RELEASE_LOCK(?)')->execute([$name]);
+                } catch (Throwable $ignored) {
+                    error_log('UC03 không nhả được khóa xét duyệt (' . get_class($ignored) . ').');
+                }
+            }
         }
     }
 

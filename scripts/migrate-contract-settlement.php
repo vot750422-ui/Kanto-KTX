@@ -65,4 +65,27 @@ foreach ($groups as $invoiceRows) {
     }
 }
 
-echo "Đã chuẩn bị phân bổ hóa đơn điện nước và lịch sử thanh lý hợp đồng.\n";
+// Chuẩn bị bảng nhatkyhethong và cột MaHocKy trong hopdong (UC18) nếu chưa có
+$db->exec("CREATE TABLE IF NOT EXISTS nhatkyhethong (
+    MaNhatKy INT AUTO_INCREMENT PRIMARY KEY,
+    ThoiGian DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    LoaiNhatKy VARCHAR(50) NOT NULL,
+    NoiDung TEXT NOT NULL,
+    MucDo ENUM('INFO', 'WARNING', 'ERROR') NOT NULL DEFAULT 'INFO'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+$checkHopDong = $db->prepare("SELECT COUNT(*) FROM information_schema.columns
+    WHERE table_schema = DATABASE() AND table_name = 'hopdong' AND column_name = 'MaHocKy'");
+$checkHopDong->execute();
+if ((int) $checkHopDong->fetchColumn() === 0) {
+    try {
+        $db->exec("ALTER TABLE hopdong ADD COLUMN MaHocKy varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+            ADD CONSTRAINT fk_hopdong_hocky FOREIGN KEY (MaHocKy) REFERENCES hocky (MaHocKy) ON DELETE RESTRICT ON UPDATE CASCADE");
+    } catch (Throwable) {
+        try {
+            $db->exec("ALTER TABLE hopdong ADD COLUMN MaHocKy varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL");
+        } catch (Throwable) {}
+    }
+}
+
+echo "Đã chuẩn bị phân bổ hóa đơn điện nước, lịch sử thanh lý và học kỳ hợp đồng.\n";

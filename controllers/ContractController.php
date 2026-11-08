@@ -32,7 +32,7 @@ class ContractController
 
             $model = new Contract($this->db);
             try {
-                $model->terminate($id);
+                $result = $model->terminate($id);
                 $_SESSION['contract_notice'] = [
                     'type' => 'success',
                     'message' => 'Thanh lý hợp đồng ' . $id . ' thành công. Số tiền hoàn trả dự kiến: '

@@ -46,6 +46,9 @@ class StudentDashboard
         $counts = $stmt->fetch();
         $data['invoices'] = (int) $counts['invoices'];
         $data['reports'] = (int) $counts['reports'];
+        $stmt = $this->pdo->prepare('SELECT MaThongBao, MaHoaDon, TieuDe, NoiDung, ThoiGianTao FROM thongbao WHERE MSSV = :mssv ORDER BY ThoiGianTao DESC, MaThongBao DESC LIMIT 5');
+        $stmt->execute(['mssv' => $student['MSSV']]);
+        $data['notifications'] = $stmt->fetchAll();
         return $data;
     }
 }

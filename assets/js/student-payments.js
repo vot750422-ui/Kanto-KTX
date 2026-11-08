@@ -10,7 +10,13 @@ document.querySelectorAll('[data-payment-qr]').forEach((element) => {
         const image = document.createElement('img');
         image.src = code.createDataURL(5, 20);
         image.alt = 'Quét mã để mở trang thanh toán mô phỏng';
-        element.replaceChildren(image);
+        const link = document.createElement('a');
+        link.href = url.href;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.title = 'Nhấp vào đây để mở trang thanh toán';
+        link.appendChild(image);
+        element.replaceChildren(link);
     } catch (error) {
         element.textContent = 'Chưa thể hiển thị QR. Vui lòng tải lại trang.';
     }

@@ -54,8 +54,12 @@ class Registration
         if ((int) $lock->fetchColumn() !== 1) {
             throw new RuntimeException('Hệ thống đang bận. Vui lòng gửi lại sau.');
         }
+        $locked = true;
         try {
-            $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+            // MySQL từ chối đổi isolation level khi kết nối đang có transaction.
+            if (!$this->db->inTransaction()) {
+                $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+            }
             $this->db->beginTransaction();
             $stmt = $this->db->prepare('SELECT MaPhong FROM phong WHERE MaPhong = ? FOR UPDATE');
             $stmt->execute([$roomId]);
@@ -93,8 +97,14 @@ class Registration
             }
             throw $error;
         } finally {
-            $release = $this->db->prepare('SELECT RELEASE_LOCK(?)');
-            $release->execute([$lockName]);
+            // Lỗi nhả khóa không được che mất lỗi gốc của giao dịch.
+            if ($locked) {
+                try {
+                    $this->db->prepare('SELECT RELEASE_LOCK(?)')->execute([$lockName]);
+                } catch (Throwable $ignored) {
+                    error_log('UC02 không nhả được khóa đăng ký (' . get_class($ignored) . ').');
+                }
+            }
         }
     }
 }
