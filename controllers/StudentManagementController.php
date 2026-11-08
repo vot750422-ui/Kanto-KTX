@@ -69,7 +69,7 @@ class StudentManagementController
                 echo 'MSSV không hợp lệ.';
                 return;
             }
-
+//tra cứu sv
             $student = $model->find($id);
             if (!$student) {
                 http_response_code(404);
@@ -108,12 +108,12 @@ class StudentManagementController
 
         require __DIR__ . '/../views/students/layout.php';
     }
-
-    public static function validate(array $input): array
+//kiểm tra dl khi cập nhật thông tin
+    public static function validate(array $input): array // trả về 1 mảng
     {
         $data = [];
         $errors = [];
-        $limits = [
+        $limits = [ // giới hạn dl
             'HoTen' => 100,
             'NgaySinh' => 10,
             'GioiTinh' => 3,

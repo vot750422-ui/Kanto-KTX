@@ -52,6 +52,8 @@ class ContractController
                     'type' => 'error',
                     'message' => $e->getMessage(),
                 ];
+
+        // Chi tiết hợp đồng truongwf hopjw looix 409( da thanh ly)
                 $content = __DIR__ . '/../views/contracts/detail.php';
                 $pageTitle = 'Chi tiết hợp đồng';
                 $displayName = (new StaffDashboard($this->db))->nameForAccount((int) $_SESSION['user']['MaTK'])
@@ -73,7 +75,7 @@ class ContractController
         }
 
         $model = new Contract($this->db);
-
+// xem chi tiet hop dong
         if ($action === 'contract-detail') {
             $id = $this->scalar('id');
             if ($id === null || preg_match('/^[A-Za-z0-9_-]{1,10}$/D', $id) !== 1) {
@@ -94,7 +96,7 @@ class ContractController
 
             $content = __DIR__ . '/../views/contracts/detail.php';
             $pageTitle = 'Chi tiết hợp đồng';
-        } else {
+        } else { // tra cuu ds hop dong
             [$filters, $errors] = $this->filters();
             $page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: 1;
 

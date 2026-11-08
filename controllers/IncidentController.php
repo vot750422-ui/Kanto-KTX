@@ -16,7 +16,7 @@ class IncidentController
             header('Allow: GET, POST');
             return;
         }
-
+// xac dinh tk sv
         $model = new Incident($this->db);
         $accountId = (int) $_SESSION['user']['MaTK'];
         $stay = $model->accommodationForAccount($accountId);

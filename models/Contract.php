@@ -37,11 +37,11 @@ class Contract
         $stmt = $this->db->prepare('SELECT COUNT(*)' . $baseFrom . $condition);
         $stmt->execute($params);
         $total = (int) $stmt->fetchColumn();
-
+// phaan trang
         $pages = max(1, (int) ceil($total / $perPage));
         $page = max(1, min($page, $pages));
         $offset = ($page - 1) * $perPage;
-
+//truy vasn ds hop dong
         $stmt = $this->db->prepare('SELECT h.MaHopDong, h.MSSV, s.HoTen, h.MaPhong,
                 p.SoPhong, t.TenToa, h.NgayBatDau, h.NgayKetThuc, h.TrangThai'
             . $baseFrom . ' LEFT JOIN toanha t ON t.MaToa = p.MaToa' . $condition
@@ -134,7 +134,7 @@ class Contract
             throw $e;
         }
     }
-
+// khoa +ktra hd
     private function unpaidInvoices(string $student): array
     {
         $room = $this->db->prepare("SELECT h.MaHoaDon, h.LoaiHoaDon, h.TongTien AS SoTienPhaiThu

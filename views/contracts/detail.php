@@ -30,7 +30,7 @@ $notice = $notice ?? null;
             <?php if (!empty($contract['NgayThanhLy'])): ?><div><dt>Ngày thanh lý</dt><dd><?= $escape($date($contract['NgayThanhLy'])) ?></dd></div><?php endif; ?>
             <?php if (isset($contract['TienHoanTra']) && $contract['TienHoanTra'] !== null && $contract['TienHoanTra'] !== ''): ?><div><dt>Tiền hoàn trả dự kiến</dt><dd><?= $escape(number_format((float) $contract['TienHoanTra'], 0, ',', '.')) ?> đồng</dd></div><?php endif; ?>
             <div><dt>Trạng thái</dt><dd><span class="contract-status"><?= $escape($contract['TrangThai']) ?></span></dd></div>
-        </dl>
+        </dl> //Description List
     </section>
     <section class="approval-panel contract-panel">
         <h2>Thông tin sinh viên</h2>
