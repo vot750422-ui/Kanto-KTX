@@ -211,10 +211,10 @@ try {
     );
 
     // ==============================================================
-    // CA 7: Thiếu chỉ số cũ hoặc mới thì bỏ qua phòng
+    // CA 7: Thiếu chỉ số cũ thì tự động coi chỉ số ban đầu = 0 (kỳ đầu tiên)
     // ==============================================================
     $hddnP02 = $pdo->query("SELECT 1 FROM hoadondiennuoc WHERE MaPhong = 'P02'")->fetchColumn();
-    checkUtility(!$hddnP02, 'UC08 ca 7: Phòng thiếu chỉ số tháng trước (P02) bị bỏ qua, không tạo hóa đơn');
+    checkUtility((bool) $hddnP02, 'UC08 ca 7: Phòng thiếu chỉ số tháng trước (P02) tự động tính từ mốc 0 và tạo hóa đơn');
 
     // ==============================================================
     // CA 8: Chỉ số mới nhỏ hơn chỉ số cũ thì bỏ qua/báo lỗi, không tạo hóa đơn
@@ -228,7 +228,7 @@ try {
     $run2 = $generator->generateForMonth(10, 2026);
     $countHddnAfterRun2 = (int) $pdo->query("SELECT COUNT(*) FROM hoadondiennuoc WHERE Thang = 10 AND Nam = 2026")->fetchColumn();
     checkUtility(
-        $run2['processed'] === 0 && $countHddnAfterRun2 === 2, // P01 và P05
+        $run2['processed'] === 0 && $countHddnAfterRun2 === 3, // P01, P02 và P05
         'UC08 ca 10: Chạy lại cùng kỳ không tạo hóa đơn trùng lặp'
     );
 

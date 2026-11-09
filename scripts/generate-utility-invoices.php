@@ -12,10 +12,23 @@ if (PHP_SAPI !== 'cli') {
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../models/UtilityInvoiceGenerator.php';
 
-// Phân tích tham số: --month=M --year=YYYY hoặc -m M -y YYYY
+// Phân tích tham số linh hoạt: --month=2026-11, --month=11 --year=2026, hoặc -m 11 -y 2026
 $options = getopt('m:y:', ['month:', 'year:']);
-$month = isset($options['month']) ? (int) $options['month'] : (isset($options['m']) ? (int) $options['m'] : null);
-$year = isset($options['year']) ? (int) $options['year'] : (isset($options['y']) ? (int) $options['y'] : null);
+$rawMonth = $options['month'] ?? ($options['m'] ?? null);
+$rawYear = $options['year'] ?? ($options['y'] ?? null);
+
+$month = null;
+$year = $rawYear !== null ? (int) $rawYear : null;
+
+if (is_string($rawMonth) && preg_match('/^(\d{4})-(\d{1,2})$/', trim($rawMonth), $matches)) {
+    $year = (int) $matches[1];
+    $month = (int) $matches[2];
+} elseif (is_string($rawMonth) && preg_match('/^(\d{1,2})[\/-](\d{4})$/', trim($rawMonth), $matches)) {
+    $month = (int) $matches[1];
+    $year = (int) $matches[2];
+} elseif ($rawMonth !== null && is_numeric($rawMonth)) {
+    $month = (int) $rawMonth;
+}
 
 $generator = new UtilityInvoiceGenerator($pdo);
 

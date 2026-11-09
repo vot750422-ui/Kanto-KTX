@@ -136,25 +136,17 @@ class UtilityInvoiceGenerator
                 continue;
             }
 
-            // 3. Lấy chỉ số tháng liền trước
-            $stmtOld = $this->db->prepare('SELECT ChiSoDien, ChiSoNuoc FROM chisodiennuoc WHERE MaPhong = ? AND Thang = ? AND Nam = ?');
-            $stmtOld->execute([$roomId, $period['prevMonth'], $period['prevYear']]);
+            // 3. Lấy chỉ số tháng liền trước (hoặc chỉ số gần nhất trước đó; nếu ghi nhận lần đầu thì coi chỉ số ban đầu = 0)
+            $stmtOld = $this->db->prepare('SELECT ChiSoDien, ChiSoNuoc FROM chisodiennuoc WHERE MaPhong = ? AND (Nam < ? OR (Nam = ? AND Thang < ?)) ORDER BY Nam DESC, Thang DESC LIMIT 1');
+            $stmtOld->execute([$roomId, $period['year'], $period['year'], $period['month']]);
             $oldMeter = $stmtOld->fetch();
-            if (!$oldMeter) {
-                $skipped++;
-                $details[] = [
-                    'room' => $roomId,
-                    'status' => 'skipped',
-                    'reason' => 'Thiếu bản ghi chỉ số tháng liền trước.',
-                ];
-                continue;
-            }
+
+            $oldElec = $oldMeter ? (int) $oldMeter['ChiSoDien'] : 0;
+            $oldWater = $oldMeter ? (int) $oldMeter['ChiSoNuoc'] : 0;
 
             // 4. Kiểm tra chỉ số mới không nhỏ hơn chỉ số cũ
             $newElec = (int) $newMeter['ChiSoDien'];
-            $oldElec = (int) $oldMeter['ChiSoDien'];
             $newWater = (int) $newMeter['ChiSoNuoc'];
-            $oldWater = (int) $oldMeter['ChiSoNuoc'];
 
             if ($newElec < $oldElec || $newWater < $oldWater) {
                 $skipped++;
